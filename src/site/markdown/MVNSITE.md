@@ -52,7 +52,7 @@
 
 有的问题可能由API rate limit引起, 可以查询它.
 
-    curl -H "Authorization: token ${GITHUB_GIT_SERVICE_TOKEN}" https://api.github.com/rate_limit
+    curl -H "Authorization: token ${GITHUB_INFRASTRUCTURE_CONF_GIT_TOKEN}" https://api.github.com/rate_limit
 
 复位时间可以查询
 

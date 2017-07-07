@@ -71,7 +71,7 @@ function deploy() {
         #scp ${id} -P ${port} -r ./_book/* ${user_host}:${directory}
         # webdav
         directory="oss-${channel}/gitbook"
-        local repository_url="${LOCAL_NEXUS}/repository/mvnsite/"
+        local repository_url="${LOCAL_NEXUS}/nexus/repository/mvnsite/"
         local files=($(find ./_book -type f -print0 | xargs -0 ls))
         for file in "${files[@]}"; do
             local remote_file="${directory}/$(echo "${file}" | sed 's#^./_book/##')"

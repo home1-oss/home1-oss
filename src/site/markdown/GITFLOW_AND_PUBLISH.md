@@ -17,7 +17,7 @@
 4. push tag到远端 `git push origin tag_name`，触发tag的发布，tag不做nexus的发布操作，只做test_and_build 和uploading release的产物，如工具类的jar到github。push之后，在github会产生一个release。
 5. tag发布完毕后，再回到本地，进行善后清理操作，将develop和master的提交，推到远端，release分支的删除操作，也推到远端。
 
-操作样例：
+操作样例:
 
     mvn gitflow:release-start # 如maven版本号确定为1.0.8.OSS
     git push -u origin release/1.0.8.OSS # 推送远端触发nexus发布
@@ -50,7 +50,7 @@
 
     deploy:
       provider: releases
-      api_key: $GITHUB_GIT_SERVICE_TOKEN
+      api_key: $GITHUB_INFRASTRUCTURE_CONF_GIT_TOKEN
       file: "target/oss-configlint-${PROJECT_MAVEN_VERSION}.jar"
       skip_cleanup: true
       on:
@@ -260,7 +260,7 @@ Encrypt cert and variables for travis
     gem install travis -v 1.8.8 --no-rdoc --no-ri
     travis version
 
-  `travis login` or `travis login --github-token $GITHUB_GIT_SERVICE_TOKEN`
+  `travis login` or `travis login --github-token $GITHUB_INFRASTRUCTURE_CONF_GIT_TOKEN`
 
   Make sure your working directory is the git root of your project.
 

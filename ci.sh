@@ -1,58 +1,48 @@
 #!/usr/bin/env bash
 
-### OSS CI CONTEXT VARIABLES BEGIN
-if [ -n "${CI_BUILD_REF_NAME}" ] && ([ "${CI_BUILD_REF_NAME}" == "master" ] || [ "${CI_BUILD_REF_NAME}" == "develop" ]); then BUILD_SCRIPT_REF="${CI_BUILD_REF_NAME}"; else BUILD_SCRIPT_REF="develop"; fi
-if [ -z "${GIT_SERVICE}" ]; then
-    if [ -n "${CI_PROJECT_URL}" ]; then INFRASTRUCTURE="internal"; GIT_SERVICE=$(echo "${CI_PROJECT_URL}" | sed 's,/*[^/]\+/*$,,' | sed 's,/*[^/]\+/*$,,'); else INFRASTRUCTURE="local"; GIT_SERVICE="${LOCAL_GIT_SERVICE}"; fi
-fi
-if [ -z "${GIT_REPO_OWNER}" ]; then
-    if [ -n "${TRAVIS_REPO_SLUG}" ]; then
-        GIT_REPO_OWNER=$(echo ${TRAVIS_REPO_SLUG} | awk -F/ '{print $1}');
-    else
-        if [ -z "${INTERNAL_GIT_SERVICE_USER}" ]; then GIT_REPO_OWNER="infra"; else GIT_REPO_OWNER="${INTERNAL_GIT_SERVICE_USER}"; fi
-    fi
-fi
-### OSS CI CONTEXT VARIABLES END
+
+
+
+
 
 export BUILD_PUBLISH_DEPLOY_SEGREGATION="true"
-export BUILD_SITE="true"
 export BUILD_SITE_PATH_PREFIX="oss"
 
 
-export BUILD_TEST_FAILURE_IGNORE="false"
-export BUILD_TEST_SKIP="false"
+
 
 
 
 ### OSS CI CALL REMOTE CI SCRIPT BEGIN
-echo "eval \$(curl -s -L ${GIT_SERVICE}/${GIT_REPO_OWNER}/oss-build/raw/${BUILD_SCRIPT_REF}/src/main/ci-script/ci.sh)"
-eval "$(curl -s -L ${GIT_SERVICE}/${GIT_REPO_OWNER}/oss-build/raw/${BUILD_SCRIPT_REF}/src/main/ci-script/ci.sh)"
+if [ -z "${LIB_CI_SCRIPT}" ]; then LIB_CI_SCRIPT="https://github.com/home1-oss/oss-build/raw/master/src/main/ci-script/lib_ci.sh"; fi
+#if [ -z "${LIB_CI_SCRIPT}" ]; then LIB_CI_SCRIPT="http://gitlab.local:10080/home1-oss/oss-build/raw/develop/src/main/ci-script/lib_ci.sh"; fi
+echo "eval \$(curl -s -L ${LIB_CI_SCRIPT})"
+#eval "$(curl -s -L ${LIB_CI_SCRIPT})"
+source src/main/ci-script/lib_ci.sh
 ### OSS CI CALL REMOTE CI SCRIPT END
-
-if [ "${1}" != "test_and_build" ] && ([ "${GIT_REPO_OWNER}" != "home1-oss" ] || [ "pull_request" == "${TRAVIS_EVENT_TYPE}" ]); then
-    echo "skip deploy/publish on forked repo or which trigger by pull request "
-else
-    $@
-fi
 
 function get_git_domain() {
   local git_service="${1}"
   local git_host_port=$(echo ${git_service} | awk -F/ '{print $3}')
-  if [[ "${git_service}" == *local-git:* ]]; then
+  if [[ "${git_service}" == *gitlab.local:* ]]; then
     echo ${git_host_port} | sed -E 's#:[0-9]+$##'
   else
     echo ${git_host_port}
   fi
 }
 
-eval "$(curl -s -L ${GIT_SERVICE}/${GIT_REPO_OWNER}/oss-build/raw/${BUILD_SCRIPT_REF}/src/main/install/oss_repositories.sh)"
+# TODO fix build script
+eval "$(curl -s -L https://github.com/home1-oss/oss-build/raw/master/src/main/install/oss_repositories.sh)"
+echo "BUILD_PUBLISH_CHANNEL: ${BUILD_PUBLISH_CHANNEL}"
+echo "INFRASTRUCTURE: ${INFRASTRUCTURE}"
+source_git_domain="$(get_git_domain "${GIT_SERVICE}")"
+echo "source_git_domain: ${source_git_domain}"
+
 if [ "test_and_build" == "${1}" ]; then
   echo "build gitbook"
   if [ ! -d src/gitbook/oss-workspace ]; then
         mkdir -p src/gitbook/oss-workspace
   fi
-  echo "GIT_SERVICE: ${GIT_SERVICE}"
-  source_git_domain="$(get_git_domain "${GIT_SERVICE}")"
   (cd src/gitbook/oss-workspace; clone_oss_repositories "${source_git_domain}")
   for repository in ${!OSS_REPOSITORIES_DICT[@]}; do
     source_git_branch=""
