@@ -8,7 +8,7 @@
 
 export BUILD_PUBLISH_DEPLOY_SEGREGATION="false"
 export BUILD_SITE_PATH_PREFIX="oss"
-
+export BUILD_SKIP_COMMANDS_EXECUTION="true"
 
 source src/main/resources/oss_repositories.sh
 source src/gitbook/book.sh

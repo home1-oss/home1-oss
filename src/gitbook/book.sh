@@ -202,6 +202,11 @@ function gitbook_build() {
     rm -rf _book/oss-workspace
 }
 
+if command -v nvm; then
+    nvm install 6.11.0
+    nvm use 6.11.0
+fi
+
 if type -p gitbook; then
     echo "gitbook executable found in PATH."
 else
