@@ -11,7 +11,8 @@ BUILD_PUBLISH_CHANNEL=snapshot ./book.sh deploy local
 or
 
 ```bash
-bash ci.sh book_build "../../../"
+#bash ci.sh book_build "../../../"
+bash ci.sh gitbook_build
 bash ci.sh book_deploy "snapshot" "local"
 ```
 

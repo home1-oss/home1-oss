@@ -34,7 +34,7 @@ on_non_release_push:
   except:
   - /^release\/.+$/
   script:
-  - bash ci.sh book_build "../../../"
+  - bash ci.sh gitbook_build
   stage: build
 
 on_release_push:
