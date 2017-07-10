@@ -44,7 +44,7 @@ on_release_push:
   only:
   - /^release\/.+$/
   script:
-  - bash ci.sh book_build "../../../" && bash ci.sh book_deploy "release"
+  - bash ci.sh gitbook_build && bash ci.sh book_deploy "release"
   stage: publish
 
 stages:

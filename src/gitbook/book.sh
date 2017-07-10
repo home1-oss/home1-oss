@@ -113,7 +113,9 @@ function book_deploy() {
     local target="${2}"
     if [ -z "${target}" ]; then target="${INFRASTRUCTURE}"; fi
 
-    echo "book_deploy channel: ${channel}, target: ${target}"
+    echo "book_deploy@$(pwd) channel: ${channel}, target: ${target}"
+    ls -lh ./*
+
     if [ "${target}" == "local" ]; then
         #directory="/usr/share/nginx/html/${directory}/"
         #id="-i ~/.ssh/mvn-site.local"
