@@ -13,7 +13,7 @@ or
 ```bash
 #bash ci.sh book_build "../../../"
 bash ci.sh gitbook_build
-bash ci.sh book_deploy "snapshot" "local"
+bash ci.sh book_deploy "local"
 ```
 
 ## test travis-ci build at local

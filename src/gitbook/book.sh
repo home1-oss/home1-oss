@@ -109,8 +109,10 @@ function book_deploy_webdav() {
 }
 
 function book_deploy() {
-    local channel="${1}"
-    local target="${2}"
+    local channel="snapshot"
+    local target="${1}"
+
+    if [ ! -z "${BUILD_PUBLISH_CHANNEL}" ]; then channel="${BUILD_PUBLISH_CHANNEL}"; fi
     if [ -z "${target}" ]; then target="${INFRASTRUCTURE}"; fi
 
     echo "book_deploy@$(pwd) channel: ${channel}, target: ${target}"
@@ -252,10 +254,8 @@ case $1 in
         ;;
 
     "deploy")
-        channel="snapshot"
-        if [ ! -z "${BUILD_PUBLISH_CHANNEL}" ]; then channel="${BUILD_PUBLISH_CHANNEL}"; fi
         target="${2}"
-        book_deploy "${channel}" "${target}"
+        book_deploy "${target}"
         ;;
 
     "pdf")
