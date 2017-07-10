@@ -57,8 +57,9 @@ function book_build() {
     local base_path="${1}"
 
     book_process_resources "${base_path}"
-    echo "gitbook build"
+    echo "book_build@$(pwd)"
     gitbook build
+    ls -lh ./*
 }
 
 function book_deploy_prepare_github_ghpages() {
