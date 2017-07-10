@@ -46,11 +46,11 @@ function book_process_resources() {
     book_clean "${docs_path}"
     book_generate_resources "${base_path}"
     book_copy_resources "${base_path}" "${docs_path}" "md"
-    book_copy_resources "${base_path}" "${docs_path}" "jpg"
     # file not found cause error
+    #book_copy_resources "${base_path}" "${docs_path}" "gif"
     #book_copy_resources "${base_path}" "${docs_path}" "jpeg"
+    book_copy_resources "${base_path}" "${docs_path}" "jpg"
     book_copy_resources "${base_path}" "${docs_path}" "png"
-    book_copy_resources "${base_path}" "${docs_path}" "gif"
 }
 
 function book_build() {
