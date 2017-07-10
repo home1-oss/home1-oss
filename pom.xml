@@ -7,13 +7,13 @@
     <parent>
         <groupId>cn.home1</groupId>
         <artifactId>oss-build</artifactId>
-        <version>1.0.9.OSS</version>
+        <version>1.0.11.OSS</version>
     </parent>
 
-    <artifactId>oss-doc</artifactId>
+    <artifactId>home1-oss</artifactId>
     <description>Site and document repository</description>
-    <name>oss-doc</name>
+    <name>home1-oss</name>
     <packaging>pom</packaging>
     <url>https://github.com/home1-oss/home1-oss</url>
-    <version>1.0.6.OSS-SNAPSHOT</version>
+    <version>1.0.9.OSS-SNAPSHOT</version>
 </project>

@@ -1,0 +1,60 @@
+addons:
+  apt:
+    packages:
+    - gnupg
+    - gnupg2
+    - graphviz
+    - openssl
+before_install:
+- wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
+- unzip -qq apache-maven-3.3.9-bin.zip
+- export M2_HOME=$PWD/apache-maven-3.3.9
+- export PATH=$M2_HOME/bin:$PATH
+branches:
+  only:
+  - master
+  - develop
+  - /^feature\/.*$/
+  - /^hotfix\/.*$/
+  - /^release\/.*$/
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?/
+cache:
+  directories:
+  - "$HOME/.cache"
+  - "$HOME/.gradle"
+  - "$HOME/.m2"
+  - "$HOME/.sonar/cache"
+
+dist: trusty
+env:
+  global:
+  - BUILD_SITE=true
+  - INFRASTRUCTURE=github
+  - LIB_CI_SCRIPT=https://github.com/home1-oss/oss-build/raw/master/src/main/ci-script/lib_ci.sh
+  - ORIGIN_REPO_SLUG=home1-oss/home1-oss
+  - OSS_GITBOOK_GHPAGES_REPO_NAME=home1-oss-gitbook
+  - MAVEN_SKIP_RC=true
+group: edge
+install: true
+jdk:
+- oraclejdk8
+language: java
+script:
+- bash ci.sh gitbook_build
+services:
+- docker
+sudo: required
+
+before_deploy:
+- bash ci.sh book_deploy_prepare_github_ghpages
+
+deploy:
+ provider: pages
+ skip_cleanup: true
+ github_token: $GITHUB_INFRASTRUCTURE_CONF_GIT_TOKEN # Set in travis-ci.org dashboard
+ local_dir: gitbook-ghpages
+ repo: home1-oss/$OSS_GITBOOK_GHPAGES_REPO_NAME
+ on:
+   branch: 
+   - develop
+   - master 

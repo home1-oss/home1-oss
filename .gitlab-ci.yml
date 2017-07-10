@@ -15,7 +15,7 @@ on_develop_push:
   only:
   - develop
   script:
-  - bash ci.sh publish_artifact publish_site
+  - bash ci.sh book_deploy "snapshot"
   stage: publish
 
 #on_master_push:
@@ -34,7 +34,7 @@ on_non_release_push:
   except:
   - /^release\/.+$/
   script:
-  - bash ci.sh clean test_and_build
+  - bash ci.sh book_build "../../../"
   stage: build
 
 on_release_push:
@@ -44,7 +44,7 @@ on_release_push:
   only:
   - /^release\/.+$/
   script:
-  - bash ci.sh clean test_and_build publish_artifact publish_site
+  - bash ci.sh book_build "../../../" && bash ci.sh book_deploy "release"
   stage: publish
 
 stages:

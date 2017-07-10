@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+declare -A OSS_REPOSITORIES_DICT
+OSS_REPOSITORIES_DICT["common-config"]="/home1-oss/common-config"
+OSS_REPOSITORIES_DICT["home1-oss"]="/home1-oss/home1-oss"
+OSS_REPOSITORIES_DICT["oss-admin"]="/home1-oss/oss-admin"
+OSS_REPOSITORIES_DICT["oss-archetype"]="/home1-oss/oss-archetype"
+OSS_REPOSITORIES_DICT["oss-build"]="/home1-oss/oss-build"
+OSS_REPOSITORIES_DICT["oss-common-dependencies"]="/home1-oss/oss-common-dependencies"
+OSS_REPOSITORIES_DICT["oss-configlint"]="/home1-oss/oss-configlint"
+OSS_REPOSITORIES_DICT["oss-configserver"]="/home1-oss/oss-configserver"
+OSS_REPOSITORIES_DICT["oss-eureka"]="/home1-oss/oss-eureka"
+OSS_REPOSITORIES_DICT["oss-github"]="/home1-oss/oss-github"
+#OSS_REPOSITORIES_DICT["oss-internal"]="/home1-oss/oss-internal"
+#OSS_REPOSITORIES_DICT["oss-jenkins-pipline"]="/home1-oss/oss-jenkins-pipline"
+OSS_REPOSITORIES_DICT["oss-keygen"]="/home1-oss/oss-keygen"
+OSS_REPOSITORIES_DICT["oss-build"]="/home1-oss/oss-build"
+OSS_REPOSITORIES_DICT["oss-lib"]="/home1-oss/oss-lib"
+OSS_REPOSITORIES_DICT["oss-lib-adminclient"]="/home1-oss/oss-lib-adminclient"
+OSS_REPOSITORIES_DICT["oss-lib-errorhandle"]="/home1-oss/oss-lib-errorhandle"
+OSS_REPOSITORIES_DICT["oss-lib-log4j2"]="/home1-oss/oss-lib-log4j2"
+OSS_REPOSITORIES_DICT["oss-lib-security"]="/home1-oss/oss-lib-security"
+OSS_REPOSITORIES_DICT["oss-lib-swagger"]="/home1-oss/oss-lib-swagger"
+OSS_REPOSITORIES_DICT["oss-lib-webmvc"]="/home1-oss/oss-lib-webmvc"
+OSS_REPOSITORIES_DICT["oss-local"]="/home1-oss/oss-local"
+OSS_REPOSITORIES_DICT["oss-release"]="/home1-oss/oss-release"
+OSS_REPOSITORIES_DICT["oss-todomvc"]="/home1-oss/oss-todomvc"
+OSS_REPOSITORIES_DICT["oss-todomvc-app-config"]="/home1-oss/oss-todomvc-app-config"
+OSS_REPOSITORIES_DICT["oss-todomvc-gateway-config"]="/home1-oss/oss-todomvc-gateway-config"
+OSS_REPOSITORIES_DICT["oss-todomvc-thymeleaf-config"]="/home1-oss/oss-todomvc-thymeleaf-config"
+OSS_REPOSITORIES_DICT["oss-turbine"]="/home1-oss/oss-turbine"
+
+#echo "${!OSS_REPOSITORIES_DICT[@]}"
+#echo "${OSS_REPOSITORIES_DICT["key"]}"
+#for key in ${!OSS_REPOSITORIES_DICT[@]}; do echo ${key}; done
+#for value in ${OSS_REPOSITORIES_DICT[@]}; do echo ${value}; done
+#echo "OSS_REPOSITORIES_DICT has ${#OSS_REPOSITORIES_DICT[@]} elements"
