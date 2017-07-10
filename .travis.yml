@@ -48,7 +48,7 @@ services:
 sudo: required
 
 before_deploy:
-- bash ci.sh book_deploy_prepare_github_ghpages
+- bash ci.sh book_deploy
 
 deploy:
  provider: pages
