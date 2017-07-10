@@ -54,7 +54,7 @@ deploy:
  provider: pages
  skip_cleanup: true
  github_token: $GITHUB_INFRASTRUCTURE_CONF_GIT_TOKEN # Set in travis-ci.org dashboard
- local_dir: gitbook-ghpages
+ local_dir: src/gitbook/gitbook-ghpages
  repo: home1-oss/$OSS_GITBOOK_GHPAGES_REPO_NAME
  on:
    branch: 
