@@ -49,7 +49,7 @@
         </pluginGroups>
         <profiles>
             <profile>
-                <id>local-sonarqube</id>
+                <id>sonarqube.local</id>
                 <activation>
                     <activeByDefault>true</activeByDefault>
                 </activation>

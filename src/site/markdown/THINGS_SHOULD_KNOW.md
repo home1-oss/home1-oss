@@ -162,11 +162,11 @@
 
 
         ...
-        hostname: ${EUREKA_INSTANCE_HOSTNAME:-local-servicename} # (1)
+        hostname: ${EUREKA_INSTANCE_HOSTNAME:-servicename.local} # (1)
         ports:
         - "${EUREKA_INSTANCE_NONSECUREPORT:-8081}:${SERVER_PORT:-8080}" # (2)
         environment:
-        - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-local-servicename} # (3)
+        - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-servicename.local} # (3)
         - EUREKA_INSTANCE_NONSECUREPORT=${EUREKA_INSTANCE_NONSECUREPORT:-8081} # (4)
         - SERVER_PORT=${SERVER_PORT:-8080} # (5)
         ...

@@ -48,8 +48,8 @@
     # 需要 >= 1.9.0
 
     # /etc/hosts
-    127.0.0.1 local-eureka
-    127.0.0.1 local-configserver
+    127.0.0.1 eureka.local
+    127.0.0.1 configserver.local
 
     mkdir workspace
     cd workspace

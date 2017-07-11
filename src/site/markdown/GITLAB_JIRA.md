@@ -26,7 +26,7 @@
 
 #### 开发人员在本机项目中启用本地 hook 步骤
 
-1. 将文中 `客户端hook代码`修改脚本中配置以后, 保存为 `commit-msg` 文件名, 放到项目根目录下`hooks`目录下(实际应用中, 参数可能会以环境变量的方式带入,例如:`JIRA="internal-jira"`)
+1. 将文中 `客户端hook代码`修改脚本中配置以后, 保存为 `commit-msg` 文件名, 放到项目根目录下`hooks`目录下(实际应用中, 参数可能会以环境变量的方式带入,例如:`JIRA="jira.internal"`)
 2. 赋予`commit-msg` 文件执行权限
 3. 执行 `git config --local core.hooksPath /path/to/xxxx/hooks` 设置全局hooks目录(git 2.9版本以前, 请参考本文 `开启git hooks方式`部分)
 4. commit一下, 测试是否生效(如果测试不生效, commit成功, 请参考此文档 `急救:如何修改未push的comment`)

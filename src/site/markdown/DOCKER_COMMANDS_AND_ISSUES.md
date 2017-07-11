@@ -26,15 +26,15 @@ services:
       service: admin
     container_name: production-admin
     command: ["start"]
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:-local-admin}
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:-admin.local}
     ports:
     - "8700:8700"
     volumes:
     - admin-volume:/root/data/admin
     environment:
-    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@local-eureka:8761/eureka/}
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@eureka.local:8761/eureka/}
     - SERVER_PORT=8700
-    - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-local-admin}
+    - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-admin.local}
     extra_hosts:
     - "oss-eureka-peer3.internal:10.*.*.*"
 ```
