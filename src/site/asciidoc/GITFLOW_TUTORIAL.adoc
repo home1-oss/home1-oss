@@ -203,4 +203,4 @@ git flow support start <release> <base> +
 == REFERENCES
 
 . https://github.com/nvie/gitflow[github地址]
-. http://mvn-site.internal/oss-develop/gitbook/docs/oss/GITFLOW.html[oss的分支模型]
+. http://mvnsite.internal/oss-develop/gitbook/docs/oss/GITFLOW.html[oss的分支模型]

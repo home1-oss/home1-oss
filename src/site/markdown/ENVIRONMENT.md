@@ -1,8 +1,8 @@
 -----
 如果你正在通过git服务查看此文档，请移步项目网站或gitbook查看文档，因为git服务生成的文档链接有问题。
-+ [gitbook](http://mvn-site.internal/oss-develop/gitbook)
-+ [RELEASE版网站](http://mvn-site.internal/oss/staging)
-+ [SNAPSHOT版网站](http://mvn-site.internal/oss-develop/staging)
++ [gitbook](http://mvnsite.internal/oss-develop/gitbook)
++ [RELEASE版网站](http://mvnsite.internal/oss/staging)
++ [SNAPSHOT版网站](http://mvnsite.internal/oss-develop/staging)
 -----
 
 # oss运行环境

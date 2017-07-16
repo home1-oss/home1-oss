@@ -121,19 +121,19 @@ function book_deploy() {
 
     if [ "${target}" == "local" ]; then
         #directory="/usr/share/nginx/html/${directory}/"
-        #id="-i ~/.ssh/mvn-site.local"
+        #id="-i ~/.ssh/mvnsite.local"
         #port="10022"
-        #user_host="root@mvn-site.local"
+        #user_host="root@mvnsite.local"
         #book_deploy_ssh "${directory}" "${id}" "${port}" "${user_host}"
         local directory="oss-${channel}/gitbook"
         local url="http://nexus3.local:28081/nexus/repository/mvnsite"
         if [ ! -z "${LOCAL_NEXUS3}" ]; then url="${LOCAL_NEXUS3}/nexus/repository/mvnsite"; fi
         book_deploy_webdav "${channel}" "${directory}" "${target}" "${url}"
     elif [ "${target}" == "internal" ]; then
-        #directory="/opt/mvn-sites/${directory}/"
-        #id="-i ~/.ssh/mvn-site.internal"
+        #directory="/opt/mvnsite/${directory}/"
+        #id="-i ~/.ssh/mvnsite.internal"
         #port="22"
-        #user_host="root@mvn-site.internal"
+        #user_host="root@mvnsite.internal"
         #book_deploy_ssh "${directory}" "${id}" "${port}" "${user_host}"
         local directory="oss-${channel}/gitbook"
         local url="http://nexus3.internal/nexus/repository/mvnsite"
