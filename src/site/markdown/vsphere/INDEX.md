@@ -17,14 +17,90 @@
 * [TODO](#TODO)
 
 <!-- vim-markdown-toc -->
- 
- 
- 
+
+
 ## 准备工作
 
 基础环境和服务
   
-1. 准备好一定数量的虚拟机节点，安装相应的环境，[docker,docker-compose,docker私有仓库、加速设置](BASIC_ENV.md)，ssh访问，网络(k8s需***翻墙***)等等。
+1. 准备好一定数量的虚拟机节点，安装相应的环境.
+
+# 部分基本环境配置
+
+    ## docker常用命令
+    ### docker exec -it container_name command
+      * 进入运行容器控制台的命令： `docker exec -it production-admin /bin/bash`
+      * 查看容器内部IP：`docker exec -it production-admin ifconfig`
+      * 查看容器内部文件：`docker exec -it production-admin ls -l /root`
+      
+    ### docker logs：在容器外部查看容器运行日志
+      * `docker logs -f --tail 100 container_name`
+      
+    ### 查看镜像、容器的配置信息
+      * 查看容器启动时间、环境变量、镜像信息、域名等信息： `docker inspect container_name`
+      * 查看镜像信息： `docker inspect image_name`
+    
+    ## 常见问题以及解决
+     - 在测试环境中，我将admin配置在一个部署了eureka节点的机器上，此时admin和这个eureka配置了同一个hostname， `oss-eureka-peer3.internal`，这就导致当admin访问这个eureka的healthUrl时，当请求到同样的域名，就把这个域名当成是自己当前容器的域名了，导致访问失败。
+     
+     > 临时的解决方案就是，添加docker-compose.yml的配置`services.admin.extra_hosts`。告诉admin，当请求到统一域名的其他服务时，通过ip地址访问这个请求。
+    
+    
+     ```
+     version: '2.1'
+    services:
+      admin:
+        extends:
+          file: docker-compose-base.yml
+          service: admin
+        container_name: production-admin
+        command: ["start"]
+        hostname: ${EUREKA_INSTANCE_HOSTNAME:-admin.local}
+        ports:
+        - "8700:8700"
+        volumes:
+        - admin-volume:/root/data/admin
+        environment:
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-http://user:user_pass@eureka.local:8761/eureka/}
+        - SERVER_PORT=8700
+        - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME:-admin.local}
+        extra_hosts:
+        - "oss-eureka-peer3.internal:10.*.*.*"
+    ```
+
+    
+      ***注意***: k8s对docker的版本有要求，需要按照对应的版本，在k8s的节点上安装相应的docker版本,查看[Supported Docker version](http://docs.rancher.com/rancher/v1.6/en/hosts/#supported-docker-versions)。
+    
+    2. docker-compose相关，[官网教程](https://docs.docker.com/compose/install/)
+    
+      以 CentOS7 为例:
+          
+            curl -L https://github.com/docker/compose/releases/download/1.12.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose  
+            chmod +x /usr/local/bin/docker-compose     
+          
+    3. docker环境设置，设置加速镜像以及私有镜像库(加速镜像地址可以改，私有镜像库域名不要改动，后边dns有讲到)。
+    
+            sudo mkdir -p /etc/docker
+            sudo tee /etc/docker/daemon.json <<-'EOF'
+            {
+                "registry-mirrors": ["https://xt3b6cxm.mirror.aliyuncs.com","http://hub-mirror.c.163.com"],
+                "insecure-registries": ["registry.docker.internal","registry.docker.yixinonline.org"]
+            }
+            EOF
+            sudo systemctl daemon-reload
+            sudo systemctl restart docker
+    
+    4. **DNS配置**
+          
+        ***DNS服务器*** 
+        要修改 `/etc/sysconfig/network-scripits/ifc-xxx` 这个文件中你的DNS，改/etc/reslov.conf是不行的，重启后就还原了。
+         
+    5. 其他，比如
+    
+        - 关闭防火墙之类。
+        - 设置静态IP
+        - 设置hostname,比如centos7系统的话，使用`hostnamectl set-hostname xxx` 来进行。  
+
 
 2. DNS配置，oss项目使用自定义域名internal,所以需要搭建自己的服务器来服务于项目。查看[DNS服务器搭建](DNS_SERVER.md)
    
