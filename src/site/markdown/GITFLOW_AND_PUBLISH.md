@@ -3,7 +3,7 @@
 ## Gitflow分支模型
 > 项目选定了gitflow的分支模型，详细可参考[A successful git branching model](http://nvie.com/posts/a-successful-git-branching-model/)
 
-![](images/14932629552063.jpg)
+![](images/gitflow.jpg)
 
 
 ## 发布版本(release)

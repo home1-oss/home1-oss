@@ -3,19 +3,15 @@
 
 ## 集群搭建
 
-#### 操作步骤
+# 基于rancher搭建k8s图解
 
- 1. `Manage Environments`页面，Add Environment，选择kubernetes的Environment Template，输入名称，如k8s，完成提交。
- 2. 设置k8s为默认激活，并切换到k8s环境。
- 3. 进入`INFRASTRUCTURE->Hosts` 管理，添加Rancher的主机到k8s环境，k8s会自动部署相关的实例在新的主机。
- 3. k8s 集群部署完毕后，页面会出现`KUBERNETES`的tab入口，UI会出现kubernetes UI的入口。
- 4. 进入CLI的tab标签页，根据引导，生成`~/.kube/config`文件放到本地对应目录，本地安装kubectl后便可以通过命令行访问k8s集群。
+11 kubernetes ui 界面，可进行很多基本的图形化操作
+  
+  ![](media/rancher_k8s/rancher-11.png)
 
-#### 实践问题
-
-- rancher界面请不要切换到中文，否则k8s的dashboard无法进入。
-- pod和pod之间的通信，可以直接使用service的名字来作为域名互相调用，不需要ip [nfs挂载除外]
-- 初始化
+14 若k8s搭建有问题，比如说kubernetes ui 不能访问，那么最有可能是下图中的namespace没有，而且大部分情况是不能翻墙导致的，请设置自己的环境能够翻墙
+  
+  ![](media/rancher_k8s/rancher-14.png)
 
 #### NOTE
 
@@ -80,12 +76,9 @@
 ### 持久卷PV
 > 通常我们把存储做成集群，对外表现为一个网络存储，持久卷(PV)是这个资源中的一个片段，就像node和cluster的关系。PV是跟Volume一样是卷插件【详见kubernetes Volume概念】，但其生命周期不依赖任何单个的pod，底层存储实现可以是NFS，iSCSI，云存储等，都通过API对象对外暴露，对用户透明。
 
-
-
 ### 实践问题
-- nexus的 ../sonatype-work/nexus3 目录会软连接到/nexus-data,当/nexus-data配置了nfs，会出现无法启动的问题，另外官方不推荐使用nfs，会导致不可预知的问题。
 - nfs服务端export的目录权限需要考虑，否则会导致应用无法读写文件,默认对root用户有效，非root用户会出问题
-- pod和pod之间的通信，可以直接使用service的名字来作为域名互相调用，不需要ip
+- pod和pod之间的通信，可以直接使用service的名字来作为域名互相调用，不需要ip [nfs挂载除外]
 - 初始化卷的操作可以通过`annotations`的 `pod.beta.kubernetes.io/init-containers:`来实现
 - 目前nexus3和sonar都使用的是emptyDir的volume，nfs存储卷无法读取。
 
