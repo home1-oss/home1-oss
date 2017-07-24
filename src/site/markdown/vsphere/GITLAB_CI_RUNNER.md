@@ -7,7 +7,7 @@
 因为有从容器内部访问外部 docker service 的需求，需要修改宿主机的/var/run/docker.sock文件访问权限.
 
     sudo chmod a+rw /var/run/docker.sock
-    
+
 上面的命令需要在所有的k8s节点执行一遍    
 
 ### maven的settings-security.xml 文件相关
@@ -79,17 +79,7 @@ GIT_SERVICE_TOKEN: 访问git服务上私有的项目需要用到用户的认证/
 7 安装完成，验证
    
 kubectl exec -it gitlab-runner-1749966091-5p1nx  gitlab-runner register
-
-
    
 # 注意 
 1. gitlab-runner要注意和gitlab版本对应。
 2. gitlab-runner注册url不能使用域名+端口的形式，所有要么gitlab服务直接绑80端口，要么配置nginx   
-
-#### 补充
-
->
-ERROR: Uploading artifacts to coordinator... too large archive  id=116 responseStatus=413 Request En
-
-https://gitlab.com/gitlab-org/gitlab-ce/issues/20612
-![](media/images/git-runner-error.png)
