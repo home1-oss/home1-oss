@@ -29,14 +29,13 @@
 
 ### jenkins
 
-3. [jenkins slave搭建](JENKINS_SWARM_SLAVE.md)
 4. 登录jenkins配置一个名为(注意是ID字段)jenkinsfile的证书访问gitlab，jenkins pipeline 脚本中用到
 
-## 正常开发注意事项   
+## 正常开发注意事项
 
 ### oss-jenkins-pipeline
 
-- 脚本中默认使用ID为`jenkinsfile`的证书   
-- 兼容docker-compose,k8s部署，但是k8s项目文件夹都用-k8s结尾来区分   
+- 脚本中默认使用ID为`jenkinsfile`的证书  
+- 兼容docker-compose,k8s部署，但是k8s项目文件夹都用-k8s结尾来区分  
 
 ## TODO 关于项目todomvc样例项目的k8s部署文档都在 oss-jenkins-pipeline项目中
