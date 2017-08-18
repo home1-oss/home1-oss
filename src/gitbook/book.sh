@@ -136,7 +136,7 @@ function book_deploy() {
         #user_host="root@mvnsite.internal"
         #book_deploy_ssh "${directory}" "${id}" "${port}" "${user_host}"
         local directory="oss-${channel}/gitbook"
-        local url="http://nexus3.internal/nexus/repository/mvnsite"
+        local url="http://nexus3.internal:28081/nexus/repository/mvnsite"
         if [ ! -z "${INTERNAL_NEXUS3}" ]; then url="${INTERNAL_NEXUS3}/nexus/repository/mvnsite"; fi
         book_deploy_webdav "${channel}" "${directory}" "${target}" "${url}"
     elif [ "${target}" == "github" ]; then
