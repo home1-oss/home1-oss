@@ -23,8 +23,8 @@
     git push -u origin release/1.0.8.OSS # 推送远端触发nexus发布
     mvn gitflow:release-finish
     git push origin v1.0.8.OSS
-    git push origin develop
     git push origin master
+    git push origin develop
 
 
 
