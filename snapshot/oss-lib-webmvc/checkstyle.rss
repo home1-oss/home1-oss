@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<rss version="0.91">
+  <channel>
+    <title>oss-lib-webmvc - Checkstyle report</title>
+    <link>https://github.com/home1-oss/oss-lib-webmvc</link>
+    <description>oss-lib-webmvc - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2017</copyright>
+    <item>
+      <title>File: 20,
+             Errors: 0,
+             Warnings: 1,
+             Infos: 0
+      </title>
+            <link>https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html</link>
+      <description>
+        <p>Click <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.internal.DefaultHttpEntityMethodProcessor.java">cn/home1/oss/lib/webmvc/internal/DefaultHttpEntityMethodProcessor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.internal.DefaultRequestResolver.java">cn/home1/oss/lib/webmvc/internal/DefaultRequestResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.UrlEncodedToken.java">cn/home1/oss/lib/webmvc/api/UrlEncodedToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#org.springframework.web.HttpMessageConverterUtils.java">org/springframework/web/HttpMessageConverterUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.starter.WebApplicationAutoConfiguration.java">cn/home1/oss/lib/webmvc/starter/WebApplicationAutoConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.TokenBasedCookie.java">cn/home1/oss/lib/webmvc/api/TokenBasedCookie.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.SecureToken.java">cn/home1/oss/lib/webmvc/api/SecureToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.DomainResolver.java">cn/home1/oss/lib/webmvc/api/DomainResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.TypeSafeCookie.java">cn/home1/oss/lib/webmvc/api/TypeSafeCookie.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.starter.GsonConfiguration.java">cn/home1/oss/lib/webmvc/starter/GsonConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.starter.Jackson2Configuration.java">cn/home1/oss/lib/webmvc/starter/Jackson2Configuration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.RequestResolver.java">cn/home1/oss/lib/webmvc/api/RequestResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.JsonToken.java">cn/home1/oss/lib/webmvc/api/JsonToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.Jetty9ServerCustomizers.java">cn/home1/oss/lib/webmvc/api/Jetty9ServerCustomizers.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#org.springframework.http.converter.Utf8StringHttpMessageConverter.java">org/springframework/http/converter/Utf8StringHttpMessageConverter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#git.properties">git.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.JsonWebToken.java">cn/home1/oss/lib/webmvc/api/JsonWebToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.StringToken.java">cn/home1/oss/lib/webmvc/api/StringToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.internal.DefaultDomainResolver.java">cn/home1/oss/lib/webmvc/internal/DefaultDomainResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-webmvc/checkstyle.html#cn.home1.oss.lib.webmvc.api.TypeSafeToken.java">cn/home1/oss/lib/webmvc/api/TypeSafeToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+
