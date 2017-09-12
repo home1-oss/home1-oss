@@ -1,0 +1,12 @@
+cn.home1.oss.lib.security
+cn.home1.oss.lib.security.api
+cn.home1.oss.lib.security.crypto
+cn.home1.oss.lib.security.internal
+cn.home1.oss.lib.security.internal.feign
+cn.home1.oss.lib.security.internal.preauth
+cn.home1.oss.lib.security.internal.rest
+cn.home1.oss.lib.security.internal.template
+cn.home1.oss.lib.security.internal.zuul
+cn.home1.oss.lib.security.starter
+cn.home1.oss.lib.security.swagger
+org.springframework.security.config.annotation.web.configurers

@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./User.html" title="cn.home1.oss.lib.security.api.User" alt="" coords="121,269,388,451"/>
+<area shape="rect" id="node1" href="./User.html" title="&lt;TABLE&gt;" alt="" coords="111,264,399,456"/>
+<area shape="rect" id="node2_1" href="./AbstractUser.html" title="cn.home1.oss.lib.security.api.AbstractUser" alt="" coords="131,509,378,829"/>
+<area shape="rect" id="node2" href="./AbstractUser.html" title="&lt;TABLE&gt;" alt="" coords="121,504,389,835"/>
+<area shape="rect" id="node3_2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/core/userdetails/UserDetails.html" title="org.springframework.security.core.userdetails.UserDetails" alt="" coords="15,11,257,210"/>
+<area shape="rect" id="node3" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/core/userdetails/UserDetails.html" title="&lt;TABLE&gt;" alt="" coords="5,6,267,215"/>
+<area shape="rect" id="node4_3" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/core/CredentialsContainer.html" title="org.springframework.security.core.CredentialsContainer" alt="" coords="302,63,445,158"/>
+<area shape="rect" id="node4" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/core/CredentialsContainer.html" title="&lt;TABLE&gt;" alt="" coords="291,58,455,163"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./RestfulBasicAuthenticationEntryPoint.html" title="cn.home1.oss.lib.security.internal.rest.RestfulBasicAuthenticationEntryPoint" alt="" coords="176,165,893,312"/>
+<area shape="rect" id="node1" href="./RestfulBasicAuthenticationEntryPoint.html" title="&lt;TABLE&gt;" alt="" coords="165,160,904,317"/>
+<area shape="rect" id="node2_1" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/web/AuthenticationEntryPoint.html" title="org.springframework.security.web.AuthenticationEntryPoint" alt="" coords="16,11,629,106"/>
+<area shape="rect" id="node2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/web/AuthenticationEntryPoint.html" title="&lt;TABLE&gt;" alt="" coords="5,6,640,111"/>
+<area shape="rect" id="node3_2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/beans/factory/InitializingBean.html" title="org.springframework.beans.factory.InitializingBean" alt="" coords="675,11,821,106"/>
+<area shape="rect" id="node3" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/beans/factory/InitializingBean.html" title="&lt;TABLE&gt;" alt="" coords="665,6,831,111"/>
+</map>

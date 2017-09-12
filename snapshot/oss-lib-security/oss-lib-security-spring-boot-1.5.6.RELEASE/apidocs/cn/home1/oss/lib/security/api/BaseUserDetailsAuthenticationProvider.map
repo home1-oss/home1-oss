@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./BaseUserDetailsAuthenticationProvider.html" title="cn.home1.oss.lib.security.api.BaseUserDetailsAuthenticationProvider" alt="" coords="677,512,1385,832"/>
+<area shape="rect" id="node1" href="./BaseUserDetailsAuthenticationProvider.html" title="&lt;TABLE&gt;" alt="" coords="666,507,1395,837"/>
+<area shape="rect" id="node2_1" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/authentication/dao/AbstractUserDetailsAuthenticationProvider.html" title="org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider" alt="" coords="16,11,637,453"/>
+<area shape="rect" id="node2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/authentication/dao/AbstractUserDetailsAuthenticationProvider.html" title="&lt;TABLE&gt;" alt="" coords="5,6,648,458"/>
+<area shape="rect" id="node3_2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/authentication/AuthenticationProvider.html" title="org.springframework.security.authentication.AuthenticationProvider" alt="" coords="683,176,1010,288"/>
+<area shape="rect" id="node3" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/authentication/AuthenticationProvider.html" title="&lt;TABLE&gt;" alt="" coords="673,171,1021,293"/>
+<area shape="rect" id="node4_3" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/core/userdetails/UserDetailsService.html" title="org.springframework.security.core.userdetails.UserDetailsService" alt="" coords="1055,185,1377,279"/>
+<area shape="rect" id="node4" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/core/userdetails/UserDetailsService.html" title="&lt;TABLE&gt;" alt="" coords="1045,179,1387,285"/>
+<area shape="rect" id="node5_4" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/context/ApplicationListener.html" title="org.springframework.context.ApplicationListener" alt="" coords="1422,185,1730,279"/>
+<area shape="rect" id="node5" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/context/ApplicationListener.html" title="&lt;TABLE&gt;" alt="" coords="1411,179,1741,285"/>
+</map>
