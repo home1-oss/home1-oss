@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OAuth2Utils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.5.6.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.api</a> &gt; <span class="el_source">OAuth2Utils.java</span></div><h1>OAuth2Utils.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.api;
+
+import static java.util.stream.Collectors.toSet;
+
+import com.google.common.collect.ImmutableMap;
+
+import cn.home1.oss.lib.common.Defaults;
+import cn.home1.oss.lib.security.internal.BaseGrantedAuthority;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Created by zhanghaolun on 16/11/22.
+ */
+@SuppressWarnings({&quot;PMD.AbstractNaming&quot;, &quot;PMD.AbstractClassWithoutAbstractMethod&quot;})
+abstract class OAuth2Utils {
+
+<span class="nc" id="L26">  private OAuth2Utils() {</span>
+<span class="nc" id="L27">  }</span>
+
+  static Boolean isOAuth2Authentication(final Principal principal) {
+<span class="nc" id="L30">    return principal instanceof OAuth2Authentication;</span>
+  }
+
+  static GenericUser fromOAuth2Authentication(final Principal principal) {
+    final GenericUser result;
+
+<span class="nc" id="L36">    final OAuth2Authentication oauth2Authentication = (OAuth2Authentication) principal;</span>
+<span class="nc" id="L37">    final Authentication auth = oauth2Authentication.getUserAuthentication();</span>
+
+<span class="nc bnc" id="L39" title="All 6 branches missed.">    if (oauth2Authentication.isClientOnly() || auth == null || auth.getDetails() == null) {</span>
+<span class="nc" id="L40">      result = null;</span>
+    } else {
+<span class="nc" id="L42">      final boolean accountNonExpired = true;</span>
+<span class="nc" id="L43">      final boolean accountNonLocked = true;</span>
+      @SuppressWarnings(&quot;unchecked&quot;)
+<span class="nc" id="L45">      final Map&lt;String, Object&gt; details = (Map&lt;String, Object&gt;) auth.getDetails();</span>
+      @SuppressWarnings(&quot;unchecked&quot;)
+<span class="nc" id="L47">      final Set&lt;GrantedAuthority&gt; authorities =</span>
+<span class="nc" id="L48">        ((Collection&lt;Map&lt;String, String&gt;&gt;) details.get(&quot;authorities&quot;)).stream()</span>
+<span class="nc" id="L49">          .map(authority -&gt; new BaseGrantedAuthority(authority.get(&quot;authority&quot;)))</span>
+<span class="nc" id="L50">          .collect(toSet());</span>
+<span class="nc" id="L51">      final boolean credentialsNonExpired = true;</span>
+<span class="nc" id="L52">      final boolean enabled = true;</span>
+<span class="nc" id="L53">      final String password = System.getProperty(&quot;blankPassword&quot;, &quot;&quot;);</span>
+<span class="nc" id="L54">      final String username = auth.getPrincipal().toString();</span>
+<span class="nc" id="L55">      final String uuid = ((OAuth2AuthenticationDetails) oauth2Authentication.getDetails()).getTokenValue();</span>
+
+<span class="nc" id="L57">      result = new GenericUser(accountNonExpired, accountNonLocked, authorities, credentialsNonExpired,</span>
+<span class="nc" id="L58">        enabled, password, username, ImmutableMap.of(), // TODO pass properties ?</span>
+<span class="nc" id="L59">        Defaults.now(), uuid);</span>
+    }
+    
+<span class="nc" id="L62">    return result;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

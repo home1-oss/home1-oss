@@ -1,0 +1,24 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./SwaggerConfiguration.html" title="cn.home1.oss.lib.security.starter.SwaggerConfiguration" alt="" coords="263,20,788,167"/>
+<area shape="rect" id="node1" href="./SwaggerConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="252,15,799,172"/>
+<area shape="rect" id="node2_1" href="./VerifyCodeConfiguration.html" title="cn.home1.oss.lib.security.starter.VerifyCodeConfiguration" alt="" coords="15,511,254,623"/>
+<area shape="rect" id="node2" href="./VerifyCodeConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="5,505,265,628"/>
+<area shape="rect" id="node3_2" href="./CsrfConfiguration.html" title="cn.home1.oss.lib.security.starter.CsrfConfiguration" alt="" coords="299,519,501,614"/>
+<area shape="rect" id="node3" href="./CsrfConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="289,514,511,619"/>
+<area shape="rect" id="node4_3" href="./FormAuthConfiguration.html" title="cn.home1.oss.lib.security.starter.FormAuthConfiguration" alt="" coords="546,424,955,709"/>
+<area shape="rect" id="node4" href="./FormAuthConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="535,419,966,715"/>
+<area shape="rect" id="node5_4" href="./BasicAuthConfiguration.html" title="cn.home1.oss.lib.security.starter.BasicAuthConfiguration" alt="" coords="1001,502,1529,631"/>
+<area shape="rect" id="node5" href="./BasicAuthConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="991,497,1540,637"/>
+<area shape="rect" id="node6_5" href="./WebApplicationSecurityAutoConfiguration.html" title="cn.home1.oss.lib.security.starter.WebApplicationSecurityAutoConfiguration" alt="" coords="1229,11,1627,175"/>
+<area shape="rect" id="node6" href="./WebApplicationSecurityAutoConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="1218,6,1638,181"/>
+<area shape="rect" id="node7_6" href="./PreAuthConfiguration.html" title="cn.home1.oss.lib.security.starter.PreAuthConfiguration" alt="" coords="1575,459,1980,675"/>
+<area shape="rect" id="node7" href="./PreAuthConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="1564,453,1991,680"/>
+<area shape="rect" id="node8_7" href="./SecurityConfigurer.html" title="cn.home1.oss.lib.security.starter.SecurityConfigurer" alt="" coords="833,11,1183,175"/>
+<area shape="rect" id="node8" href="./SecurityConfigurer.html" title="&lt;TABLE&gt;" alt="" coords="823,6,1193,181"/>
+<area shape="rect" id="node9_8" href="./SecurityConfigurerAdapter.html" title="cn.home1.oss.lib.security.starter.SecurityConfigurerAdapter" alt="" coords="805,235,1211,365"/>
+<area shape="rect" id="node9" href="./SecurityConfigurerAdapter.html" title="&lt;TABLE&gt;" alt="" coords="795,230,1221,370"/>
+<area shape="rect" id="node11_9" href="./PermitedRequestConfiguration.html" title="cn.home1.oss.lib.security.starter.PermitedRequestConfiguration" alt="" coords="2026,476,2339,657"/>
+<area shape="rect" id="node11" href="./PermitedRequestConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="2015,471,2350,663"/>
+<area shape="rect" id="node10_10" href="./MethodSecurityConfiguration.html" title="cn.home1.oss.lib.security.starter.MethodSecurityConfiguration" alt="" coords="1673,46,2071,141"/>
+<area shape="rect" id="node10" href="./MethodSecurityConfiguration.html" title="&lt;TABLE&gt;" alt="" coords="1662,41,2082,146"/>
+</map>

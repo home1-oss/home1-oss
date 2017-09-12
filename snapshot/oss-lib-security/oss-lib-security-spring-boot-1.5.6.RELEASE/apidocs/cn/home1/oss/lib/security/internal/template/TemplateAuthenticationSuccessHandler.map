@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./TemplateAuthenticationSuccessHandler.html" title="cn.home1.oss.lib.security.internal.template.TemplateAuthenticationSuccessHandler" alt="" coords="16,181,757,293"/>
+<area shape="rect" id="node1" href="./TemplateAuthenticationSuccessHandler.html" title="&lt;TABLE&gt;" alt="" coords="5,176,768,299"/>
+<area shape="rect" id="node2_1" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/web/authentication/SavedRequestAwareAuthenticationSuccessHandler.html" title="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler" alt="" coords="67,11,706,123"/>
+<area shape="rect" id="node2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/web/authentication/SavedRequestAwareAuthenticationSuccessHandler.html" title="&lt;TABLE&gt;" alt="" coords="57,5,717,128"/>
+</map>

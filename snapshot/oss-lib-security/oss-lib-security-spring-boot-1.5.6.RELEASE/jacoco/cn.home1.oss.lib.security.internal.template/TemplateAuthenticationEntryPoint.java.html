@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TemplateAuthenticationEntryPoint.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.5.6.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.internal.template</a> &gt; <span class="el_source">TemplateAuthenticationEntryPoint.java</span></div><h1>TemplateAuthenticationEntryPoint.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.internal.template;
+
+import static cn.home1.oss.lib.security.internal.template.SmartRedirectStrategy.PARAM_REDIRECT;
+import static cn.home1.oss.lib.security.internal.template.SmartRedirectStrategy.appendParam;
+
+import cn.home1.oss.lib.common.CodecUtils;
+import cn.home1.oss.lib.errorhandle.api.ExceptionResolver;
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.webmvc.api.TypeSafeCookie;
+
+import lombok.SneakyThrows;
+
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Created by zhanghaolun on 16/8/23.
+ */
+public class TemplateAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
+
+  private final ExceptionResolver&lt;Throwable&gt; exceptionResolver;
+  private final TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie;
+
+  /**
+   * @param loginFormUrl        URL where the login page can be found. Should either be relative to the web-app context
+   *                            path (include a leading {@code /}) or an absolute URL.
+   * @param exceptionResolver   exceptionResolver
+   * @param resolvedErrorCookie resolvedErrorCookie
+   */
+  public TemplateAuthenticationEntryPoint(
+    final String loginFormUrl, //
+    final ExceptionResolver&lt;Throwable&gt; exceptionResolver, //
+    final TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie //
+  ) {
+<span class="nc" id="L38">    super(loginFormUrl);</span>
+
+<span class="nc" id="L40">    this.exceptionResolver = exceptionResolver;</span>
+<span class="nc" id="L41">    this.resolvedErrorCookie = resolvedErrorCookie;</span>
+<span class="nc" id="L42">  }</span>
+
+<span class="nc" id="L44">  @SneakyThrows</span>
+  protected String determineUrlToUseForThisRequest( //
+    final HttpServletRequest request, //
+    final HttpServletResponse response, //
+    final AuthenticationException exception //
+  ) {
+<span class="nc" id="L50">    final ResolvedError resolvedError = this.exceptionResolver.resolve(request, exception);</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">    if (this.resolvedErrorCookie != null) {</span>
+<span class="nc" id="L52">      this.resolvedErrorCookie.setCookie(request, response, resolvedError.eraseTraces());</span>
+    }
+<span class="nc" id="L54">    final String url = super.determineUrlToUseForThisRequest(request, response, exception);</span>
+<span class="nc" id="L55">    return url + &quot;?error=&quot; + CodecUtils.urlEncode(resolvedError.getLocalizedMessage());</span>
+  }
+
+<span class="nc" id="L58">  @SneakyThrows</span>
+  protected String buildRedirectUrlToLoginPage( //
+    final HttpServletRequest request, //
+    final HttpServletResponse response, //
+    final AuthenticationException authException //
+  ) {
+<span class="nc" id="L64">    final String redirectUrl = super.buildRedirectUrlToLoginPage(request, response, authException);</span>
+
+<span class="nc" id="L66">    final Boolean containsRedirectParam = SmartRedirectStrategy.containsParam(redirectUrl, PARAM_REDIRECT);</span>
+
+<span class="nc bnc" id="L68" title="All 2 branches missed.">    return !containsRedirectParam ? //</span>
+<span class="nc" id="L69">      appendParam(redirectUrl, PARAM_REDIRECT, request.getRequestURL().toString()) : redirectUrl;</span>
+  }
+
+  public static TemplateAuthenticationEntryPoint templateEntryPoint( //
+    final String loginFormUrl, //
+    final ExceptionResolver&lt;Throwable&gt; exceptionResolver, //
+    final TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie //
+  ) {
+<span class="nc" id="L77">    final TemplateAuthenticationEntryPoint entryPoint = new TemplateAuthenticationEntryPoint( //</span>
+      loginFormUrl, exceptionResolver, resolvedErrorCookie);
+<span class="nc" id="L79">    entryPoint.setForceHttps(false);</span>
+<span class="nc" id="L80">    entryPoint.setUseForward(false);</span>
+<span class="nc" id="L81">    return entryPoint;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PermitedRequestConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.5.6.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.starter</a> &gt; <span class="el_source">PermitedRequestConfiguration.java</span></div><h1>PermitedRequestConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.starter;
+
+import static cn.home1.oss.boot.autoconfigure.AppType.RESOURCE;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import com.google.common.collect.ImmutableMap;
+
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.boot.autoconfigure.AppSecurityProperties;
+import cn.home1.oss.lib.security.internal.VerifyCodeFilter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.h2.H2ConsoleProperties;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.autoconfigure.security.SpringBootWebSecurityConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.AnyRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * see: {@link SpringBootWebSecurityConfiguration} IgnoredPathsWebSecurityConfigurerAdapter.
+ *
+ * Created by zhanghaolun on 16/8/19.
+ */
+@Order(PermitedRequestConfiguration.ORDER_PERMITED_REQUEST)
+@Configuration
+<span class="nc" id="L44">public class PermitedRequestConfiguration extends SecurityConfigurerAdapter&lt;PermitedRequestConfiguration&gt; {</span>
+
+  public static final String PERMITED_REQUESTS = &quot;permitedRequests&quot;;
+  public static final String PERMITED_REQUEST_MATCHER = &quot;permitedRequestMatcher&quot;;
+
+  public static final int ORDER_PERMITED_REQUEST = SecurityProperties.IGNORED_ORDER + 1;
+
+  @Autowired
+  private AppProperties appProperties;
+
+  @Autowired(required = false)
+  private VerifyCodeFilter verifyCodeFilter;
+
+  @Autowired(required = false)
+  private H2ConsoleProperties h2ConsoleProperties;
+
+  @Override
+  public void init(final WebSecurity web) {
+<span class="nc" id="L62">    final Set&lt;String&gt; ignored = newLinkedHashSet();</span>
+    // ! TODO ! 其它地方似乎也加了这些, 条件开启, 重复代码 see: Swagger2DocumentationAutoConfiguration.swaggerRequestMatcher
+    // default is: /v2/api-docs
+    //ignored.add(&quot;/webjars/**&quot;);
+    //ignored.add(this.environment.getProperty(&quot;springfox.documentation.swagger.v1.path&quot;, &quot;/v1/**&quot;));
+    //ignored.add(this.environment.getProperty(&quot;springfox.documentation.swagger.v2.path&quot;, &quot;/v2/**&quot;));
+    //ignored.addAll(newArrayList(&quot;/swagger-ui.html&quot;, &quot;/swagger-resources/**&quot;));
+
+<span class="nc" id="L70">    ignored.add(&quot;/h2-console/**&quot;);</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">    if (this.h2ConsoleProperties != null) {</span>
+<span class="nc" id="L72">      final String path = this.h2ConsoleProperties.getPath();</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">      final String antPattern = (path.endsWith(&quot;/&quot;) ? path + &quot;**&quot; : path + &quot;/**&quot;);</span>
+<span class="nc" id="L74">      ignored.add(antPattern);</span>
+    }
+
+    // create another filterChain after spring-boot's default (security.ignored) filterChain
+<span class="nc bnc" id="L78" title="All 2 branches missed.">    if (!ignored.isEmpty()) {</span>
+<span class="nc" id="L79">      final List&lt;RequestMatcher&gt; matchers = ignored.stream() //</span>
+<span class="nc" id="L80">        .map(pattern -&gt; new AntPathRequestMatcher(pattern, null)) //</span>
+<span class="nc" id="L81">        .collect(toList());</span>
+<span class="nc" id="L82">      final RequestMatcher requestMatcher = new OrRequestMatcher(matchers);</span>
+<span class="nc" id="L83">      web.ignoring().requestMatchers(requestMatcher);</span>
+    }
+<span class="nc" id="L85">  }</span>
+
+  @Override
+  public void configure(final HttpSecurity http) {
+    // empty-impl
+<span class="nc" id="L90">  }</span>
+
+  @Bean(name = PERMITED_REQUEST_MATCHER)
+  public RequestMatcher permitedRequestMatcher() {
+    final RequestMatcher result;
+<span class="nc bnc" id="L95" title="All 2 branches missed.">    if (this.appProperties.getSecurityEnabled()) {</span>
+      // requestMatchers must contain a value
+<span class="nc" id="L97">      final List&lt;RequestMatcher&gt; antMatchers = this.permitedRequests().entrySet().stream()</span>
+<span class="nc" id="L98">        .flatMap(entry -&gt; entry.getValue().stream().map(pattern -&gt; //</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">          isBlank(entry.getKey()) //</span>
+<span class="nc" id="L100">            ? new AntPathRequestMatcher(pattern) : new AntPathRequestMatcher(pattern, entry.getKey())</span>
+<span class="nc" id="L101">        )).collect(toList());</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">      result = antMatchers.isEmpty() ? request -&gt; false : new OrRequestMatcher(antMatchers);</span>
+<span class="nc" id="L103">    } else {</span>
+<span class="nc" id="L104">      result = AnyRequestMatcher.INSTANCE;</span>
+    }
+<span class="nc" id="L106">    return result;</span>
+  }
+
+  @Bean(name = PERMITED_REQUESTS)
+  public Map&lt;String, List&lt;String&gt;&gt; permitedRequests() {
+    // permit的还是要过filter和authenticationManager
+<span class="nc" id="L112">    final AppSecurityProperties security = this.appProperties.getSecurity();</span>
+
+<span class="nc" id="L114">    final String loginPage = security.getLoginPage();</span>
+
+<span class="nc bnc" id="L116" title="All 2 branches missed.">    final Collection&lt;String&gt; defaultPermited = this.appProperties.getType() != RESOURCE ? //</span>
+<span class="nc" id="L117">      newLinkedHashSet(newArrayList( //</span>
+<span class="nc" id="L118">        security.getLoginPublicKeyUrl(), loginPage, security.getLoginProcessingUrl(), //</span>
+<span class="nc" id="L119">        security.getLogoutUrl() + &quot;/*&quot;, security.getLogoutUrl() //</span>
+<span class="nc" id="L120">      )) : newArrayList();</span>
+
+<span class="nc" id="L122">    final Collection&lt;String&gt; permitedRequests = newLinkedHashSet();</span>
+
+<span class="nc bnc" id="L124" title="All 2 branches missed.">    if (isNotBlank(security.getPermited())) {</span>
+<span class="nc" id="L125">      permitedRequests.addAll(newArrayList(security.getPermited().split(&quot;[ ]*,[ ]*&quot;)));</span>
+    }
+
+<span class="nc" id="L128">    permitedRequests.addAll(defaultPermited);</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">    if (this.verifyCodeFilter != null) {</span>
+<span class="nc" id="L131">      permitedRequests.add(this.verifyCodeFilter.getCodeUrl());</span>
+    }
+
+<span class="nc" id="L134">    final Map&lt;String, List&lt;String&gt;&gt; grouped = permitedRequests.stream()</span>
+<span class="nc" id="L135">      .map(expression -&gt; {</span>
+<span class="nc" id="L136">        final String[] fragments = expression.split(&quot;:&quot;);</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        return fragments.length == 1 //</span>
+<span class="nc" id="L138">          ? newArrayList(&quot;&quot;, fragments[0]) : newArrayList(fragments[0].toUpperCase(), fragments[1]);</span>
+      })
+<span class="nc" id="L140">      .collect(groupingBy(o -&gt; o.get(0), mapping(o -&gt; o.get(1), toList())));</span>
+
+<span class="nc" id="L142">    return ImmutableMap.copyOf(grouped);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

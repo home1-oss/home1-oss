@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TemplateAuthenticationFailureHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.5.6.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.internal.template</a> &gt; <span class="el_source">TemplateAuthenticationFailureHandler.java</span></div><h1>TemplateAuthenticationFailureHandler.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.internal.template;
+
+import static cn.home1.oss.lib.common.CodecUtils.urlEncode;
+
+import cn.home1.oss.lib.errorhandle.api.ExceptionResolver;
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.webmvc.api.TypeSafeCookie;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.util.UrlUtils;
+import org.springframework.util.Assert;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ * Created by zhanghaolun on 16/8/23.
+ */
+<span class="nc" id="L29">@Slf4j</span>
+public class TemplateAuthenticationFailureHandler implements AuthenticationFailureHandler {
+  // extends SimpleUrlAuthenticationFailureHandler
+
+  private final ExceptionResolver&lt;Throwable&gt; exceptionResolver;
+  private final TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie;
+
+  private String defaultFailureUrl;
+  private boolean forwardToDestination;
+<span class="nc" id="L38">  private boolean allowSessionCreation = true;</span>
+<span class="nc" id="L39">  private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();</span>
+
+  public TemplateAuthenticationFailureHandler( //
+    final String defaultFailureUrl, //
+    final ExceptionResolver&lt;Throwable&gt; exceptionResolver, //
+    final TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie //
+<span class="nc" id="L45">  ) {</span>
+<span class="nc" id="L46">    this.setDefaultFailureUrl(defaultFailureUrl);</span>
+<span class="nc" id="L47">    this.exceptionResolver = exceptionResolver;</span>
+<span class="nc" id="L48">    this.resolvedErrorCookie = resolvedErrorCookie;</span>
+<span class="nc" id="L49">  }</span>
+
+  @Override
+  public void onAuthenticationFailure( //
+    final HttpServletRequest request, //
+    final HttpServletResponse response, //
+    final AuthenticationException exception //
+  ) throws IOException, ServletException {
+<span class="nc" id="L57">    final ResolvedError resolvedError = this.exceptionResolver.resolve(request, exception);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    if (this.resolvedErrorCookie != null) {</span>
+<span class="nc" id="L59">      this.resolvedErrorCookie.setCookie(request, response, resolvedError.eraseTraces());</span>
+    }
+
+<span class="nc bnc" id="L62" title="All 2 branches missed.">    if (this.defaultFailureUrl == null) {</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">      if (log.isDebugEnabled()) {</span>
+<span class="nc" id="L64">        log.debug(&quot;No failure URL set, sending 401 Unauthorized error&quot;);</span>
+      }
+
+<span class="nc" id="L67">      response.sendError(HttpServletResponse.SC_UNAUTHORIZED,</span>
+<span class="nc" id="L68">        &quot;Authentication Failed: &quot; + exception.getMessage());</span>
+    } else {
+<span class="nc" id="L70">      saveException(request, exception);</span>
+
+<span class="nc bnc" id="L72" title="All 2 branches missed.">      if (this.forwardToDestination) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (log.isDebugEnabled()) {</span>
+<span class="nc" id="L74">          log.debug(&quot;Forwarding to &quot; + this.defaultFailureUrl);</span>
+        }
+
+<span class="nc" id="L77">        request.getRequestDispatcher(this.defaultFailureUrl)</span>
+<span class="nc" id="L78">          .forward(request, response);</span>
+      } else {
+<span class="nc" id="L80">        final String url = this.defaultFailureUrl + &quot;?error=&quot; + urlEncode(resolvedError.getLocalizedMessage());</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (log.isDebugEnabled()) {</span>
+<span class="nc" id="L82">          log.debug(&quot;Redirecting to &quot; + url);</span>
+        }
+<span class="nc" id="L84">        this.redirectStrategy.sendRedirect(request, response, url);</span>
+      }
+    }
+<span class="nc" id="L87">  }</span>
+
+  /**
+   * &lt;p&gt;
+   * Caches the {@code AuthenticationException} for use in view rendering.
+   * &lt;/p&gt;
+   * If {@code forwardToDestination} is set to true, request scope will be used,
+   * otherwise it will attempt to store the exception in the session. If there is no
+   * session and {@code allowSessionCreation} is {@code true} a session will be created.
+   * Otherwise the exception will not be stored.
+   *
+   * @param request   request
+   * @param exception exception
+   */
+  protected final void saveException(final HttpServletRequest request, final AuthenticationException exception) {
+<span class="nc bnc" id="L102" title="All 2 branches missed.">    if (this.forwardToDestination) {</span>
+<span class="nc" id="L103">      request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);</span>
+    } else {
+<span class="nc" id="L105">      HttpSession session = request.getSession(false);</span>
+
+<span class="nc bnc" id="L107" title="All 4 branches missed.">      if (session != null || this.allowSessionCreation) {</span>
+<span class="nc" id="L108">        request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);</span>
+      }
+    }
+<span class="nc" id="L111">  }</span>
+
+  /**
+   * The URL which will be used as the failure destination.
+   *
+   * @param defaultFailureUrl the failure URL, for example &quot;/loginFailed.jsp&quot;.
+   */
+  public final void setDefaultFailureUrl(final String defaultFailureUrl) {
+<span class="nc" id="L119">    Assert.isTrue(UrlUtils.isValidRedirectUrl(defaultFailureUrl), &quot;'&quot;</span>
+      + defaultFailureUrl + &quot;' is not a valid redirect URL&quot;);
+<span class="nc" id="L121">    this.defaultFailureUrl = defaultFailureUrl;</span>
+<span class="nc" id="L122">  }</span>
+
+  protected boolean isUseForward() {
+<span class="nc" id="L125">    return this.forwardToDestination;</span>
+  }
+
+  /**
+   * If set to &lt;tt&gt;true&lt;/tt&gt;, performs a forward to the failure destination URL instead
+   * of a redirect. Defaults to &lt;tt&gt;false&lt;/tt&gt;.
+   *
+   * @param forwardToDestination forwardToDestination
+   */
+  public void setUseForward(final boolean forwardToDestination) {
+<span class="nc" id="L135">    this.forwardToDestination = forwardToDestination;</span>
+<span class="nc" id="L136">  }</span>
+
+  /**
+   * Allows overriding of the behaviour when redirecting to a target URL.
+   *
+   * @param redirectStrategy redirectStrategy
+   */
+  public void setRedirectStrategy(final RedirectStrategy redirectStrategy) {
+<span class="nc" id="L144">    this.redirectStrategy = redirectStrategy;</span>
+<span class="nc" id="L145">  }</span>
+
+  protected RedirectStrategy getRedirectStrategy() {
+<span class="nc" id="L148">    return this.redirectStrategy;</span>
+  }
+
+  protected boolean isAllowSessionCreation() {
+<span class="nc" id="L152">    return this.allowSessionCreation;</span>
+  }
+
+  public void setAllowSessionCreation(final boolean allowSessionCreation) {
+<span class="nc" id="L156">    this.allowSessionCreation = allowSessionCreation;</span>
+<span class="nc" id="L157">  }</span>
+
+  public static TemplateAuthenticationFailureHandler templateFailureHandler( //
+    final String loginFormUrl, //
+    final ExceptionResolver&lt;Throwable&gt; exceptionResolver, //
+    final TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie //
+  ) {
+<span class="nc" id="L164">    final TemplateAuthenticationFailureHandler failureHandler = new TemplateAuthenticationFailureHandler( //</span>
+      loginFormUrl, exceptionResolver, resolvedErrorCookie);
+<span class="nc" id="L166">    failureHandler.setUseForward(false);</span>
+<span class="nc" id="L167">    failureHandler.setRedirectStrategy(new SmartRedirectStrategy());</span>
+<span class="nc" id="L168">    return failureHandler;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
