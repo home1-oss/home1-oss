@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonWebToken.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-webmvc-spring-boot-1.5.6.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.webmvc.api</a> &gt; <span class="el_source">JsonWebToken.java</span></div><h1>JsonWebToken.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.webmvc.api;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import cn.home1.oss.lib.common.crypto.Jwt;
+
+import lombok.Getter;
+
+/**
+ * Created by zhanghaolun on 16/10/29.
+ */
+public class JsonWebToken&lt;T&gt; implements TypeSafeToken&lt;T&gt; {
+
+  private final TypeSafeToken&lt;T&gt; token;
+<span class="nc" id="L15">  @Getter</span>
+  private final Jwt jwt;
+  /**
+   * Maximum age of the jwt token in seconds.
+   */
+<span class="nc" id="L20">  @Getter</span>
+  private final Integer maxAge;
+
+  public JsonWebToken( //
+    final TypeSafeToken&lt;T&gt; token, //
+    final Jwt jwt, //
+    final int maxAge //
+<span class="nc" id="L27">  ) {</span>
+<span class="nc" id="L28">    this.token = checkNotNull(token);</span>
+<span class="nc" id="L29">    this.jwt = jwt;</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">    this.maxAge = maxAge &gt; 0 ? maxAge : 0;</span>
+<span class="nc" id="L31">  }</span>
+
+  @Override
+  public String toToken(final T obj) {
+<span class="nc" id="L35">    final String token = this.token.toToken(obj);</span>
+<span class="nc" id="L36">    return this.jwt.encrypt(token, this.maxAge);</span>
+  }
+
+  @Override
+  public T fromToken(final String compactJws) {
+<span class="nc" id="L41">    final String token = this.jwt.decrypt(compactJws);</span>
+<span class="nc" id="L42">    return this.token.fromToken(token);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

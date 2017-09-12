@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpMessageConverterUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-webmvc-spring-boot-1.5.6.RELEASE</a> &gt; <a href="index.source.html" class="el_package">org.springframework.web</a> &gt; <span class="el_source">HttpMessageConverterUtils.java</span></div><h1>HttpMessageConverterUtils.java</h1><pre class="source lang-java linenums">package org.springframework.web;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_XML;
+
+import com.google.common.collect.ImmutableMap;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.core.env.PropertyResolver;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.accept.FixedContentNegotiationStrategy;
+import org.springframework.web.accept.HeaderContentNegotiationStrategy;
+import org.springframework.web.accept.ParameterContentNegotiationStrategy;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="fc" id="L29">@Slf4j</span>
+public final class HttpMessageConverterUtils {
+
+<span class="nc" id="L32">  private HttpMessageConverterUtils() {</span>
+<span class="nc" id="L33">  }</span>
+
+  /**
+   * Determine whether a JAXB binder is present on the classpath and can be loaded. Will return
+   * &lt;tt&gt;false&lt;/tt&gt; if either the {@link javax.xml.bind.Binder} or one of its dependencies is not
+   * present or cannot be loaded.
+   *
+   * @param classLoader classLoader
+   * @return isJaxb2Present
+   */
+  public static boolean isJaxb2Present(final ClassLoader classLoader) {
+<span class="fc" id="L44">    return ClassUtils.isPresent(&quot;javax.xml.bind.Binder&quot;, classLoader);</span>
+  }
+
+  /**
+   * Determine whether Jackson 2.x is present on the classpath and can be loaded. Will return
+   * &lt;tt&gt;false&lt;/tt&gt; if either the {@code com.fasterxml.jackson.databind.ObjectMapper},
+   * {@code com.fasterxml.jackson.core.JsonGenerator} or one of its dependencies is not present
+   * or cannot be loaded.
+   *
+   * @param classLoader classLoader
+   * @return isJackson2Present
+   */
+  public static boolean isJackson2Present(final ClassLoader classLoader) {
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">    return ClassUtils.isPresent(&quot;com.fasterxml.jackson.databind.ObjectMapper&quot;, classLoader)</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">      &amp;&amp; ClassUtils.isPresent(&quot;com.fasterxml.jackson.core.JsonGenerator&quot;, classLoader);</span>
+  }
+
+  /**
+   * Determine whether Jackson 1.x is present on the classpath and can be loaded. Will return
+   * &lt;tt&gt;false&lt;/tt&gt; if either the {@code org.codehaus.jackson.map.ObjectMapper},
+   * {@code org.codehaus.jackson.JsonGenerator} or one of its dependencies is not present or
+   * cannot be loaded.
+   *
+   * @param classLoader classLoader
+   * @return isJacksonPresent
+   */
+  @Deprecated
+  public static boolean isJacksonPresent(final ClassLoader classLoader) {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">    return ClassUtils.isPresent(&quot;org.codehaus.jackson.map.ObjectMapper&quot;, classLoader)</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">      &amp;&amp; ClassUtils.isPresent(&quot;org.codehaus.jackson.JsonGenerator&quot;, classLoader);</span>
+  }
+
+  /**
+   * Returns default {@link HttpMessageConverter} instances, i.e.:
+   *
+   * &lt;ul&gt;
+   * &lt;li&gt;{@linkplain ByteArrayHttpMessageConverter}&lt;/li&gt;
+   * &lt;li&gt;{@linkplain StringHttpMessageConverter}&lt;/li&gt;
+   * &lt;li&gt;{@linkplain ResourceHttpMessageConverter}&lt;/li&gt;
+   * &lt;li&gt;{@linkplain Jaxb2RootElementHttpMessageConverter} (when JAXB is present)&lt;/li&gt;
+   * &lt;li&gt;{@linkplain MappingJackson2HttpMessageConverter} (when Jackson 2.x is present)&lt;/li&gt;
+   * &lt;li&gt;{org.springframework.http.converter.json.MappingJacksonHttpMessageConverter}
+   * (when Jackson 1.x is present and 2.x not)&lt;/li&gt;
+   * &lt;/ul&gt;
+   *
+   * &lt;p&gt;
+   * Note: It does not return all of the default converters defined in Spring, but just thus
+   * usable for exception responses.
+   * &lt;/p&gt;
+   *
+   * @param propertyResolver propertyResolver
+   * @param objectMapper     objectMapper
+   * @return httpMessageConverters
+   */
+  public static List&lt;HttpMessageConverter&lt;?&gt;&gt; defaultHttpMessageConverters(
+    final PropertyResolver propertyResolver,
+    final Object objectMapper
+  ) {
+<span class="fc" id="L102">    final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();</span>
+
+<span class="fc" id="L104">    final List&lt;HttpMessageConverter&lt;?&gt;&gt; converters = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L106">    final StringHttpMessageConverter stringConverter =</span>
+<span class="fc" id="L107">      new StringHttpMessageConverter(Charset.forName(&quot;UTF-8&quot;));</span>
+<span class="fc" id="L108">    stringConverter.setWriteAcceptCharset(false); // See SPR-7316</span>
+
+<span class="fc" id="L110">    converters.add(new ByteArrayHttpMessageConverter());</span>
+<span class="fc" id="L111">    converters.add(stringConverter);</span>
+<span class="fc" id="L112">    converters.add(new ResourceHttpMessageConverter());</span>
+
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">    if (isJaxb2Present(classLoader)) {</span>
+<span class="fc" id="L115">      converters.add(new Jaxb2RootElementHttpMessageConverter());</span>
+    }
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">    if (isJackson2Present(classLoader)) {</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">      if (objectMapper == null) {</span>
+<span class="nc" id="L119">        converters.add(new MappingJackson2HttpMessageConverter( //</span>
+<span class="nc" id="L120">            cn.home1.oss.lib.common.Jackson2Utils.setupObjectMapper( //</span>
+              propertyResolver, //
+<span class="nc" id="L122">              Jackson2ObjectMapperBuilder.json().build()) //</span>
+          ) //
+        );
+      } else {
+<span class="fc" id="L126">        converters.add(new MappingJackson2HttpMessageConverter( //</span>
+          (com.fasterxml.jackson.databind.ObjectMapper) objectMapper) //
+        );
+      }
+<span class="nc bnc" id="L130" title="All 2 branches missed.">    } else if (isJacksonPresent(classLoader)) {</span>
+      try {
+<span class="nc" id="L132">        final String className = &quot;org.springframework.http.converter.json.MappingJacksonHttpMessageConverter&quot;;</span>
+<span class="nc" id="L133">        final Class&lt;?&gt; clazz = Class.forName(className);</span>
+<span class="nc" id="L134">        converters.add((HttpMessageConverter&lt;?&gt;) clazz.newInstance());</span>
+
+<span class="nc" id="L136">      } catch (final ClassNotFoundException ex) {</span>
+        // Ignore it, this class is not available since Spring 4.1.0.
+<span class="nc" id="L138">        log.trace(&quot;MappingJacksonHttpMessageConverter is not available since Spring 4.1.0.&quot;, ex);</span>
+<span class="nc" id="L139">      } catch (InstantiationException | IllegalAccessException ex) {</span>
+<span class="nc" id="L140">        throw new IllegalStateException(ex);</span>
+<span class="nc" id="L141">      }</span>
+    }
+<span class="fc" id="L143">    return converters;</span>
+  }
+
+  public static ContentNegotiationManager defaultContentNegotiationManager() {
+<span class="fc" id="L147">    return defaultContentNegotiationManager(APPLICATION_JSON);</span>
+  }
+
+  public static ContentNegotiationManager defaultContentNegotiationManager(final MediaType defaultContentType) {
+<span class="fc" id="L151">    final ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager( //</span>
+      new HeaderContentNegotiationStrategy(), //
+      new ParameterContentNegotiationStrategy( //
+<span class="fc" id="L154">        ImmutableMap.of(&quot;json&quot;, APPLICATION_JSON, &quot;xml&quot;, APPLICATION_XML) //</span>
+      ), //
+      new FixedContentNegotiationStrategy(defaultContentType) //
+    );
+<span class="fc" id="L158">    return contentNegotiationManager;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

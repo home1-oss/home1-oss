@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TypeSafeCookie.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-webmvc-spring-boot-1.5.6.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.webmvc.api</a> &gt; <span class="el_source">TypeSafeCookie.java</span></div><h1>TypeSafeCookie.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.webmvc.api;
+
+import static java.util.concurrent.TimeUnit.DAYS;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.Arrays;
+import java.util.Optional;
+
+import javax.servlet.ServletContext;
+import javax.servlet.SessionCookieConfig;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * cookie.
+ */
+public interface TypeSafeCookie&lt;T&gt; {
+
+  /**
+   * build a cookie.setMaxAge(0) if no value provided.
+   *
+   * @param domain   domain
+   * @param httpOnly httpOnly
+   * @param maxAge   maxAge
+   * @param name     name
+   * @param secure   secure
+   * @param value    value
+   * @return cookie
+   */
+  static Cookie buildCookie( //
+    final String domain, //
+    final Boolean httpOnly, //
+    final Integer maxAge, //
+    final String name, //
+    final Boolean secure, //
+    final String value //
+  ) {
+<span class="nc" id="L39">    final Cookie cookie = new Cookie(name, value);</span>
+<span class="nc" id="L40">    cookie.setComment(name);</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">    if (isNotBlank(domain)) {</span>
+<span class="nc" id="L42">      cookie.setDomain(domain);</span>
+    }
+<span class="nc bnc" id="L44" title="All 4 branches missed.">    if (httpOnly != null &amp;&amp; httpOnly) {</span>
+<span class="nc" id="L45">      cookie.setHttpOnly(true);</span>
+    }
+<span class="nc bnc" id="L47" title="All 2 branches missed.">    final int defaultMaxAge = value != null ? (int) DAYS.toSeconds(1L) : 0;</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">    cookie.setMaxAge(maxAge != null ? maxAge : defaultMaxAge);</span>
+<span class="nc" id="L49">    cookie.setPath(&quot;/&quot;);</span>
+<span class="nc bnc" id="L50" title="All 4 branches missed.">    if (secure != null &amp;&amp; secure) {</span>
+<span class="nc" id="L51">      cookie.setSecure(true);</span>
+    }
+<span class="nc" id="L53">    cookie.setVersion(1);</span>
+<span class="nc" id="L54">    return cookie;</span>
+  }
+
+  static void configSessionCookie( //
+    final ServletContext servletContext, //
+    final String domain, //
+    final String name, //
+    final Integer maxAge //
+  ) {
+<span class="nc" id="L63">    servletContext.setInitParameter(&quot;org.eclipse.jetty.servlet.SessionCookie&quot;, name);</span>
+<span class="nc" id="L64">    final SessionCookieConfig sessionCookieConfig = servletContext.getSessionCookieConfig();</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">    if (isNotBlank(domain)) {</span>
+<span class="nc" id="L66">      sessionCookieConfig.setDomain(domain);</span>
+    }
+<span class="nc" id="L68">    sessionCookieConfig.setMaxAge(maxAge);</span>
+<span class="nc" id="L69">    sessionCookieConfig.setName(name);</span>
+<span class="nc" id="L70">    sessionCookieConfig.setPath(&quot;/&quot;);</span>
+<span class="nc" id="L71">  }</span>
+
+  static Cookie findCookie(final HttpServletRequest request, final String name) {
+<span class="nc" id="L74">    final Cookie[] cookies = request.getCookies();</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">    final Optional&lt;Cookie&gt; firstMatch = Arrays.stream(cookies != null ? cookies : new Cookie[0])</span>
+<span class="nc" id="L76">      .filter(cookie -&gt; cookie.getName().equals(name)).findFirst();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">    return firstMatch.isPresent() ? firstMatch.get() : null;</span>
+  }
+
+  void clearCookie(HttpServletRequest request, HttpServletResponse response);
+
+  T getCookie(HttpServletRequest request);
+
+  String getValue(HttpServletRequest request);
+
+  T setCookie(HttpServletRequest request, HttpServletResponse response, T obj);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
