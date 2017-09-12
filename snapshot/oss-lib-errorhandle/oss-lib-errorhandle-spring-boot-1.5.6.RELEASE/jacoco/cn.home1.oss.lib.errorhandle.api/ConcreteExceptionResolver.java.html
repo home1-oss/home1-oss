@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConcreteExceptionResolver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.5.6.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.api</a> &gt; <span class="el_source">ConcreteExceptionResolver.java</span></div><h1>ConcreteExceptionResolver.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.api;
+
+import static org.springframework.util.StringUtils.isEmpty;
+
+import com.google.common.collect.ImmutableMap;
+
+import cn.home1.oss.lib.errorhandle.api.ExceptionTranslator.Location;
+
+import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.context.request.RequestAttributes;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.validation.ConstraintViolationException;
+
+/**
+ * Created by zhanghaolun on 16/8/11.
+ */
+public interface ConcreteExceptionResolver&lt;T extends Throwable&gt; extends ExceptionResolver&lt;T&gt; {
+
+  Class&lt;T&gt; getExceptionClass();
+
+  /**
+   * set conversionService.
+   *
+   * @param conversionService convert value in validation error into string
+   */
+  void setConversionService(ConversionService conversionService);
+
+  ExceptionTranslator getExceptionTranslator();
+
+  void setExceptionTranslator(ExceptionTranslator exceptionTranslator);
+
+  void setStackTraceIndicator(StackTraceIndicator stackTraceIndicator);
+
+  default Optional&lt;HttpHeaders&gt; createHeaders(final RequestAttributes request, final T throwable) {
+<span class="fc" id="L43">    return Optional.of(ResolvedError.newHttpHeaders());</span>
+  }
+
+  /**
+   * find a request attribute.
+   *
+   * @param requestAttributes requestAttributes
+   * @param name              name
+   * @param &lt;A&gt;               attributeType
+   * @return request attribute
+   */
+  @SuppressWarnings(&quot;unchecked&quot;)
+  default &lt;A&gt; A getAttribute(final RequestAttributes requestAttributes, final String name) {
+<span class="fc" id="L56">    return (A) requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST);</span>
+  }
+
+  default &lt;E extends Throwable&gt; String message( //
+    final RequestAttributes requestAttributes, //
+    final E throwable, //
+    final Optional&lt;List&lt;ValidationError&gt;&gt; validationErrorsOptional //
+  ) {
+<span class="fc" id="L64">    final Object fromAttribute = getAttribute(requestAttributes, &quot;javax.servlet.error.message&quot;);</span>
+    final String fromError;
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">    if (throwable != null) {</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">      if (!validationErrorsOptional.isPresent()) {</span>
+<span class="fc" id="L68">        fromError = throwable.getMessage();</span>
+      } else {
+<span class="nc" id="L70">        final int errorCount = validationErrorsOptional.get().size();</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        fromError = errorCount &gt; 0 ? //</span>
+          &quot;Validation failed. Validation errors count: &quot; + errorCount : //
+          &quot;No validation errors&quot;;
+<span class="nc" id="L74">      }</span>
+    } else {
+<span class="nc" id="L76">      fromError = null;</span>
+    }
+    final String result;
+<span class="pc bpc" id="L79" title="4 of 6 branches missed.">    if ((!isEmpty(fromAttribute) || fromError == null) &amp;&amp; !(throwable instanceof BindingResult)) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">      result = isEmpty(fromAttribute) ? &quot;No message available&quot; : fromAttribute.toString();</span>
+    } else {
+<span class="fc" id="L82">      result = fromError;</span>
+    }
+<span class="fc" id="L84">    return result;</span>
+  }
+
+  default Optional&lt;Location&gt; find(final T throwable) {
+<span class="fc" id="L88">    final ExceptionTranslator exceptionTranslator = this.getExceptionTranslator();</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    return exceptionTranslator != null ? exceptionTranslator.find(throwable) : Optional.empty();</span>
+  }
+
+  default Optional&lt;Integer&gt; status( //
+    final RequestAttributes requestAttributes, //
+    final Location location, //
+    final T throwable //
+  ) {
+<span class="fc" id="L97">    final ExceptionTranslator exceptionTranslator = this.getExceptionTranslator();</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">    final Optional&lt;Integer&gt; translated = exceptionTranslator != null ? //</span>
+<span class="fc" id="L99">      exceptionTranslator.status(location) : //</span>
+<span class="pc" id="L100">      Optional.empty();</span>
+<span class="fc" id="L101">    final Integer fromAttribute = this.getAttribute(requestAttributes, &quot;javax.servlet.error.status_code&quot;);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    return translated.isPresent() ? translated : Optional.ofNullable(fromAttribute);</span>
+  }
+
+  /**
+   * Translate exception and generates localizedMessage.
+   *
+   * @param request   The current request.
+   * @param location  The location get data from.
+   * @param throwable throwable
+   * @return A TranslateResult.
+   */
+  default Optional&lt;String&gt; localizedMessage( //
+    final RequestAttributes request, //
+    final Location location, //
+    final T throwable //
+  ) {
+<span class="fc" id="L118">    final ExceptionTranslator exceptionTranslator = this.getExceptionTranslator();</span>
+    final Optional&lt;String&gt; result;
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">    if (exceptionTranslator != null) {</span>
+<span class="fc" id="L121">      final Map&lt;String, Serializable&gt; contextVariables = ImmutableMap.of();</span>
+<span class="fc" id="L122">      final String template = exceptionTranslator.template(location).orElse(null);</span>
+<span class="fc" id="L123">      result = exceptionTranslator.localizedMessage(template, request, throwable, contextVariables);</span>
+<span class="fc" id="L124">    } else {</span>
+<span class="nc" id="L125">      result = Optional.empty();</span>
+    }
+<span class="fc" id="L127">    return result;</span>
+  }
+
+  /**
+   * validation errors.
+   *
+   * @param throwable {@link ConstraintViolationException}, {@link MethodArgumentNotValidException}
+   * @return validation errors
+   */
+  default Optional&lt;List&lt;ValidationError&gt;&gt; validationErrors(final T throwable) {
+<span class="fc" id="L137">    return Optional.empty();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
