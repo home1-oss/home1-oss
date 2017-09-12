@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionHandlerConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.starter</a> &gt; <span class="el_source">ExceptionHandlerConfiguration.java</span></div><h1>ExceptionHandlerConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.starter;
+
+import cn.home1.oss.lib.errorhandle.internal.DefaultExceptionHandler;
+import cn.home1.oss.lib.errorhandle.internal.RestfulExceptionHandler;
+import cn.home1.oss.lib.errorhandle.internal.TemplateExceptionHandler;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Created by zhanghaolun on 16/8/17.
+ */
+@Configuration
+<span class="fc" id="L17">public class ExceptionHandlerConfiguration {</span>
+
+  @Autowired
+  private ServerProperties serverProperties;
+
+  /**
+   * experimental.
+   *
+   * @return defaultExceptionHandler
+   */
+  @Bean
+  @ConditionalOnProperty(prefix = &quot;app.error&quot;, name = &quot;handlerEnabled&quot;, havingValue = &quot;true&quot;)
+  public DefaultExceptionHandler defaultExceptionHandler() {
+<span class="nc" id="L30">    return new DefaultExceptionHandler();</span>
+  }
+
+  @Bean
+  public RestfulExceptionHandler restfulExceptionHandler() {
+<span class="fc" id="L35">    return new RestfulExceptionHandler();</span>
+  }
+
+  @Bean
+  public TemplateExceptionHandler templateExceptionHandler() {
+<span class="fc" id="L40">    final TemplateExceptionHandler handler = new TemplateExceptionHandler();</span>
+<span class="fc" id="L41">    handler.setErrorPage(this.serverProperties.getError().getPath());</span>
+<span class="fc" id="L42">    return handler;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

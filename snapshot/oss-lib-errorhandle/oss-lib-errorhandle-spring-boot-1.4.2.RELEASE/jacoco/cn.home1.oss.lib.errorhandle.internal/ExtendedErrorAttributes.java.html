@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExtendedErrorAttributes.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.internal</a> &gt; <span class="el_source">ExtendedErrorAttributes.java</span></div><h1>ExtendedErrorAttributes.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.internal;
+
+import static cn.home1.oss.lib.errorhandle.api.ExceptionResolver.COMPOSITE_EXCEPTION_RESOLVER;
+
+import com.google.common.collect.ImmutableMap;
+
+import cn.home1.oss.lib.errorhandle.api.ExceptionResolver;
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.errorhandle.api.ResolvedErrorException;
+
+import lombok.Setter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.ErrorAttributes;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * {@link org.springframework.boot.autoconfigure.web.DefaultErrorAttributes}
+ *
+ * &lt;p&gt;
+ * Created by zhanghaolun on 16/8/9.
+ * &lt;/p&gt;
+ */
+@Order(Ordered.HIGHEST_PRECEDENCE)
+<span class="fc" id="L35">public class ExtendedErrorAttributes //</span>
+  implements ErrorAttributes, HandlerExceptionResolver, Ordered {
+
+<span class="fc" id="L38">  private static final String ERROR_ATTRIBUTE = ExtendedErrorAttributes.class.getName() + &quot;.ERROR&quot;;</span>
+
+  @Qualifier(COMPOSITE_EXCEPTION_RESOLVER)
+  @Autowired
+<span class="nc" id="L42">  @Setter</span>
+  private ExceptionResolver&lt;Throwable&gt; resolver;
+
+  @Override
+  public Map&lt;String, Object&gt; getErrorAttributes( //
+    final RequestAttributes requestAttributes, //
+    final boolean includeStackTrace //
+  ) {
+<span class="fc" id="L50">    final Throwable error = getError(requestAttributes);</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">    final ResolvedError resolved = ResolvedErrorException.isResolvedError(error) ? //</span>
+<span class="pc" id="L52">      ((ResolvedErrorException) error).getError() : //</span>
+<span class="pc" id="L53">      this.resolver.resolve(requestAttributes, error);</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">    return resolved != null ? resolved.toErrorAttributes() : ImmutableMap.of();</span>
+  }
+
+  @Override
+  public int getOrder() {
+<span class="fc" id="L59">    return Ordered.HIGHEST_PRECEDENCE;</span>
+  }
+
+  @Override
+  public ModelAndView resolveException( //
+    final HttpServletRequest request, //
+    final HttpServletResponse response, //
+    final Object handler, //
+    final Exception ex //
+  ) {
+<span class="fc" id="L69">    final ResolvedError resolved = this.resolver.resolve(request, ex);</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">    this.storeErrorAttributes(request, resolved != null ? new ResolvedErrorException(resolved) : ex);</span>
+<span class="fc" id="L71">    return null;</span>
+  }
+
+  private void storeErrorAttributes(final HttpServletRequest request, final Exception ex) {
+<span class="fc" id="L75">    request.setAttribute(ERROR_ATTRIBUTE, ex);</span>
+<span class="fc" id="L76">  }</span>
+
+  @Override
+  public Throwable getError(final RequestAttributes requestAttributes) {
+<span class="fc" id="L80">    final Throwable found = getAttribute(requestAttributes, ERROR_ATTRIBUTE);</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">    return found != null ? found : getAttribute(requestAttributes, &quot;javax.servlet.error.exception&quot;);</span>
+  }
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  private &lt;T&gt; T getAttribute(final RequestAttributes requestAttributes, final String name) {
+<span class="fc" id="L86">    return (T) requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultExceptionTranslator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.internal.translator</a> &gt; <span class="el_source">DefaultExceptionTranslator.java</span></div><h1>DefaultExceptionTranslator.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.internal.translator;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static java.util.Collections.unmodifiableList;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import com.google.common.collect.ImmutableMap;
+
+import cn.home1.oss.lib.errorhandle.api.ExceptionTranslator;
+
+import cn.home1.oss.lib.common.msginterpolate.MessageInterpolator;
+import cn.home1.oss.lib.common.msginterpolate.MessageInterpolatorAware;
+import cn.home1.oss.lib.common.msginterpolate.NoOpMessageInterpolator;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.context.request.RequestAttributes;
+
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
+/**
+ * Created by zhanghaolun on 16/8/10.
+ */
+<span class="fc" id="L35">@Slf4j</span>
+<span class="fc" id="L36">public class DefaultExceptionTranslator implements ExceptionTranslator, MessageInterpolatorAware {</span>
+
+  static final String DEFAULT_EXCEPTION_CLASS = &quot;default&quot;;
+  private static final String FIELD_STATUS = &quot;status&quot;;
+  private static final String FIELD_TEMPLATE = &quot;template&quot;;
+
+  private MessageInterpolator messageInterpolator;
+<span class="nc" id="L43">  @Setter</span>
+  private Locale locale;
+<span class="fc" id="L45">  @Setter</span>
+  private Comparator&lt;Location&gt; locationComparator;
+  private List&lt;MessageSource&gt; messageSources;
+
+  public void setMessageSources(final List&lt;MessageSource&gt; messageSources) {
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">    checkArgument(messageSources != null &amp;&amp; !messageSources.isEmpty(), &quot;messageSources must not null or empty&quot;);</span>
+<span class="fc" id="L51">    this.messageSources = unmodifiableList(messageSources);</span>
+<span class="fc" id="L52">  }</span>
+
+  public void setMessageInterpolator(final MessageInterpolator messageInterpolator) {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">    this.messageInterpolator = messageInterpolator != null ? messageInterpolator : new NoOpMessageInterpolator();</span>
+<span class="fc" id="L56">  }</span>
+
+  @Override
+  public Optional&lt;Location&gt; find(final Throwable throwable) {
+    final Optional&lt;Location&gt; result;
+
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">    if (throwable != null) {</span>
+<span class="fc" id="L63">      final List&lt;Location&gt; locations = newLinkedList();</span>
+
+<span class="fc" id="L65">      Integer sourceOrder = 0;</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">      for (final MessageSource source : this.messageSources) {</span>
+
+<span class="fc" id="L68">        Boolean found = FALSE;</span>
+<span class="fc" id="L69">        Integer level = 0;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        for (Class type = throwable.getClass(); type != Throwable.class; type = type.getSuperclass()) {</span>
+<span class="fc" id="L71">          final Optional&lt;String&gt; template = this.template(source, type.getName());</span>
+<span class="fc" id="L72">          final Optional&lt;Integer&gt; status = this.status(source, type.getName());</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">          if (template.isPresent() &amp;&amp; status.isPresent()) {</span>
+<span class="fc" id="L74">            found = TRUE;</span>
+<span class="fc" id="L75">            locations.add(new Location(source, sourceOrder, type.getName(), level));</span>
+<span class="fc" id="L76">            break;</span>
+          }
+<span class="fc" id="L78">          level++;</span>
+        }
+
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (!found) {</span>
+<span class="fc" id="L82">          final Optional&lt;String&gt; defaultTemplate = this.defaultTemplate(source);</span>
+<span class="fc" id="L83">          final Optional&lt;Integer&gt; defaultStatus = this.defaultStatus(source);</span>
+<span class="pc bpc" id="L84" title="2 of 4 branches missed.">          if (defaultTemplate.isPresent() &amp;&amp; defaultStatus.isPresent()) {</span>
+<span class="fc" id="L85">            locations.add(new Location(source, sourceOrder, DEFAULT_EXCEPTION_CLASS, Integer.MAX_VALUE));</span>
+          }
+        }
+
+<span class="fc" id="L89">        sourceOrder++;</span>
+<span class="fc" id="L90">      }</span>
+
+<span class="fc" id="L92">      locations.sort(this.locationComparator);</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">      result = locations.isEmpty() ? Optional.empty() : Optional.of(locations.get(0));</span>
+<span class="fc" id="L94">    } else {</span>
+<span class="nc" id="L95">      result = Optional.empty();</span>
+    }
+
+
+<span class="fc" id="L99">    return result;</span>
+  }
+
+  public Optional&lt;String&gt; defaultTemplate(final MessageSource messageSource) {
+<span class="fc" id="L103">    return this.template(messageSource, DEFAULT_EXCEPTION_CLASS);</span>
+  }
+
+  public Optional&lt;Integer&gt; defaultStatus(final MessageSource messageSource) {
+<span class="fc" id="L107">    return this.status(messageSource, DEFAULT_EXCEPTION_CLASS);</span>
+  }
+
+  @Override
+  public Optional&lt;String&gt; localizedMessage( //
+    final String template, //
+    final RequestAttributes request, //
+    final Throwable throwable, //
+    final Map&lt;String, Serializable&gt; contextVariables //
+  ) {
+    final Optional&lt;String&gt; result;
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">    if (template != null) {</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">      final Map&lt;String, Object&gt; variables = ImmutableMap.&lt;String, Object&gt;builder() //</span>
+<span class="pc" id="L120">        .putAll(contextVariables != null ? contextVariables : ImmutableMap.of()) //</span>
+<span class="fc" id="L121">        .put(&quot;req&quot;, request) //</span>
+<span class="fc" id="L122">        .put(&quot;ex&quot;, throwable) //</span>
+<span class="fc" id="L123">        .build();</span>
+<span class="fc" id="L124">      final String localizedMessage = this.messageInterpolator.interpolate(template, variables);</span>
+<span class="fc" id="L125">      result = Optional.ofNullable(localizedMessage);</span>
+<span class="fc" id="L126">    } else {</span>
+<span class="nc" id="L127">      result = Optional.empty();</span>
+    }
+<span class="fc" id="L129">    return result;</span>
+  }
+
+  @SuppressWarnings(&quot;rawtypes&quot;)
+  @Override
+  public Optional&lt;Integer&gt; status(final Location location) {
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">    return location != null ? this.status(location.getSource(), location.getKey()) : Optional.empty();</span>
+  }
+
+  protected Optional&lt;Integer&gt; status(final MessageSource messageSource, final String type) {
+<span class="fc" id="L139">    final String status = this.getValue(messageSource, type, FIELD_STATUS);</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">    return isNotBlank(status) ? Optional.of(Integer.parseInt(status)) : Optional.empty();</span>
+  }
+
+  @SuppressWarnings(&quot;rawtypes&quot;)
+  @Override
+  public Optional&lt;String&gt; template(final Location location) {
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">    return location != null ? this.template(location.getSource(), location.getKey()) : Optional.empty();</span>
+  }
+
+  protected Optional&lt;String&gt; template(final MessageSource messageSource, final String type) {
+<span class="fc" id="L150">    final String template = this.getValue(messageSource, type, FIELD_TEMPLATE);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">    return isNotBlank(template) ? Optional.of(template) : Optional.empty();</span>
+  }
+
+  protected String getValue(final MessageSource messageSource, final String type, final String field) {
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">    final Locale locale = this.locale != null ? this.locale : LocaleContextHolder.getLocale();</span>
+<span class="fc" id="L156">    return getValue(messageSource, type, field, locale);</span>
+  }
+
+  protected static String getValue( //
+    final MessageSource messageSource, //
+    final String type, //
+    final String field, //
+    final Locale locale //
+  ) {
+<span class="fc" id="L165">    final String key = type + &quot;.&quot; + field;</span>
+<span class="fc" id="L166">    return messageSource.getMessage(key, null, null, locale);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

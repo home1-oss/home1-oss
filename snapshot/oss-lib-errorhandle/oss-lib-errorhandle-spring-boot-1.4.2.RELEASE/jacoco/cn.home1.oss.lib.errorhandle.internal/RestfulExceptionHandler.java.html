@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestfulExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.internal</a> &gt; <span class="el_source">RestfulExceptionHandler.java</span></div><h1>RestfulExceptionHandler.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.internal;
+
+import static cn.home1.oss.lib.errorhandle.api.ExceptionResolver.COMPOSITE_EXCEPTION_RESOLVER;
+
+import cn.home1.oss.lib.errorhandle.api.ExceptionResolver;
+import cn.home1.oss.lib.errorhandle.api.HttpHeader;
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.webmvc.internal.DefaultHttpEntityMethodProcessor;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.method.support.ModelAndViewContainer;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.lang.reflect.Method;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Created by zhanghaolun on 16/8/22.
+ */
+<span class="fc" id="L33">@Slf4j</span>
+<span class="fc" id="L34">public class RestfulExceptionHandler {</span>
+
+  @Qualifier(COMPOSITE_EXCEPTION_RESOLVER)
+  @Autowired
+<span class="nc" id="L38">  @Getter</span>
+<span class="nc" id="L39">  @Setter</span>
+  private ExceptionResolver&lt;Throwable&gt; exceptionResolver;
+  @Autowired
+<span class="nc" id="L42">  @Setter</span>
+  private DefaultHttpEntityMethodProcessor httpEntityMethodProcessor;
+
+  static ResponseEntity&lt;ResolvedError&gt; toResponseEntity(final ResolvedError error) {
+<span class="nc" id="L46">    ResponseEntity&lt;ResolvedError&gt; entity = null;</span>
+    try {
+<span class="nc" id="L48">      entity = new ResponseEntity&lt;&gt;( //</span>
+        error, //
+<span class="nc" id="L50">        HttpHeader.toHttpHeaders(error.getHeaders()), //</span>
+<span class="nc" id="L51">        HttpStatus.valueOf(error.getStatus()) //</span>
+      );
+<span class="nc" id="L53">    } catch (final Exception ex) {</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">      if (log.isWarnEnabled()) {</span>
+<span class="nc" id="L55">        log.warn(&quot;Failed to process resolvedError: {}&quot;, error, ex);</span>
+      }
+<span class="nc" id="L57">    }</span>
+<span class="nc" id="L58">    return entity;</span>
+  }
+
+  public ModelAndView resolveAndHandle(
+    final HttpServletRequest request, //
+    final HttpServletResponse response, //
+    final Throwable throwable //
+  ) {
+<span class="nc" id="L66">    final ResolvedError resolvedError = this.exceptionResolver.resolve(request, throwable);</span>
+<span class="nc" id="L67">    this.handleResolved(request, response, resolvedError);</span>
+<span class="nc" id="L68">    return new ModelAndView();</span>
+  }
+
+  public void handleResolved( //
+    final HttpServletRequest request, //
+    final HttpServletResponse response, //
+    final ResolvedError resolvedError //
+  ) {
+<span class="nc" id="L76">    final ResponseEntity&lt;ResolvedError&gt; returnValue = toResponseEntity(resolvedError);</span>
+
+<span class="nc bnc" id="L78" title="All 2 branches missed.">    if (returnValue != null) {</span>
+      try {
+<span class="nc" id="L80">        final Method method = ClassUtils.getMethod( //</span>
+          ExceptionResolver.class, &quot;resolve&quot;, HttpServletRequest.class, Throwable.class //
+        );
+<span class="nc" id="L83">        final MethodParameter returnTypeMethodParam = new MethodParameter(method, -1);</span>
+        // This method caches the resolved value, so it's convenient to initialize it only once here.
+<span class="nc" id="L85">        returnTypeMethodParam.getGenericParameterType();</span>
+
+        // XXX: Create MethodParameter from the actually used subclass of ExceptionResolver?
+<span class="nc" id="L88">        final MethodParameter returnType = new MethodParameter(returnTypeMethodParam);</span>
+<span class="nc" id="L89">        final ModelAndViewContainer mavContainer = new ModelAndViewContainer();</span>
+<span class="nc" id="L90">        final NativeWebRequest webRequest = new ServletWebRequest(request, response);</span>
+
+<span class="nc" id="L92">        this.httpEntityMethodProcessor.handleReturnValue(returnValue, returnType, mavContainer, webRequest);</span>
+<span class="nc" id="L93">      } catch (final Exception ex) {</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (log.isWarnEnabled()) {</span>
+<span class="nc" id="L95">          log.warn(&quot;Failed to process error response: {}&quot;, returnValue, ex);</span>
+        }
+<span class="nc" id="L97">      }</span>
+    }
+<span class="nc" id="L99">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

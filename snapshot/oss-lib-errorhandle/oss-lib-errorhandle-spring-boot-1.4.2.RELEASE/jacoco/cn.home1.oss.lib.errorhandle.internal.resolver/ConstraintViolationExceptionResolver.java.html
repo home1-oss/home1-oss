@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConstraintViolationExceptionResolver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.internal.resolver</a> &gt; <span class="el_source">ConstraintViolationExceptionResolver.java</span></div><h1>ConstraintViolationExceptionResolver.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.internal.resolver;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static org.springframework.util.StringUtils.isEmpty;
+
+import cn.home1.oss.lib.errorhandle.api.AbstractConcreteExceptionResolver;
+import cn.home1.oss.lib.errorhandle.api.ValidationError;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.core.convert.ConversionException;
+import org.springframework.core.convert.ConversionService;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ElementKind;
+import javax.validation.Path;
+import javax.validation.Path.Node;
+
+<span class="fc" id="L25">@Slf4j</span>
+<span class="fc" id="L26">public class ConstraintViolationExceptionResolver</span>
+  extends AbstractConcreteExceptionResolver&lt;ConstraintViolationException&gt; {
+
+  static String convertToString( //
+    final ConversionService conversionService, //
+    final Object value //
+  ) {
+    String reuslt;
+<span class="nc bnc" id="L34" title="All 2 branches missed.">    if (value == null) {</span>
+<span class="nc" id="L35">      reuslt = null;</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">    } else if (conversionService == null) {</span>
+<span class="nc" id="L37">      reuslt = value.toString();</span>
+    } else {
+      try {
+<span class="nc" id="L40">        reuslt = conversionService.convert(value, String.class);</span>
+<span class="nc" id="L41">      } catch (final ConversionException ex) {</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (log.isDebugEnabled()) {</span>
+<span class="nc" id="L43">          log.debug(&quot;failed to convert value '{}' to String.class.&quot;, value, ex);</span>
+        }
+<span class="nc" id="L45">        reuslt = value.toString();</span>
+<span class="nc" id="L46">      }</span>
+    }
+<span class="nc" id="L48">    return reuslt;</span>
+  }
+
+  static Node findLastNonEmptyPathNode(final Path path) {
+<span class="nc" id="L52">    Node found = null;</span>
+<span class="nc" id="L53">    final List&lt;Node&gt; list = newArrayList(path.iterator());</span>
+<span class="nc" id="L54">    Collections.reverse(list);</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">    for (final Node node : list) {</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">      if (!isEmpty(node.getName())) {</span>
+<span class="nc" id="L57">        found = node;</span>
+<span class="nc" id="L58">        break;</span>
+      }
+<span class="nc" id="L60">    }</span>
+<span class="nc" id="L61">    return found;</span>
+  }
+
+  @Override
+  public Optional&lt;List&lt;ValidationError&gt;&gt; validationErrors( //
+    final ConstraintViolationException exception //
+  ) {
+<span class="nc" id="L68">    final List&lt;ValidationError&gt; validationErrors = newLinkedList();</span>
+
+<span class="nc bnc" id="L70" title="All 2 branches missed.">    for (final ConstraintViolation&lt;?&gt; violation : exception.getConstraintViolations()) {</span>
+<span class="nc" id="L71">      final Node pathNode = findLastNonEmptyPathNode(violation.getPropertyPath());</span>
+
+      // path is probably useful only for properties (fields)
+<span class="nc bnc" id="L74" title="All 4 branches missed.">      if (pathNode != null &amp;&amp; pathNode.getKind() == ElementKind.PROPERTY) {</span>
+<span class="nc" id="L75">        validationErrors.add( //</span>
+<span class="nc" id="L76">          ValidationError.validationErrorBuilder() //</span>
+<span class="nc" id="L77">            .field(pathNode.getName()) //</span>
+<span class="nc" id="L78">            .rejected(convertToString(this.conversionService, violation.getInvalidValue())) //</span>
+<span class="nc" id="L79">            .message(violation.getMessage()) //</span>
+<span class="nc" id="L80">            .build() //</span>
+        );
+        // type level constraints etc.
+      } else {
+<span class="nc" id="L84">        validationErrors.add( //</span>
+<span class="nc" id="L85">          ValidationError.validationErrorBuilder() //</span>
+<span class="nc" id="L86">            .message(violation.getMessage()) //</span>
+<span class="nc" id="L87">            .build() //</span>
+        );
+      }
+<span class="nc" id="L90">    }</span>
+
+<span class="nc" id="L92">    return Optional.of(validationErrors);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

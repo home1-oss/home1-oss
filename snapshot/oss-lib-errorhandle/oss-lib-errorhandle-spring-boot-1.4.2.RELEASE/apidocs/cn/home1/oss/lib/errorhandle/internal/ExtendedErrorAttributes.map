@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./ExtendedErrorAttributes.html" title="cn.home1.oss.lib.errorhandle.internal.ExtendedErrorAttributes" alt="" coords="543,181,1343,328"/>
+<area shape="rect" id="node1" href="./ExtendedErrorAttributes.html" title="&lt;TABLE&gt;" alt="" coords="532,176,1353,333"/>
+<area shape="rect" id="node2_1" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/boot/autoconfigure/web/ErrorAttributes.html" title="org.springframework.boot.autoconfigure.web.ErrorAttributes" alt="" coords="15,11,523,123"/>
+<area shape="rect" id="node2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/boot/autoconfigure/web/ErrorAttributes.html" title="&lt;TABLE&gt;" alt="" coords="5,5,534,128"/>
+<area shape="rect" id="node3_2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/web/servlet/HandlerExceptionResolver.html" title="org.springframework.web.servlet.HandlerExceptionResolver" alt="" coords="569,19,1317,114"/>
+<area shape="rect" id="node3" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/web/servlet/HandlerExceptionResolver.html" title="&lt;TABLE&gt;" alt="" coords="558,14,1327,119"/>
+<area shape="rect" id="node4_3" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/core/Ordered.html" title="org.springframework.core.Ordered" alt="" coords="1363,11,1584,123"/>
+<area shape="rect" id="node4" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/core/Ordered.html" title="&lt;TABLE&gt;" alt="" coords="1352,5,1595,128"/>
+</map>

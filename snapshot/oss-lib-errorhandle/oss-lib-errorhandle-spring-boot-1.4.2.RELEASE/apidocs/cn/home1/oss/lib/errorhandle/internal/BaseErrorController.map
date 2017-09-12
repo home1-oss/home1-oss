@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./BaseErrorController.html" title="cn.home1.oss.lib.errorhandle.internal.BaseErrorController" alt="" coords="683,235,1320,381"/>
+<area shape="rect" id="node1" href="./BaseErrorController.html" title="&lt;TABLE&gt;" alt="" coords="672,229,1331,387"/>
+<area shape="rect" id="node2_1" href="./BaseErrorController.RestfulErrorController.html" title="cn.home1.oss.lib.errorhandle.internal.BaseErrorController.RestfulErrorController" alt="" coords="15,449,654,543"/>
+<area shape="rect" id="node2" href="./BaseErrorController.RestfulErrorController.html" title="&lt;TABLE&gt;" alt="" coords="5,443,665,549"/>
+<area shape="rect" id="node3_2" href="./BaseErrorController.TemplateErrorController.html" title="cn.home1.oss.lib.errorhandle.internal.BaseErrorController.TemplateErrorController" alt="" coords="699,449,1303,543"/>
+<area shape="rect" id="node3" href="./BaseErrorController.TemplateErrorController.html" title="&lt;TABLE&gt;" alt="" coords="689,443,1314,549"/>
+<area shape="rect" id="node4_3" href="./BaseErrorController.MixedErrorController.html" title="cn.home1.oss.lib.errorhandle.internal.BaseErrorController.MixedErrorController" alt="" coords="1349,440,1987,552"/>
+<area shape="rect" id="node4" href="./BaseErrorController.MixedErrorController.html" title="&lt;TABLE&gt;" alt="" coords="1338,435,1998,557"/>
+<area shape="rect" id="node5_4" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/boot/autoconfigure/web/AbstractErrorController.html" title="org.springframework.boot.autoconfigure.web.AbstractErrorController" alt="" coords="585,11,1418,175"/>
+<area shape="rect" id="node5" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/boot/autoconfigure/web/AbstractErrorController.html" title="&lt;TABLE&gt;" alt="" coords="574,6,1429,181"/>
+</map>

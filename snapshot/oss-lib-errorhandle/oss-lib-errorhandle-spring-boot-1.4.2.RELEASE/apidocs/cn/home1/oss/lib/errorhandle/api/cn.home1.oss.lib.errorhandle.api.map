@@ -1,0 +1,26 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./ExceptionTranslator.html" title="cn.home1.oss.lib.errorhandle.api.ExceptionTranslator" alt="" coords="15,19,937,183"/>
+<area shape="rect" id="node1" href="./ExceptionTranslator.html" title="&lt;TABLE&gt;" alt="" coords="5,14,947,189"/>
+<area shape="rect" id="node2_1" href="./ExceptionTranslator.Location.html" title="cn.home1.oss.lib.errorhandle.api.ExceptionTranslator.Location" alt="" coords="983,54,1511,149"/>
+<area shape="rect" id="node2" href="./ExceptionTranslator.Location.html" title="&lt;TABLE&gt;" alt="" coords="972,49,1521,154"/>
+<area shape="rect" id="node3_2" href="./ExceptionResolver.html" title="cn.home1.oss.lib.errorhandle.api.ExceptionResolver" alt="" coords="1556,45,2033,157"/>
+<area shape="rect" id="node3" href="./ExceptionResolver.html" title="&lt;TABLE&gt;" alt="" coords="1545,40,2044,163"/>
+<area shape="rect" id="node6_3" href="./ConcreteExceptionResolver.html" title="cn.home1.oss.lib.errorhandle.api.ConcreteExceptionResolver" alt="" coords="1402,251,2187,536"/>
+<area shape="rect" id="node6" href="./ConcreteExceptionResolver.html" title="&lt;TABLE&gt;" alt="" coords="1391,245,2198,541"/>
+<area shape="rect" id="node4_4" href="./ApplicationExceptions.html" title="cn.home1.oss.lib.errorhandle.api.ApplicationExceptions" alt="" coords="2079,19,2777,183"/>
+<area shape="rect" id="node4" href="./ApplicationExceptions.html" title="&lt;TABLE&gt;" alt="" coords="2069,14,2787,189"/>
+<area shape="rect" id="node5_5" href="./StackTraceIndicator.html" title="cn.home1.oss.lib.errorhandle.api.StackTraceIndicator" alt="" coords="2823,54,3295,149"/>
+<area shape="rect" id="node5" href="./StackTraceIndicator.html" title="&lt;TABLE&gt;" alt="" coords="2812,49,3305,154"/>
+<area shape="rect" id="node8_6" href="./AbstractConcreteExceptionResolver.html" title="cn.home1.oss.lib.errorhandle.api.AbstractConcreteExceptionResolver" alt="" coords="1359,595,2231,898"/>
+<area shape="rect" id="node8" href="./AbstractConcreteExceptionResolver.html" title="&lt;TABLE&gt;" alt="" coords="1348,590,2241,903"/>
+<area shape="rect" id="node7_7" href="./HttpHeader.html" title="cn.home1.oss.lib.errorhandle.api.HttpHeader" alt="" coords="3340,28,3700,175"/>
+<area shape="rect" id="node7" href="./HttpHeader.html" title="&lt;TABLE&gt;" alt="" coords="3329,23,3711,180"/>
+<area shape="rect" id="node9_8" href="./ValidationError.html" title="cn.home1.oss.lib.errorhandle.api.ValidationError" alt="" coords="3745,63,3871,140"/>
+<area shape="rect" id="node9" href="./ValidationError.html" title="&lt;TABLE&gt;" alt="" coords="3735,57,3881,145"/>
+<area shape="rect" id="node10_9" href="./ResolvedErrorException.html" title="cn.home1.oss.lib.errorhandle.api.ResolvedErrorException" alt="" coords="3917,28,4286,175"/>
+<area shape="rect" id="node10" href="./ResolvedErrorException.html" title="&lt;TABLE&gt;" alt="" coords="3906,23,4297,180"/>
+<area shape="rect" id="node11_10" href="./ApplicationException.html" title="cn.home1.oss.lib.errorhandle.api.ApplicationException" alt="" coords="4332,19,4977,183"/>
+<area shape="rect" id="node11" href="./ApplicationException.html" title="&lt;TABLE&gt;" alt="" coords="4321,14,4988,189"/>
+<area shape="rect" id="node12_11" href="./ResolvedError.html" title="cn.home1.oss.lib.errorhandle.api.ResolvedError" alt="" coords="5023,11,5484,192"/>
+<area shape="rect" id="node12" href="./ResolvedError.html" title="&lt;TABLE&gt;" alt="" coords="5012,5,5495,197"/>
+</map>

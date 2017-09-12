@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErrorHandleAutoConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.starter</a> &gt; <span class="el_source">ErrorHandleAutoConfiguration.java</span></div><h1>ErrorHandleAutoConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.starter;
+
+import static cn.home1.oss.boot.autoconfigure.AppErrorProperties.SearchStrategy.HIERARCHY_FIRST;
+import static cn.home1.oss.lib.errorhandle.api.ExceptionTranslator.Location.HIERARCHY_FIRST_COMPARATOR;
+import static cn.home1.oss.lib.errorhandle.api.ExceptionTranslator.Location.ORDER_FIRST_COMPARATOR;
+import static cn.home1.oss.lib.errorhandle.api.ResolvedError.RESOLVED_ERROR_COOKIE;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
+import static cn.home1.oss.lib.common.Jackson2Utils.getJackson2Present;
+import static java.util.concurrent.TimeUnit.DAYS;
+
+import cn.home1.oss.boot.autoconfigure.AppErrorProperties;
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.boot.autoconfigure.ConditionalOnNotEnvProduction;
+import cn.home1.oss.lib.errorhandle.api.ExceptionTranslator;
+import cn.home1.oss.lib.errorhandle.api.ExceptionTranslator.Location;
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.errorhandle.internal.BaseErrorController;
+import cn.home1.oss.lib.errorhandle.internal.ContentCachingRequestFilter;
+import cn.home1.oss.lib.errorhandle.internal.DefaultStackTraceIndicator;
+import cn.home1.oss.lib.errorhandle.internal.ExtendedErrorAttributes;
+import cn.home1.oss.lib.errorhandle.internal.rpc.FeignErrorDecoderConfiguration;
+import cn.home1.oss.lib.errorhandle.internal.translator.DefaultExceptionTranslator;
+import cn.home1.oss.lib.webmvc.internal.DefaultHttpEntityMethodProcessor;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.home1.oss.lib.common.msginterpolate.SpelMessageInterpolator;
+import cn.home1.oss.lib.webmvc.api.DomainResolver;
+import cn.home1.oss.lib.webmvc.api.JsonToken;
+import cn.home1.oss.lib.webmvc.api.TokenBasedCookie;
+import cn.home1.oss.lib.webmvc.api.TypeSafeCookie;
+import cn.home1.oss.lib.webmvc.api.UrlEncodedToken;
+import cn.home1.oss.lib.webmvc.starter.WebApplicationAutoConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ErrorAttributes;
+import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.JsonViewResponseBodyAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.Servlet;
+
+/**
+ * A replacement of {@link org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration}.
+ * see: {@link org.springframework.boot.autoconfigure.web.DefaultErrorAttributes}
+ * see: {@link org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration}
+ * Extends WebMvcConfigurerAdapter make this visable to MockMvc tests,
+ * does not override it's method.
+ */
+@AutoConfigureBefore({ErrorMvcAutoConfiguration.class, WebMvcAutoConfiguration.class, SecurityAutoConfiguration.class})
+@AutoConfigureAfter({WebApplicationAutoConfiguration.class})
+@ComponentScan(basePackages = {&quot;cn.home1.oss.lib.errorhandle.starter&quot;})
+@ConditionalOnClass({Servlet.class, DispatcherServlet.class})
+@ConditionalOnWebApplication
+@Configuration
+@EnableConfigurationProperties(value = {AppProperties.class, DefaultStackTraceIndicator.class})
+@Import({ //
+  ExceptionResolverConfiguration.class, //
+  FeignErrorDecoderConfiguration.class, //
+  ExceptionHandlerConfiguration.class})
+@ServletComponentScan(basePackages = {&quot;cn.home1.oss.lib.errorhandle.filter&quot;})
+<span class="fc" id="L95">@Slf4j</span>
+<span class="fc" id="L96">public class ErrorHandleAutoConfiguration extends WebMvcConfigurerAdapter implements ApplicationContextAware {</span>
+
+  private ApplicationContext applicationContext;
+
+  @Autowired
+  private AppProperties appProperties;
+
+  @Autowired
+  private DefaultHttpEntityMethodProcessor defaultHttpEntityMethodProcessor;
+
+  @Autowired
+  private DomainResolver domainResolver;
+  @Autowired
+  private ObjectMapper objectMapper;
+  @Autowired
+  private ServerProperties serverProperties;
+
+  @Bean
+  @ConditionalOnNotEnvProduction
+  public ContentCachingRequestFilter contentCachingRequestFilter() {
+<span class="fc" id="L116">    return new ContentCachingRequestFilter();</span>
+  }
+
+  @Bean(name = RESOLVED_ERROR_COOKIE)
+  @ConditionalOnMissingBean(name = RESOLVED_ERROR_COOKIE)
+  public TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie() {
+<span class="fc" id="L122">    return buildResolvedErrorCookie(this.domainResolver, this.objectMapper);</span>
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(value = ErrorAttributes.class, search = SearchStrategy.CURRENT)
+  public ExtendedErrorAttributes errorAttributes() {
+<span class="fc" id="L128">    return new ExtendedErrorAttributes();</span>
+  }
+
+  @Bean
+  //@ConditionalOnMissingBean(value = ErrorController.class, search = SearchStrategy.CURRENT)
+  @ConditionalOnProperty(prefix = &quot;app&quot;, name = &quot;type&quot;, havingValue = &quot;RESTFUL&quot;, matchIfMissing = false)
+  public BaseErrorController.RestfulErrorController restfulErrorController( //
+    final ExtendedErrorAttributes errorAttributes) {
+<span class="nc" id="L136">    return new BaseErrorController.RestfulErrorController(errorAttributes, this.serverProperties.getError());</span>
+  }
+
+  @Bean
+  //@ConditionalOnMissingBean(value = ErrorController.class, search = SearchStrategy.CURRENT)
+  @ConditionalOnProperty(prefix = &quot;app&quot;, name = &quot;type&quot;, havingValue = &quot;TEMPLATE&quot;, matchIfMissing = false)
+  public BaseErrorController.TemplateErrorController templateErrorController( //
+    final ExtendedErrorAttributes errorAttributes) {
+<span class="nc" id="L144">    return new BaseErrorController.TemplateErrorController(errorAttributes, this.serverProperties.getError());</span>
+  }
+
+  @Bean
+  //@ConditionalOnMissingBean(value = ErrorController.class, search = SearchStrategy.CURRENT)
+  @ConditionalOnProperty(prefix = &quot;app&quot;, name = &quot;type&quot;, havingValue = &quot;MIXED&quot;, matchIfMissing = true)
+  public BaseErrorController.MixedErrorController mixedErrorController( //
+    final ExtendedErrorAttributes errorAttributes) {
+<span class="fc" id="L152">    return new BaseErrorController.MixedErrorController(errorAttributes, this.serverProperties.getError());</span>
+  }
+
+  @Bean
+  public ExceptionTranslator exceptionTranslator() {
+<span class="fc" id="L157">    return buildExceptionTranslator(this.appProperties.getError().getSearchStrategy());</span>
+  }
+
+  @Override
+  public void setApplicationContext(final ApplicationContext applicationContext) {
+<span class="fc" id="L162">    this.applicationContext = applicationContext;</span>
+<span class="fc" id="L163">  }</span>
+
+  // ------------------------------ experimental WebMvcConfigurerAdapter ------------------------------
+
+  /**
+   * see: {@link WebMvcConfigurationSupport#handlerExceptionResolver()}.
+   *
+   * @param resolvers resolvers
+   */
+  @Override
+  public void configureHandlerExceptionResolvers(final List&lt;HandlerExceptionResolver&gt; resolvers) {
+    // call this addDefaultHandlerExceptionResolvers ?
+<span class="fc" id="L175">  }</span>
+
+  /**
+   * @param resolvers exceptionResolvers
+   * @deprecated see: {@link org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
+   * #addDefaultHandlerExceptionResolvers(List) addDefaultHandlerExceptionResolvers}
+   */
+  @Deprecated
+  protected final void addDefaultHandlerExceptionResolvers( //
+    final List&lt;HandlerExceptionResolver&gt; resolvers //
+  ) {
+<span class="nc" id="L186">    final List&lt;ResponseBodyAdvice&lt;?&gt;&gt; interceptors = newArrayList();</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">    if (getJackson2Present()) {</span>
+<span class="nc" id="L188">      interceptors.add(new JsonViewResponseBodyAdvice());</span>
+    }
+<span class="nc" id="L190">    final ExceptionHandlerExceptionResolver handlerExceptionResolver = new ExceptionHandlerExceptionResolver();</span>
+<span class="nc" id="L191">    handlerExceptionResolver.setMessageConverters(this.defaultHttpEntityMethodProcessor.getMessageConverters());</span>
+<span class="nc" id="L192">    handlerExceptionResolver.setResponseBodyAdvice(interceptors);</span>
+<span class="nc" id="L193">    handlerExceptionResolver.setApplicationContext(this.applicationContext);</span>
+<span class="nc" id="L194">    handlerExceptionResolver.afterPropertiesSet();</span>
+
+<span class="nc" id="L196">    final ResponseStatusExceptionResolver responseStatusExceptionResolver = new ResponseStatusExceptionResolver();</span>
+<span class="nc" id="L197">    responseStatusExceptionResolver.setMessageSource(this.applicationContext);</span>
+
+<span class="nc" id="L199">    resolvers.add(handlerExceptionResolver);</span>
+    // resolvers add responseStatusExceptionResolver ?
+    // resolvers add new DefaultHandlerExceptionResolver ?
+<span class="nc" id="L202">  }</span>
+
+  public static ExceptionTranslator buildExceptionTranslator(final AppErrorProperties.SearchStrategy searchStrategy) {
+<span class="fc" id="L205">    final Optional&lt;MessageSource&gt; messageSourceOptional = messageSource(&quot;classpath:/errorhandle/default&quot;);</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">    final MessageSource defaultMessageSource = messageSourceOptional.isPresent() ? messageSourceOptional.get() : null;</span>
+<span class="fc" id="L207">    checkNotNull(defaultMessageSource, &quot;message source classpath:/errorhandle/default not present&quot;);</span>
+
+<span class="fc" id="L209">    final Optional&lt;MessageSource&gt; applicationMessageSource = messageSource(&quot;classpath:/errorhandle/application&quot;);</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">    final List&lt;MessageSource&gt; messageSources = applicationMessageSource.isPresent() ? //</span>
+<span class="pc" id="L211">      newArrayList(applicationMessageSource.get(), defaultMessageSource) : //</span>
+<span class="pc" id="L212">      newArrayList(defaultMessageSource);</span>
+
+<span class="fc bfc" id="L214" title="All 2 branches covered.">    final Comparator&lt;Location&gt; locationComparator = HIERARCHY_FIRST == searchStrategy ? //</span>
+      HIERARCHY_FIRST_COMPARATOR : ORDER_FIRST_COMPARATOR;
+
+<span class="fc" id="L217">    final DefaultExceptionTranslator defaultExceptionTranslator = new DefaultExceptionTranslator();</span>
+<span class="fc" id="L218">    defaultExceptionTranslator.setLocationComparator(locationComparator);</span>
+<span class="fc" id="L219">    defaultExceptionTranslator.setMessageSources(messageSources);</span>
+<span class="fc" id="L220">    defaultExceptionTranslator.setMessageInterpolator(new SpelMessageInterpolator());</span>
+<span class="fc" id="L221">    return defaultExceptionTranslator;</span>
+  }
+
+  public static TypeSafeCookie&lt;ResolvedError&gt; buildResolvedErrorCookie( //
+    final DomainResolver domainResolver, final ObjectMapper objectMapper) {
+<span class="fc" id="L226">    final JsonToken&lt;ResolvedError&gt; jsonToken = new JsonToken&lt;&gt;(ResolvedError.class, objectMapper);</span>
+<span class="fc" id="L227">    final UrlEncodedToken&lt;ResolvedError&gt; urlEncodedToken = new UrlEncodedToken&lt;&gt;(jsonToken);</span>
+<span class="fc" id="L228">    final int maxAge = (int) DAYS.toSeconds(1L);</span>
+<span class="fc" id="L229">    return new TokenBasedCookie&lt;&gt;(domainResolver, false, maxAge, &quot;resolved_error&quot;, false, urlEncodedToken);</span>
+  }
+
+  static Optional&lt;MessageSource&gt; messageSource(final String location) {
+    final Optional&lt;MessageSource&gt; result;
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">    if (StringUtils.isNotBlank(location)) {</span>
+<span class="fc" id="L235">      final ReloadableResourceBundleMessageSource messages = new ReloadableResourceBundleMessageSource();</span>
+<span class="fc" id="L236">      messages.setBasename(location);</span>
+<span class="fc" id="L237">      messages.setDefaultEncoding(&quot;UTF-8&quot;);</span>
+<span class="fc" id="L238">      messages.setFallbackToSystemLocale(false);</span>
+<span class="fc" id="L239">      result = Optional.of(messages);</span>
+<span class="fc" id="L240">    } else {</span>
+<span class="nc" id="L241">      log.info(&quot;errorhandle messageSource not found at {}&quot;, location);</span>
+<span class="nc" id="L242">      result = Optional.empty();</span>
+    }
+<span class="fc" id="L244">    return result;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

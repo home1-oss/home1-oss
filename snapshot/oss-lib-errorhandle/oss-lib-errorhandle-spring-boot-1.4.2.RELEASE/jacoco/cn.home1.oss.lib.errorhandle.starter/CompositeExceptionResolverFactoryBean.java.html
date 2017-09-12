@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CompositeExceptionResolverFactoryBean.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.starter</a> &gt; <span class="el_source">CompositeExceptionResolverFactoryBean.java</span></div><h1>CompositeExceptionResolverFactoryBean.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.starter;
+
+import com.google.common.collect.ImmutableMap;
+
+import cn.home1.oss.lib.errorhandle.api.ApplicationException;
+import cn.home1.oss.lib.errorhandle.api.ConcreteExceptionResolver;
+import cn.home1.oss.lib.errorhandle.api.ExceptionResolver;
+import cn.home1.oss.lib.errorhandle.api.ExceptionTranslator;
+import cn.home1.oss.lib.errorhandle.api.StackTraceIndicator;
+import cn.home1.oss.lib.errorhandle.internal.CompositeExceptionResolver;
+import cn.home1.oss.lib.errorhandle.internal.resolver.ApplicationErrorExceptionResolver;
+import cn.home1.oss.lib.errorhandle.internal.resolver.ConstraintViolationExceptionResolver;
+import cn.home1.oss.lib.errorhandle.internal.resolver.DefaultExceptionResolver;
+import cn.home1.oss.lib.errorhandle.internal.resolver.HttpMediaTypeNotSupportedExceptionResolver;
+import cn.home1.oss.lib.errorhandle.internal.resolver.HttpRequestMethodNotSupportedExceptionResolver;
+import cn.home1.oss.lib.errorhandle.internal.resolver.MethodArgumentNotValidExceptionResolver;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import java.util.Map;
+
+<span class="nc" id="L32">@Setter</span>
+<span class="fc" id="L33">@Slf4j</span>
+<span class="fc" id="L34">public class CompositeExceptionResolverFactoryBean implements FactoryBean&lt;ExceptionResolver&lt;Throwable&gt;&gt; {</span>
+
+  public static final String CONSTRAINT_VIOLATION_EXCEPTION = &quot;javax.validation.ConstraintViolationException&quot;;
+
+  @Autowired
+  private ExceptionTranslator exceptionTranslator;
+  @Autowired
+  private StackTraceIndicator stackTraceIndicator;
+
+  @SuppressWarnings({&quot;rawtypes&quot;, &quot;unchecked&quot;})
+  static Map&lt;Class&lt;? extends Throwable&gt;, ConcreteExceptionResolver&gt; buildInResolvers( //
+    final ConversionService conversionService, //
+    final ExceptionTranslator exceptionTranslator, //
+    final StackTraceIndicator stackTraceIndicator //
+  ) {
+<span class="fc" id="L49">    final ImmutableMap.Builder&lt;Class&lt;? extends Throwable&gt;, ConcreteExceptionResolver&gt; builder = ImmutableMap.builder();</span>
+
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">    if (ClassUtils.isPresent( //</span>
+      CONSTRAINT_VIOLATION_EXCEPTION, //
+<span class="fc" id="L53">      Thread.currentThread().getContextClassLoader() //</span>
+    )) {
+      try {
+<span class="fc" id="L56">        final Class clazz = Class.forName(CONSTRAINT_VIOLATION_EXCEPTION);</span>
+<span class="fc" id="L57">        builder.put(clazz, new ConstraintViolationExceptionResolver());</span>
+<span class="nc" id="L58">      } catch (final ClassNotFoundException ex) {</span>
+        // ignore
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (log.isDebugEnabled()) {</span>
+<span class="nc" id="L61">          log.debug(&quot;class {} not found&quot;, CONSTRAINT_VIOLATION_EXCEPTION, ex);</span>
+        }
+<span class="fc" id="L63">      }</span>
+    }
+
+<span class="fc" id="L66">    builder.put(HttpMediaTypeNotSupportedException.class, new HttpMediaTypeNotSupportedExceptionResolver());</span>
+<span class="fc" id="L67">    builder.put(HttpRequestMethodNotSupportedException.class, new HttpRequestMethodNotSupportedExceptionResolver());</span>
+<span class="fc" id="L68">    builder.put(MethodArgumentNotValidException.class, new MethodArgumentNotValidExceptionResolver());</span>
+<span class="fc" id="L69">    builder.put(ApplicationException.class, new ApplicationErrorExceptionResolver());</span>
+
+<span class="fc" id="L71">    final Map&lt;Class&lt;? extends Throwable&gt;, ConcreteExceptionResolver&gt; map = builder.build();</span>
+<span class="fc" id="L72">    map.values().forEach(exceptionResolver -&gt; {</span>
+<span class="fc" id="L73">      exceptionResolver.setConversionService(conversionService);</span>
+<span class="fc" id="L74">      exceptionResolver.setExceptionTranslator(exceptionTranslator);</span>
+<span class="fc" id="L75">      exceptionResolver.setStackTraceIndicator(stackTraceIndicator);</span>
+<span class="fc" id="L76">    });</span>
+
+<span class="fc" id="L78">    return map;</span>
+  }
+
+  @Override
+  public ExceptionResolver&lt;Throwable&gt; getObject() {
+<span class="fc" id="L83">    final ConversionService conversionService = new DefaultConversionService(); // TODO conversionService</span>
+
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="fc" id="L86">    final Map&lt;Class&lt;? extends Throwable&gt;, ConcreteExceptionResolver&gt; buildInResolvers = buildInResolvers( //</span>
+      conversionService, //
+      this.exceptionTranslator, //
+      this.stackTraceIndicator //
+    );
+
+<span class="fc" id="L92">    final DefaultExceptionResolver defaultResolver = new DefaultExceptionResolver();</span>
+<span class="fc" id="L93">    defaultResolver.setConversionService(conversionService);</span>
+<span class="fc" id="L94">    defaultResolver.setExceptionTranslator(this.exceptionTranslator);</span>
+<span class="fc" id="L95">    defaultResolver.setStackTraceIndicator(this.stackTraceIndicator);</span>
+
+<span class="fc" id="L97">    final CompositeExceptionResolver compositeExceptionResolver = new CompositeExceptionResolver();</span>
+<span class="fc" id="L98">    compositeExceptionResolver.setDefaultResolver(defaultResolver);</span>
+<span class="fc" id="L99">    compositeExceptionResolver.setResolverMap(buildInResolvers);</span>
+
+<span class="fc" id="L101">    return compositeExceptionResolver;</span>
+  }
+
+  @Override
+  public Class&lt;?&gt; getObjectType() {
+<span class="fc" id="L106">    return ExceptionResolver.class;</span>
+  }
+
+  @Override
+  public boolean isSingleton() {
+<span class="fc" id="L111">    return false;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

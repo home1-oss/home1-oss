@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationExceptions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.api</a> &gt; <span class="el_source">ApplicationExceptions.java</span></div><h1>ApplicationExceptions.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.api;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Created by zhanghaolun on 16/9/22.
+ */
+public final class ApplicationExceptions {
+
+<span class="nc" id="L21">  static final Pattern PATTERN_EXPRESSION = Pattern.compile(&quot;(#\\{[^}]+\\}|\\{\\})&quot;);</span>
+
+<span class="nc" id="L23">  private ApplicationExceptions() {</span>
+<span class="nc" id="L24">  }</span>
+
+  public static void checkArgument( //
+      final boolean expression, //
+      final String format, final Serializable... arguments //
+  ) {
+<span class="nc bnc" id="L30" title="All 2 branches missed.">    if (!expression) {</span>
+<span class="nc" id="L31">      throw applicationException(BAD_REQUEST, format, arguments);</span>
+    }
+<span class="nc" id="L33">  }</span>
+
+  public static &lt;T&gt; T checkNotNull( //
+      final T object, //
+      final HttpStatus status, final String format, final Serializable... arguments //
+  ) {
+<span class="nc bnc" id="L39" title="All 2 branches missed.">    if (object == null) {</span>
+<span class="nc" id="L40">      throw applicationException(status, format, arguments);</span>
+    }
+<span class="nc" id="L42">    return object;</span>
+  }
+
+  public static void check( //
+      final boolean expression, //
+      final HttpStatus status, final String format, final Serializable... arguments //
+  ) {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">    if (!expression) {</span>
+<span class="nc" id="L50">      throw applicationException(status, format, arguments);</span>
+    }
+<span class="nc" id="L52">  }</span>
+
+  public static ApplicationException wrap( //
+      final Throwable throwable, //
+      final HttpStatus status, final String format, final Serializable... arguments //
+  ) {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    if (ApplicationException.isApplicationError(throwable)) {</span>
+<span class="nc" id="L59">      return (ApplicationException) throwable;</span>
+    } else {
+<span class="nc" id="L61">      return applicationException(status, format, arguments);</span>
+    }
+  }
+
+  public static ApplicationException applicationException( //
+      final HttpStatus status, final String format, final Serializable... arguments //
+  ) {
+<span class="nc" id="L68">    final String template = toTemplate(format);</span>
+<span class="nc" id="L69">    final Map&lt;String, Serializable&gt; contextVariables = toContextVariables(template, arguments);</span>
+<span class="nc" id="L70">    return new ApplicationException(status, template, contextVariables);</span>
+  }
+
+  public static String toTemplate(final String format) {
+<span class="nc" id="L74">    final List&lt;String[]&gt; found = newLinkedList();</span>
+
+<span class="nc" id="L76">    final Matcher matcher = PATTERN_EXPRESSION.matcher(format);</span>
+<span class="nc" id="L77">    int index = 0;</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">    while (matcher.find()) {</span>
+<span class="nc" id="L79">      final String text = matcher.group(0);</span>
+<span class="nc" id="L80">      final String el = &quot;#{arg&quot; + index + &quot;}&quot;;</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">      found.add(new String[]{text, isEl(text) ? text : el});</span>
+<span class="nc" id="L82">      index++;</span>
+<span class="nc" id="L83">    }</span>
+
+<span class="nc" id="L85">    String template = format;</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">    for (final String[] element : found) {</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">      if (!element[0].equals(element[1])) {</span>
+<span class="nc" id="L88">        template = StringUtils.replace(template, element[0], element[1], 1);</span>
+      }
+<span class="nc" id="L90">    }</span>
+
+<span class="nc" id="L92">    return template;</span>
+  }
+
+  static Map&lt;String, Serializable&gt; toContextVariables(final String template, final Serializable[] arguments) {
+<span class="nc" id="L96">    final Map&lt;String, Serializable&gt; contextVariables = newLinkedHashMap();</span>
+
+<span class="nc" id="L98">    final Matcher matcher = PATTERN_EXPRESSION.matcher(template);</span>
+<span class="nc" id="L99">    int index = 0;</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">    while (matcher.find()) {</span>
+<span class="nc" id="L101">      final String text = matcher.group(0);</span>
+<span class="nc" id="L102">      final String name = text.substring(2, text.length() - 1);</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">      final Serializable value = index &lt; arguments.length ? arguments[index] : null;</span>
+<span class="nc" id="L104">      contextVariables.put(name, value);</span>
+<span class="nc" id="L105">      index++;</span>
+<span class="nc" id="L106">    }</span>
+
+<span class="nc" id="L108">    return contextVariables;</span>
+  }
+
+  static boolean isEl(final String text) {
+<span class="nc bnc" id="L112" title="All 2 branches missed.">    return text.charAt(0) == '#';</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

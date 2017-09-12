@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-errorhandle-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.errorhandle.api</a> &gt; <span class="el_source">ApplicationException.java</span></div><h1>ApplicationException.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.errorhandle.api;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.MoreObjects;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
+import org.springframework.http.HttpStatus;
+
+import java.io.Serializable;
+import java.util.Map;
+
+/**
+ * 应用抛出的通用错误信息.
+ *
+ * &lt;p&gt;
+ * Created by zhanghaolun on 16/7/1.
+ * &lt;/p&gt;
+ */
+//@JsonInclude(JsonInclude.Include.NON_EMPTY) // for Jackson 2.x
+//@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY) // for Jackson 1.x
+//@XmlRootElement(name = &quot;applicationError&quot;) // for JAXB
+<span class="nc bnc" id="L25" title="All 22 branches missed.">@EqualsAndHashCode(callSuper = false, of = {&quot;status&quot;, &quot;template&quot;})</span>
+@Getter
+public final class ApplicationException extends RuntimeException implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+
+  private static final String APPLICATION_EXCEPTION = &quot;application exception&quot;;
+
+  private final HttpStatus status;
+  private final String template;
+  private final Map&lt;String, Serializable&gt; contextVariables;
+
+  public ApplicationException( //
+    final HttpStatus status, //
+    final String template, //
+    final Map&lt;String, Serializable&gt; contextVariables //
+  ) {
+<span class="nc" id="L42">    super(APPLICATION_EXCEPTION);</span>
+<span class="nc" id="L43">    this.status = checkNotNull(status, &quot;status must not null&quot;);</span>
+<span class="nc" id="L44">    this.template = checkNotNull(template, &quot;template must not null&quot;);</span>
+<span class="nc" id="L45">    this.contextVariables = checkNotNull(contextVariables, &quot;contextVariables must not null&quot;);</span>
+<span class="nc" id="L46">  }</span>
+
+  public static Boolean isApplicationError(final Throwable throwable) {
+<span class="nc bnc" id="L49" title="All 4 branches missed.">    return throwable != null &amp;&amp; ApplicationException.class.isAssignableFrom(throwable.getClass());</span>
+  }
+
+  public Map&lt;String, Serializable&gt; getContextVariables() {
+<span class="nc" id="L53">    return this.contextVariables;</span>
+  }
+
+  public HttpStatus getStatus() {
+<span class="nc" id="L57">    return this.status;</span>
+  }
+
+  public String getTemplate() {
+<span class="nc" id="L61">    return this.template;</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc" id="L66">    final MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(ApplicationException.class)</span>
+<span class="nc" id="L67">      .add(&quot;status&quot;, this.status)</span>
+<span class="nc" id="L68">      .add(&quot;template&quot;, this.template);</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">    if (this.contextVariables != null) {</span>
+<span class="nc" id="L70">      this.contextVariables.entrySet().forEach(entry -&gt; toStringHelper.add(entry.getKey(), entry.getValue()));</span>
+    }
+<span class="nc" id="L72">    return toStringHelper.toString();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
