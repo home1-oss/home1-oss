@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<rss version="0.91">
+  <channel>
+    <title>oss-lib-errorhandle - Checkstyle report</title>
+    <link>https://github.com/home1-oss/oss-lib-errorhandle</link>
+    <description>oss-lib-errorhandle - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2017</copyright>
+    <item>
+      <title>File: 35,
+             Errors: 0,
+             Warnings: 14,
+             Infos: 0
+      </title>
+            <link>https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html</link>
+      <description>
+        <p>Click <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.ApplicationExceptions.java">cn/home1/oss/lib/errorhandle/api/ApplicationExceptions.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.DefaultExceptionHandler.java">cn/home1/oss/lib/errorhandle/internal/DefaultExceptionHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.BaseErrorController.java">cn/home1/oss/lib/errorhandle/internal/BaseErrorController.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.resolver.MethodArgumentNotValidExceptionResolver.java">cn/home1/oss/lib/errorhandle/internal/resolver/MethodArgumentNotValidExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.ValidationError.java">cn/home1/oss/lib/errorhandle/api/ValidationError.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.ExceptionResolver.java">cn/home1/oss/lib/errorhandle/api/ExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.starter.ExceptionResolverConfiguration.java">cn/home1/oss/lib/errorhandle/starter/ExceptionResolverConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.resolver.HttpMediaTypeNotSupportedExceptionResolver.java">cn/home1/oss/lib/errorhandle/internal/resolver/HttpMediaTypeNotSupportedExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.rpc.FeignErrorDecoderConfiguration.java">cn/home1/oss/lib/errorhandle/internal/rpc/FeignErrorDecoderConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#git.properties">git.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#errorhandle.default.properties">errorhandle/default.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.RestfulExceptionHandler.java">cn/home1/oss/lib/errorhandle/internal/RestfulExceptionHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.TemplateExceptionHandler.java">cn/home1/oss/lib/errorhandle/internal/TemplateExceptionHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#errorhandle.default_zh.properties">errorhandle/default_zh.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.CompositeExceptionResolver.java">cn/home1/oss/lib/errorhandle/internal/CompositeExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.ResolvedErrorException.java">cn/home1/oss/lib/errorhandle/api/ResolvedErrorException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.ExceptionTranslator.java">cn/home1/oss/lib/errorhandle/api/ExceptionTranslator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.resolver.DefaultExceptionResolver.java">cn/home1/oss/lib/errorhandle/internal/resolver/DefaultExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.ContentCachingRequestFilter.java">cn/home1/oss/lib/errorhandle/internal/ContentCachingRequestFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.DefaultStackTraceIndicator.java">cn/home1/oss/lib/errorhandle/internal/DefaultStackTraceIndicator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.translator.DefaultExceptionTranslator.java">cn/home1/oss/lib/errorhandle/internal/translator/DefaultExceptionTranslator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.starter.CompositeExceptionResolverFactoryBean.java">cn/home1/oss/lib/errorhandle/starter/CompositeExceptionResolverFactoryBean.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.ConcreteExceptionResolver.java">cn/home1/oss/lib/errorhandle/api/ConcreteExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.StackTraceIndicator.java">cn/home1/oss/lib/errorhandle/api/StackTraceIndicator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.starter.ErrorHandleAutoConfiguration.java">cn/home1/oss/lib/errorhandle/starter/ErrorHandleAutoConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.ApplicationException.java">cn/home1/oss/lib/errorhandle/api/ApplicationException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.rpc.GenericFeignErrorDecoder.java">cn/home1/oss/lib/errorhandle/internal/rpc/GenericFeignErrorDecoder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.resolver.HttpRequestMethodNotSupportedExceptionResolver.java">cn/home1/oss/lib/errorhandle/internal/resolver/HttpRequestMethodNotSupportedExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.AbstractConcreteExceptionResolver.java">cn/home1/oss/lib/errorhandle/api/AbstractConcreteExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.HttpHeader.java">cn/home1/oss/lib/errorhandle/api/HttpHeader.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.ExtendedErrorAttributes.java">cn/home1/oss/lib/errorhandle/internal/ExtendedErrorAttributes.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.api.ResolvedError.java">cn/home1/oss/lib/errorhandle/api/ResolvedError.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.starter.ExceptionHandlerConfiguration.java">cn/home1/oss/lib/errorhandle/starter/ExceptionHandlerConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.resolver.ApplicationErrorExceptionResolver.java">cn/home1/oss/lib/errorhandle/internal/resolver/ApplicationErrorExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-errorhandle/checkstyle.html#cn.home1.oss.lib.errorhandle.internal.resolver.ConstraintViolationExceptionResolver.java">cn/home1/oss/lib/errorhandle/internal/resolver/ConstraintViolationExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+
