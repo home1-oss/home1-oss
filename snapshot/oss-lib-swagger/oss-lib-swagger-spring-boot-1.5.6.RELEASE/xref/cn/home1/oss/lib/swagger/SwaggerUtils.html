@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>SwaggerUtils xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/cn/home1/oss/lib/swagger/SwaggerUtils.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> cn.home1.oss.lib.swagger;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> springfox.documentation.builders.ApiInfoBuilder;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> springfox.documentation.service.ApiInfo;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_javadoccomment"> * Created by zhanghaolun on 16/11/1.</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../cn/home1/oss/lib/swagger/SwaggerUtils.html">SwaggerUtils</a> {
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>    <strong class="jxr_keyword">private</strong> <a href="../../../../../cn/home1/oss/lib/swagger/SwaggerUtils.html">SwaggerUtils</a>() {
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>    }
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ApiInfo apiInfo(<strong class="jxr_keyword">final</strong> String title, <strong class="jxr_keyword">final</strong> String description) {
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ApiInfoBuilder()
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>        <em class="jxr_comment">//.contact(new Contact("haolun zhang", "", "haolunzhang@somedomain.com"))</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>        .description(description)
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>        <em class="jxr_comment">//.license("Apache License Version 2.0")</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>        <em class="jxr_comment">//.licenseUrl("https://github.com/IBM-Bluemix/news-aggregator/blob/master/LICENSE")</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>        <em class="jxr_comment">//.termsOfServiceUrl("http://www-03.ibm.com/software/sla/sladb.nsf/sla/bm?Open")</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>        .title(title)
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>        <em class="jxr_comment">//.version("1.0")</em>
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>        .build();
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>    }
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2017. All rights reserved.</div>
+</body>
+</html>
