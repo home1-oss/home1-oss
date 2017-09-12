@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Jetty9ServerCustomizers.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-webmvc-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.webmvc.api</a> &gt; <span class="el_source">Jetty9ServerCustomizers.java</span></div><h1>Jetty9ServerCustomizers.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.webmvc.api;
+
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static java.lang.Boolean.parseBoolean;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static lombok.AccessLevel.PRIVATE;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.io.FileUtils;
+import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.jetty.server.ConnectionFactory;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ForwardedRequestCustomizer;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.RequestLog;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.Slf4jRequestLog;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.MovedContextHandler;
+import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.jetty.JettyServerCustomizer;
+import org.springframework.core.env.Environment;
+
+import java.io.File;
+import java.util.Collection;
+
+public interface Jetty9ServerCustomizers {
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  static &lt;T&gt; Collection&lt;T&gt; connectorConnectionFactories(final Connector connector,
+    final Class&lt;T&gt; ofType) {
+<span class="nc" id="L45">    final Collection&lt;T&gt; connectionFactories = newLinkedHashSet();</span>
+<span class="nc" id="L46">    final ConnectionFactory defaultConnectionFactory = connector.getDefaultConnectionFactory();</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">    if (defaultConnectionFactory != null</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">      &amp;&amp; ofType.isAssignableFrom(defaultConnectionFactory.getClass())) {</span>
+<span class="nc" id="L49">      connectionFactories.add((T) defaultConnectionFactory);</span>
+    }
+<span class="nc" id="L51">    connectionFactories.addAll(connector.getConnectionFactories().stream()</span>
+<span class="nc" id="L52">      .filter(connectionFactory -&gt; ofType.isAssignableFrom(connectionFactory.getClass()))</span>
+<span class="nc" id="L53">      .map(connectionFactory -&gt; (T) connectionFactory).collect(toList()));</span>
+<span class="nc" id="L54">    return connectionFactories;</span>
+  }
+
+  static &lt;T&gt; Collection&lt;T&gt; serverConnectionFactories(final Server server, final Class&lt;T&gt; ofType) {
+<span class="nc" id="L58">    return newLinkedHashSet(asList(server.getConnectors()).stream()</span>
+<span class="nc" id="L59">      .flatMap(connector -&gt; connectorConnectionFactories(connector, ofType).stream())</span>
+<span class="nc" id="L60">      .collect(toList()));</span>
+  }
+
+  static Collection&lt;ServerConnector&gt; serverConnectors(final Server server) {
+<span class="nc" id="L64">    return newLinkedHashSet(</span>
+<span class="nc" id="L65">      asList(server.getConnectors()).stream().filter(c -&gt; c instanceof ServerConnector)</span>
+<span class="nc" id="L66">        .map(connector -&gt; (ServerConnector) connector).collect(toList()));</span>
+  }
+
+  static JettyEmbeddedServletContainerFactory jetty(
+    final ConfigurableEmbeddedServletContainer container) {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">    if (container instanceof JettyEmbeddedServletContainerFactory) {</span>
+<span class="nc" id="L72">      return (JettyEmbeddedServletContainerFactory) container;</span>
+    } else {
+<span class="nc" id="L74">      return null;</span>
+    }
+  }
+
+<span class="nc bnc" id="L78" title="All 4 branches missed.">  @AllArgsConstructor(access = PRIVATE)</span>
+  class RedirectToHostRoot implements JettyServerCustomizer {
+
+    @NonNull
+    private final String host;
+    @NonNull
+    private final String root;
+
+    @Override
+    public void customize(final Server server) {
+<span class="nc" id="L88">      final HandlerCollection handlers = new HandlerCollection();</span>
+<span class="nc" id="L89">      final MovedContextHandler movedContextHandler = new MovedContextHandler();</span>
+<span class="nc" id="L90">      movedContextHandler.setContextPath(&quot;/&quot;);</span>
+<span class="nc" id="L91">      movedContextHandler.setNewContextURL(this.root);</span>
+<span class="nc" id="L92">      movedContextHandler.setPermanent(true);</span>
+<span class="nc" id="L93">      movedContextHandler.setDiscardPathInfo(false);</span>
+<span class="nc" id="L94">      movedContextHandler.setDiscardQuery(false);</span>
+<span class="nc" id="L95">      movedContextHandler.setVirtualHosts(new String[]{this.host});</span>
+<span class="nc" id="L96">      handlers.addHandler(movedContextHandler);</span>
+
+<span class="nc" id="L98">      asList(server.getHandlers()).forEach(handlers::addHandler);</span>
+<span class="nc" id="L99">      server.setHandler(handlers);</span>
+<span class="nc" id="L100">    }</span>
+  }
+
+  /**
+   * see:
+   * http://stackoverflow.com/questions/3539143/redirect-non-www-version-of-domain-to-www-in-jetty
+   *
+   * @param container container
+   * @param host      host
+   * @param root      root
+   */
+  static void redirectRootDomainToHostRoot( //
+    final ConfigurableEmbeddedServletContainer container, final String host, final String root //
+  ) {
+<span class="nc" id="L114">    final JettyEmbeddedServletContainerFactory jetty = jetty(container);</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">    if (jetty == null) {</span>
+<span class="nc" id="L116">      return;</span>
+    }
+
+<span class="nc" id="L119">    jetty.addServerCustomizers(new RedirectToHostRoot(host, root));</span>
+<span class="nc" id="L120">  }</span>
+
+<span class="nc" id="L122">  @AllArgsConstructor(access = PRIVATE)</span>
+  class AccessLog implements JettyServerCustomizer {
+
+    private String applicationName;
+
+    @Override
+    public void customize(final Server server) {
+<span class="nc" id="L129">      final HandlerCollection handlers = new HandlerCollection();</span>
+      // final RequestLog requestLog = slf4jLog();
+<span class="nc" id="L131">      final RequestLog requestLog = ncsaRequestLog(applicationName);</span>
+<span class="nc" id="L132">      final RequestLogHandler logHandler = new RequestLogHandler();</span>
+<span class="nc" id="L133">      logHandler.setRequestLog(requestLog);</span>
+<span class="nc" id="L134">      handlers.addHandler(logHandler);</span>
+
+<span class="nc" id="L136">      asList(server.getHandlers()).forEach(handlers::addHandler);</span>
+<span class="nc" id="L137">      server.setHandler(handlers);</span>
+<span class="nc" id="L138">    }</span>
+
+    public static RequestLog slf4jLog() {
+<span class="nc" id="L141">      final Slf4jRequestLog requestLog = new Slf4jRequestLog();</span>
+<span class="nc" id="L142">      return requestLog;</span>
+    }
+
+<span class="nc" id="L145">    @SneakyThrows</span>
+    public static RequestLog ncsaRequestLog(String applicationName) {
+<span class="nc" id="L147">      final String logPath = &quot;./logs&quot;;</span>
+<span class="nc" id="L148">      FileUtils.forceMkdir(new File(logPath));</span>
+
+<span class="nc" id="L150">      final String logPattern = logPath + &quot;/&quot; + applicationName + &quot;_access.yyyy_mm_dd.log&quot;;</span>
+<span class="nc" id="L151">      final NCSARequestLog requestLog = new NCSARequestLog(logPattern);</span>
+<span class="nc" id="L152">      requestLog.setLogDateFormat(&quot;yyyy-MM-dd HH:mm:ss.SSS&quot;);</span>
+<span class="nc" id="L153">      requestLog.setRetainDays(30);</span>
+<span class="nc" id="L154">      requestLog.setAppend(true);</span>
+<span class="nc" id="L155">      requestLog.setExtended(true);</span>
+<span class="nc" id="L156">      requestLog.setLogTimeZone(&quot;GMT+8&quot;);</span>
+<span class="nc" id="L157">      requestLog.setLogLatency(true);</span>
+<span class="nc" id="L158">      return requestLog;</span>
+    }
+  }
+
+  static void accessLog(final Environment environment,
+    final ConfigurableEmbeddedServletContainer container) {
+<span class="nc" id="L164">    final JettyEmbeddedServletContainerFactory jetty = jetty(container);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">    if (jetty == null) {</span>
+<span class="nc" id="L166">      return;</span>
+    }
+<span class="nc" id="L168">    String applicationName =</span>
+<span class="nc" id="L169">      environment.getProperty(&quot;spring.application.name&quot;, &quot;$spring.application.name&quot;);</span>
+<span class="nc" id="L170">    jetty.addServerCustomizers(new AccessLog(applicationName));</span>
+<span class="nc" id="L171">  }</span>
+
+<span class="nc" id="L173">  @NoArgsConstructor(access = PRIVATE)</span>
+<span class="nc" id="L174">  @Slf4j</span>
+  class Gzip implements JettyServerCustomizer {
+
+    @Override
+    public void customize(final Server server) {
+      try {
+<span class="nc" id="L180">        Class.forName(&quot;org.eclipse.jetty.server.handler.gzip.GzipHandler&quot;);</span>
+<span class="nc" id="L181">      } catch (final ClassNotFoundException ignored) {</span>
+<span class="nc" id="L182">        log.debug(&quot;org.eclipse.jetty.server.handler.gzip.GzipHandler is not in classpath.&quot;, ignored);</span>
+<span class="nc" id="L183">        return;</span>
+<span class="nc" id="L184">      }</span>
+
+<span class="nc" id="L186">      final HandlerCollection handlers = new HandlerCollection();</span>
+
+<span class="nc" id="L188">      final GzipHandler gzipHandler = new GzipHandler();</span>
+<span class="nc" id="L189">      gzipHandler.addIncludedMethods(HttpMethod.GET.asString(), HttpMethod.POST.asString(),</span>
+<span class="nc" id="L190">        HttpMethod.PUT.asString(), HttpMethod.DELETE.asString());</span>
+<span class="nc" id="L191">      gzipHandler.setCompressionLevel(5);</span>
+<span class="nc" id="L192">      handlers.addHandler(gzipHandler);</span>
+
+<span class="nc" id="L194">      asList(server.getHandlers()).forEach(handlers::addHandler);</span>
+<span class="nc" id="L195">      server.setHandler(handlers);</span>
+<span class="nc" id="L196">    }</span>
+  }
+
+  /**
+   * 最后添加gzip.
+   *
+   * @param environment environment
+   * @param container   container
+   */
+  static void gzip( //
+    final Environment environment, final ConfigurableEmbeddedServletContainer container //
+  ) {
+<span class="nc" id="L208">    final JettyEmbeddedServletContainerFactory jetty = jetty(container);</span>
+<span class="nc" id="L209">    final Boolean gzipEnabled =</span>
+<span class="nc" id="L210">      parseBoolean(environment.getProperty(&quot;spring.http.gzip.enabled&quot;, &quot;false&quot;));</span>
+<span class="nc bnc" id="L211" title="All 4 branches missed.">    if (gzipEnabled &amp;&amp; jetty != null) {</span>
+<span class="nc" id="L212">      jetty.addServerCustomizers(new Gzip());</span>
+    }
+<span class="nc" id="L214">  }</span>
+
+<span class="nc" id="L216">  @NoArgsConstructor(access = PRIVATE)</span>
+  class ForwardedRequest implements JettyServerCustomizer {
+
+    @Override
+    public void customize(final Server server) {
+<span class="nc" id="L221">      final Collection&lt;HttpConnectionFactory&gt; httpConnectionFactories =</span>
+<span class="nc" id="L222">        serverConnectionFactories(server, HttpConnectionFactory.class);</span>
+<span class="nc" id="L223">      httpConnectionFactories.forEach(httpConnectionFactory -&gt; {</span>
+<span class="nc" id="L224">        final HttpConfiguration httpConfiguration = httpConnectionFactory.getHttpConfiguration();</span>
+<span class="nc" id="L225">        httpConfiguration.addCustomizer(new ForwardedRequestCustomizer());</span>
+<span class="nc" id="L226">      });</span>
+<span class="nc" id="L227">    }</span>
+  }
+
+  static void forwardedRequest(final Environment environment,
+    final ConfigurableEmbeddedServletContainer container) {
+<span class="nc" id="L232">    final JettyEmbeddedServletContainerFactory jetty = jetty(container);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">    if (jetty != null) {</span>
+<span class="nc" id="L234">      jetty.addServerCustomizers(new ForwardedRequest());</span>
+    }
+<span class="nc" id="L236">  }</span>
+
+<span class="nc" id="L238">  @NoArgsConstructor(access = PRIVATE)</span>
+  class HideServerInfo implements JettyServerCustomizer {
+
+    @Override
+    public void customize(final Server server) {
+<span class="nc" id="L243">      final Collection&lt;HttpConnectionFactory&gt; httpConnectionFactories =</span>
+<span class="nc" id="L244">        serverConnectionFactories(server, HttpConnectionFactory.class);</span>
+<span class="nc" id="L245">      httpConnectionFactories.forEach(httpConnectionFactory -&gt; {</span>
+<span class="nc" id="L246">        final HttpConfiguration httpConfiguration = httpConnectionFactory.getHttpConfiguration();</span>
+<span class="nc" id="L247">        httpConfiguration.setSendServerVersion(false);</span>
+<span class="nc" id="L248">        httpConfiguration.setSendXPoweredBy(false);</span>
+<span class="nc" id="L249">        httpConfiguration.setSendDateHeader(false);</span>
+<span class="nc" id="L250">      });</span>
+<span class="nc" id="L251">    }</span>
+  }
+
+  static void hideServerInfo(final Environment environment,
+    final ConfigurableEmbeddedServletContainer container) {
+<span class="nc" id="L256">    final JettyEmbeddedServletContainerFactory jetty = jetty(container);</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">    if (jetty != null) {</span>
+<span class="nc" id="L258">      jetty.addServerCustomizers(new HideServerInfo());</span>
+    }
+<span class="nc" id="L260">  }</span>
+
+<span class="nc" id="L262">  @NoArgsConstructor(access = PRIVATE)</span>
+  class NullSessionIdManager implements JettyServerCustomizer {
+
+    @Override
+    public void customize(final Server server) {
+<span class="nc" id="L267">      server.setSessionIdManager(null);</span>
+<span class="nc" id="L268">    }</span>
+  }
+
+  static void nullSessionIdManager(final Environment environment,
+    final ConfigurableEmbeddedServletContainer container) {
+<span class="nc" id="L273">    final JettyEmbeddedServletContainerFactory jetty = jetty(container);</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">    if (jetty != null) {</span>
+<span class="nc" id="L275">      jetty.addServerCustomizers(new NullSessionIdManager());</span>
+    }
+<span class="nc" id="L277">  }</span>
+
+  @Deprecated
+<span class="nc" id="L280">  @AllArgsConstructor</span>
+  class Pool implements JettyServerCustomizer {
+
+    // @org.springframework.beans.factory.annotation.Value(&quot;${jetty.threadPool.maxThreads:200}&quot;)
+    private final String maxThreads;
+    // @org.springframework.beans.factory.annotation.Value(&quot;${jetty.threadPool.minThreads:8}&quot;)
+    private final String minThreads;
+    // @org.springframework.beans.factory.annotation.Value(&quot;${jetty.threadPool.idleTimeout:60000}&quot;)
+    private final String idleTimeout;
+
+    @Override
+    public void customize(final Server server) {
+<span class="nc" id="L292">      final QueuedThreadPool threadPool = server.getBean(QueuedThreadPool.class);</span>
+<span class="nc" id="L293">      threadPool.setMaxThreads(Integer.parseInt(this.maxThreads));</span>
+<span class="nc" id="L294">      threadPool.setMinThreads(Integer.parseInt(this.minThreads));</span>
+<span class="nc" id="L295">      threadPool.setIdleTimeout(Integer.parseInt(this.idleTimeout));</span>
+<span class="nc" id="L296">    }</span>
+
+    public static Pool smallPool() {
+<span class="nc" id="L299">      return new Pool(&quot;1&quot;, &quot;8&quot;, &quot;60000&quot;);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

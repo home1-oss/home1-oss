@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonToken.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-webmvc-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.webmvc.api</a> &gt; <span class="el_source">JsonToken.java</span></div><h1>JsonToken.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.webmvc.api;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import cn.home1.oss.lib.common.Jackson2Utils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.function.Function;
+
+/**
+ * Created by zhanghaolun on 16/10/29.
+ */
+<span class="nc" id="L16">@Slf4j</span>
+public class JsonToken&lt;T&gt; implements TypeSafeToken&lt;T&gt; {
+
+  private final Function&lt;String, T&gt; fromToken;
+  private final Function&lt;T, String&gt; toToken;
+
+  public JsonToken( //
+    final Class&lt;T&gt; type, //
+    final ObjectMapper objectMapper //
+<span class="nc" id="L25">  ) {</span>
+<span class="nc" id="L26">    this.toToken = Jackson2Utils.toJson(objectMapper);</span>
+<span class="nc" id="L27">    this.fromToken = Jackson2Utils.fromJson(objectMapper, type);</span>
+<span class="nc" id="L28">  }</span>
+
+  @Override
+  public String toToken(final T obj) {
+<span class="nc bnc" id="L32" title="All 4 branches missed.">    return this.toToken != null &amp;&amp; obj != null ? //</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">      this.toToken.apply(obj) : //</span>
+<span class="nc" id="L34">      (obj != null) ? obj.toString() : null;</span>
+  }
+
+  @Override
+  public T fromToken(final String token) {
+    T result;
+    try {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">      result = isNotBlank(token) ? this.fromToken.apply(token) : null;</span>
+<span class="nc" id="L42">    } catch (final Exception ex) {</span>
+<span class="nc" id="L43">      log.warn(&quot;error reading token: {}&quot;, token, ex);</span>
+<span class="nc" id="L44">      result = null;</span>
+<span class="nc" id="L45">    }</span>
+<span class="nc" id="L46">    return result;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

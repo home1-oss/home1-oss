@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UrlEncodedToken.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-webmvc-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.webmvc.api</a> &gt; <span class="el_source">UrlEncodedToken.java</span></div><h1>UrlEncodedToken.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.webmvc.api;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import cn.home1.oss.lib.common.CodecUtils;
+
+/**
+ * Created by zhanghaolun on 16/11/14.
+ */
+public class UrlEncodedToken&lt;T&gt; implements TypeSafeToken&lt;T&gt; {
+
+  private final TypeSafeToken&lt;T&gt; delegate;
+
+<span class="nc" id="L14">  public UrlEncodedToken(final TypeSafeToken&lt;T&gt; delegate) {</span>
+<span class="nc" id="L15">    this.delegate = checkNotNull(delegate, &quot;delegate must not null&quot;);</span>
+<span class="nc" id="L16">  }</span>
+
+  @Override
+  public String toToken(final T obj) {
+<span class="nc" id="L20">    final String token = this.delegate.toToken(obj);</span>
+<span class="nc" id="L21">    return CodecUtils.urlEncode(token);</span>
+  }
+
+  @Override
+  public T fromToken(final String token) {
+<span class="nc" id="L26">    final String decoded = CodecUtils.urlDecode(token);</span>
+<span class="nc" id="L27">    return this.delegate.fromToken(decoded);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
