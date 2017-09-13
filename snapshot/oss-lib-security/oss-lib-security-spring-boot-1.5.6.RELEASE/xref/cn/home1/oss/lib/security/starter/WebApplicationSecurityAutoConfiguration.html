@@ -112,7 +112,7 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>   <em class="jxr_comment">// ApprovalStoreUserApprovalHandler#updateAfterApproval</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>   @Override
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> configure(<strong class="jxr_keyword">final</strong> AuthenticationManagerBuilder auth) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> SecurityConfigurer configurer : <strong class="jxr_keyword">this</strong>.securityConfigurers()) {
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> SecurityConfigurer configurer : <strong class="jxr_keyword">this</strong>.sortedSecurityConfigurers()) {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>       configurer.configure(auth);
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     }
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> 
@@ -161,7 +161,7 @@
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>       }
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>     }
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> 
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> SecurityConfigurer configurer : <strong class="jxr_keyword">this</strong>.securityConfigurers()) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> SecurityConfigurer configurer : <strong class="jxr_keyword">this</strong>.sortedSecurityConfigurers()) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>       configurer.configure(http);
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>     }
 <a class="jxr_linenumber" name="L159" href="#L159">159</a> 
@@ -181,13 +181,13 @@
 <a class="jxr_linenumber" name="L173" href="#L173">173</a> 
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>   @Override
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> init(<strong class="jxr_keyword">final</strong> WebSecurity web) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> SecurityConfigurer configurer : <strong class="jxr_keyword">this</strong>.securityConfigurers()) {
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> SecurityConfigurer configurer : <strong class="jxr_keyword">this</strong>.sortedSecurityConfigurers()) {
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>       configurer.init(web);
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>     }
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>     <strong class="jxr_keyword">super</strong>.init(web);
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>   }
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> 
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>   <strong class="jxr_keyword">public</strong> List&lt;SecurityConfigurer&gt; securityConfigurers() {
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>   <strong class="jxr_keyword">public</strong> List&lt;SecurityConfigurer&gt; sortedSecurityConfigurers() {
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>     <strong class="jxr_keyword">final</strong> List&lt;SecurityConfigurer&gt; all = <strong class="jxr_keyword">this</strong>.securityConfigurers != <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">this</strong>.securityConfigurers : newArrayList();
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">final</strong> List&lt;SecurityConfigurer&gt; sorted = all.stream().sorted().collect(toList());
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> SecurityConfigurer configurer : sorted) {

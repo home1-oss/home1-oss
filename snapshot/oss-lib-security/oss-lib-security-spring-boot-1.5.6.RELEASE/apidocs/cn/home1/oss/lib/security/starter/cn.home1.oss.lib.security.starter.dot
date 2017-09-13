@@ -105,7 +105,7 @@ digraph G {
 <tr><td align="left" balign="left"> # configure(auth : AuthenticationManagerBuilder) </td></tr>
 <tr><td align="left" balign="left"> # configure(http : HttpSecurity) </td></tr>
 <tr><td align="left" balign="left"> + init(web : WebSecurity) </td></tr>
-<tr><td align="left" balign="left"> + securityConfigurers() : List&lt;SecurityConfigurer&lt;&gt;&gt; </td></tr>
+<tr><td align="left" balign="left"> + sortedSecurityConfigurers() : List&lt;SecurityConfigurer&lt;&gt;&gt; </td></tr>
 		</table></td></tr>
 		</table>>, URL="./WebApplicationSecurityAutoConfiguration.html", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// cn.home1.oss.lib.security.starter.PreAuthConfiguration

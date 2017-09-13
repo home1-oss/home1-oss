@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.forwardToDestination) {
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>       request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>       HttpSession session = request.getSession(false);
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>       <strong class="jxr_keyword">final</strong> HttpSession session = request.getSession(false);
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> 
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>       <strong class="jxr_keyword">if</strong> (session != <strong class="jxr_keyword">null</strong> || <strong class="jxr_keyword">this</strong>.allowSessionCreation) {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);

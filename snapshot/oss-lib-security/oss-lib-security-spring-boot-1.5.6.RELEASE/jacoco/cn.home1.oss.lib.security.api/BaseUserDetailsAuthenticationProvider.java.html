@@ -94,7 +94,7 @@ import java.util.Set;
 <span class="nc" id="L94">      throw new UsernameNotFoundException(username);</span>
     }
 
-<span class="nc" id="L97">    final PasswordEncoder passwordEncoder = this.getPasswordEncoder();</span>
+<span class="nc" id="L97">    final PasswordEncoder passwordEncoder = this.passwordEncoder;</span>
     final Boolean passwordMatches;
 <span class="nc bnc" id="L99" title="All 2 branches missed.">    if (passwordEncoder != null) {</span>
 <span class="nc" id="L100">      passwordMatches = passwordEncoder.matches(password, user.getPassword());</span>
@@ -137,7 +137,7 @@ import java.util.Set;
 <span class="nc" id="L137">          .stream() //</span>
 <span class="nc" id="L138">          .map(role -&gt; new BaseGrantedAuthority(Security.ROLE_PREFIX + role)) //</span>
 <span class="nc" id="L139">          .collect(toSet());</span>
-<span class="nc" id="L140">        final PasswordEncoder passwordEncoder = this.getPasswordEncoder();</span>
+<span class="nc" id="L140">        final PasswordEncoder passwordEncoder = this.passwordEncoder;</span>
 <span class="nc bnc" id="L141" title="All 2 branches missed.">        final String password = passwordEncoder != null ? //</span>
 <span class="nc" id="L142">          passwordEncoder.encode(securityUser.getPassword()) : securityUser.getPassword();</span>
 

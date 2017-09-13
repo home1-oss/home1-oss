@@ -23,7 +23,6 @@ import cn.home1.oss.lib.security.internal.preauth.PreAuthTokenProcessingFilter;
 import cn.home1.oss.lib.webmvc.api.DomainResolver;
 import cn.home1.oss.lib.webmvc.api.JsonToken;
 import cn.home1.oss.lib.webmvc.api.JsonWebToken;
-import cn.home1.oss.lib.webmvc.api.RequestResolver;
 import cn.home1.oss.lib.webmvc.api.SecureToken;
 import cn.home1.oss.lib.webmvc.api.TokenBasedCookie;
 import cn.home1.oss.lib.webmvc.api.TypeSafeCookie;
@@ -57,8 +56,8 @@ import java.util.concurrent.TimeUnit;
 @Order(PreAuthConfiguration.ORDER_PRE_AUTH)
 @Configuration
 @ConfigurationProperties(prefix = APP_SECURITY)
-<span class="nc" id="L60">@Slf4j</span>
-<span class="nc" id="L61">public class PreAuthConfiguration extends SecurityConfigurerAdapter&lt;PreAuthConfiguration&gt; {</span>
+<span class="nc" id="L59">@Slf4j</span>
+<span class="nc" id="L60">public class PreAuthConfiguration extends SecurityConfigurerAdapter&lt;PreAuthConfiguration&gt; {</span>
 
   public static final int ORDER_PRE_AUTH = BasicAuthConfiguration.ORDER_BASIC_AUTH + 1;
 
@@ -76,8 +75,6 @@ import java.util.concurrent.TimeUnit;
   @Autowired(required = false)
   private RequestMatcher permitedRequestMatcher;
   @Autowired
-  private RequestResolver requestResolver;
-  @Autowired
   private ServerProperties serverProperties;
 
   @Autowired(required = false)
@@ -85,25 +82,25 @@ import java.util.concurrent.TimeUnit;
   private BaseUserDetailsAuthenticationProvider userDetailsAuthenticationProvider;
 
   public static int getMaxAge(final ServerProperties serverProperties) {
-<span class="nc" id="L88">    final Integer maxAge = serverProperties.getSession().getCookie().getMaxAge();</span>
-<span class="nc" id="L89">    final int defaultMaxAge = (int) TimeUnit.DAYS.toSeconds(1L);</span>
-<span class="nc bnc" id="L90" title="All 2 branches missed.">    return maxAge != null ? maxAge : defaultMaxAge;</span>
+<span class="nc" id="L85">    final Integer maxAge = serverProperties.getSession().getCookie().getMaxAge();</span>
+<span class="nc" id="L86">    final int defaultMaxAge = (int) TimeUnit.DAYS.toSeconds(1L);</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    return maxAge != null ? maxAge : defaultMaxAge;</span>
   }
 
   @Override
   public void configure(final HttpSecurity http) {
-<span class="nc bnc" id="L95" title="All 2 branches missed.">    if (this.appProperties.getSecurityEnabled()) {</span>
-<span class="nc" id="L96">      final PreAuthTokenFilter preAuthTokenFilter = this.preAuthTokenFilter();</span>
-<span class="nc" id="L97">      http.addFilterBefore(preAuthTokenFilter, UsernamePasswordAuthenticationFilter.class);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">    if (this.appProperties.getSecurityEnabled()) {</span>
+<span class="nc" id="L93">      final PreAuthTokenFilter preAuthTokenFilter = this.preAuthTokenFilter();</span>
+<span class="nc" id="L94">      http.addFilterBefore(preAuthTokenFilter, UsernamePasswordAuthenticationFilter.class);</span>
 
-<span class="nc bnc" id="L99" title="All 2 branches missed.">      if (this.appProperties.getSecurityUseTestUser()) {</span>
-<span class="nc" id="L100">        http.addFilterAfter(this.preAuthTestUserFilter(), BasicAuthenticationFilter.class);</span>
-<span class="nc" id="L101">        http.addFilterAfter(this.preAuthTokenProcessingFilter(), PreAuthTestUserFilter.class);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">      if (this.appProperties.getSecurityUseTestUser()) {</span>
+<span class="nc" id="L97">        http.addFilterAfter(this.preAuthTestUserFilter(), BasicAuthenticationFilter.class);</span>
+<span class="nc" id="L98">        http.addFilterAfter(this.preAuthTokenProcessingFilter(), PreAuthTestUserFilter.class);</span>
       } else {
-<span class="nc" id="L103">        http.addFilterAfter(this.preAuthTokenProcessingFilter(), BasicAuthenticationFilter.class);</span>
+<span class="nc" id="L100">        http.addFilterAfter(this.preAuthTokenProcessingFilter(), BasicAuthenticationFilter.class);</span>
       }
     }
-<span class="nc" id="L106">  }</span>
+<span class="nc" id="L103">  }</span>
 
   @Bean(name = GENERIC_USER_COOKIE)
   public TypeSafeCookie&lt;GenericUser&gt; genericUserCookie() {
@@ -115,75 +112,75 @@ import java.util.concurrent.TimeUnit;
     // server.session.cookie.path= # Path of the session cookie.
     // server.session.cookie.secure= # &quot;Secure&quot; flag for the session cookie.
 
-<span class="nc" id="L118">    final TypeSafeToken&lt;GenericUser&gt; token = this.genericUserToken();</span>
-<span class="nc" id="L119">    return new TokenBasedCookie&lt;&gt;( //</span>
+<span class="nc" id="L115">    final TypeSafeToken&lt;GenericUser&gt; token = this.genericUserToken();</span>
+<span class="nc" id="L116">    return new TokenBasedCookie&lt;&gt;( //</span>
       this.domainResolver, //
-<span class="nc" id="L121">      true, //</span>
-<span class="nc" id="L122">      getMaxAge(this.serverProperties), //</span>
+<span class="nc" id="L118">      true, //</span>
+<span class="nc" id="L119">      getMaxAge(this.serverProperties), //</span>
       &quot;generic_user&quot;, //
-<span class="nc" id="L124">      false, //</span>
+<span class="nc" id="L121">      false, //</span>
       token //
     );
   }
 
   @Bean(name = GENERIC_USER_TOKEN)
   public TypeSafeToken&lt;GenericUser&gt; genericUserToken() {
-<span class="nc" id="L131">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+<span class="nc" id="L128">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
 
-<span class="nc" id="L133">    TypeSafeToken&lt;GenericUser&gt; token = new JsonToken&lt;&gt;(GenericUser.class, this.objectMapper);</span>
+<span class="nc" id="L130">    TypeSafeToken&lt;GenericUser&gt; token = new JsonToken&lt;&gt;(GenericUser.class, this.objectMapper);</span>
 
-<span class="nc" id="L135">    final Jwt jwtCipher = Cryptos.cipher(appSecurityProperties.getJwtKey());</span>
-<span class="nc bnc" id="L136" title="All 2 branches missed.">    if (jwtCipher != null) {</span>
-<span class="nc" id="L137">      token = new JsonWebToken&lt;&gt;(token, jwtCipher, getMaxAge(this.serverProperties));</span>
+<span class="nc" id="L132">    final Jwt jwtCipher = Cryptos.cipher(appSecurityProperties.getJwtKey());</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">    if (jwtCipher != null) {</span>
+<span class="nc" id="L134">      token = new JsonWebToken&lt;&gt;(token, jwtCipher, getMaxAge(this.serverProperties));</span>
     } else {
-<span class="nc" id="L139">      log.warn(&quot;INSECURE ! JwtKey not set. Using plain text token.&quot;);</span>
+<span class="nc" id="L136">      log.warn(&quot;INSECURE ! JwtKey not set. Using plain text token.&quot;);</span>
     }
 
-<span class="nc" id="L142">    final EncodeCipher cookieCipher = Cryptos.cipher(appSecurityProperties.getCookieKey());</span>
-<span class="nc bnc" id="L143" title="All 2 branches missed.">    if (cookieCipher != null) {</span>
-<span class="nc" id="L144">      token = new SecureToken&lt;&gt;(token, cookieCipher);</span>
+<span class="nc" id="L139">    final EncodeCipher cookieCipher = Cryptos.cipher(appSecurityProperties.getCookieKey());</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">    if (cookieCipher != null) {</span>
+<span class="nc" id="L141">      token = new SecureToken&lt;&gt;(token, cookieCipher);</span>
     }
 
-<span class="nc" id="L147">    token = new UrlEncodedToken&lt;&gt;(token);</span>
-<span class="nc" id="L148">    return token;</span>
+<span class="nc" id="L144">    token = new UrlEncodedToken&lt;&gt;(token);</span>
+<span class="nc" id="L145">    return token;</span>
   }
 
   public PreAuthTokenFilter preAuthTokenFilter() {
-<span class="nc" id="L152">    final PreAuthTokenFilter filter = new PreAuthTokenFilter();</span>
-<span class="nc" id="L153">    filter.setCookie(this.genericUserCookie());</span>
-<span class="nc" id="L154">    filter.setEnvironment(this.environment);</span>
-<span class="nc" id="L155">    filter.setPermitedRequestMatcher(this.permitedRequestMatcher);</span>
-<span class="nc" id="L156">    filter.setToken(this.genericUserToken());</span>
-<span class="nc" id="L157">    return filter;</span>
+<span class="nc" id="L149">    final PreAuthTokenFilter filter = new PreAuthTokenFilter();</span>
+<span class="nc" id="L150">    filter.setCookie(this.genericUserCookie());</span>
+<span class="nc" id="L151">    filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L152">    filter.setPermitedRequestMatcher(this.permitedRequestMatcher);</span>
+<span class="nc" id="L153">    filter.setToken(this.genericUserToken());</span>
+<span class="nc" id="L154">    return filter;</span>
   }
 
   public PreAuthTokenProcessingFilter preAuthTokenProcessingFilter() {
-<span class="nc" id="L161">    final PreAuthTokenProcessingFilter filter = new PreAuthTokenProcessingFilter();</span>
-<span class="nc" id="L162">    filter.setEnvironment(this.environment);</span>
-<span class="nc" id="L163">    return filter;</span>
+<span class="nc" id="L158">    final PreAuthTokenProcessingFilter filter = new PreAuthTokenProcessingFilter();</span>
+<span class="nc" id="L159">    filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L160">    return filter;</span>
   }
 
   @SuppressWarnings(&quot;unchecked&quot;)
   public PreAuthTestUserFilter preAuthTestUserFilter() {
     final PreAuthTestUserFilter filter;
-<span class="nc bnc" id="L169" title="All 2 branches missed.">    if (this.appProperties.getSecurityUseTestUser()) {</span>
-<span class="nc" id="L170">      final String defaultTestUser = this.appProperties.getSecurityDefaultTestUser();</span>
-<span class="nc" id="L171">      final List&lt;User&gt; testUsers = this.userDetailsAuthenticationProvider.initTestUsers();</span>
-<span class="nc" id="L172">      filter = new PreAuthTestUserFilter(defaultTestUser, testUsers);</span>
-<span class="nc" id="L173">      filter.setEnvironment(this.environment);</span>
-<span class="nc" id="L174">      filter.setToken(this.genericUserToken());</span>
-<span class="nc" id="L175">    } else {</span>
-<span class="nc" id="L176">      this.userDetailsAuthenticationProvider.deleteTestUsers();</span>
-<span class="nc" id="L177">      filter = null;</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">    if (this.appProperties.getSecurityUseTestUser()) {</span>
+<span class="nc" id="L167">      final String defaultTestUser = this.appProperties.getSecurityDefaultTestUser();</span>
+<span class="nc" id="L168">      final List&lt;User&gt; testUsers = this.userDetailsAuthenticationProvider.initTestUsers();</span>
+<span class="nc" id="L169">      filter = new PreAuthTestUserFilter(defaultTestUser, testUsers);</span>
+<span class="nc" id="L170">      filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L171">      filter.setToken(this.genericUserToken());</span>
+<span class="nc" id="L172">    } else {</span>
+<span class="nc" id="L173">      this.userDetailsAuthenticationProvider.deleteTestUsers();</span>
+<span class="nc" id="L174">      filter = null;</span>
     }
-<span class="nc" id="L179">    return filter;</span>
+<span class="nc" id="L176">    return filter;</span>
   }
 
   @Bean(name = PRE_AUTH_AUTHENTICATION_PROVIDER)
   @ConditionalOnAppSecurity(ENABLED)
   public AuthenticationProvider preAuthAuthenticationProvider() {
     // this.appProperties.getSecurityUseTestUser() ? new NoOpPreAuthenticatedAuthenticationProvider()
-<span class="nc" id="L186">    return new PreAuthTokenAuthenticationProvider(FALSE);</span>
+<span class="nc" id="L183">    return new PreAuthTokenAuthenticationProvider(FALSE);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
