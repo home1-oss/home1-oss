@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreAuthConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.starter</a> &gt; <span class="el_source">PreAuthConfiguration.java</span></div><h1>PreAuthConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.starter;
+
+import static cn.home1.oss.boot.autoconfigure.AppSecurity.ENABLED;
+import static cn.home1.oss.boot.autoconfigure.AppSecurityProperties.APP_SECURITY;
+import static cn.home1.oss.lib.security.api.GenericUser.GENERIC_USER_COOKIE;
+import static cn.home1.oss.lib.security.api.GenericUser.GENERIC_USER_TOKEN;
+import static cn.home1.oss.lib.security.starter.PermitedRequestConfiguration.PERMITED_REQUEST_MATCHER;
+import static java.lang.Boolean.FALSE;
+
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.boot.autoconfigure.AppSecurityProperties;
+import cn.home1.oss.boot.autoconfigure.ConditionalOnAppSecurity;
+import cn.home1.oss.lib.common.crypto.Cryptos;
+import cn.home1.oss.lib.common.crypto.EncodeCipher;
+import cn.home1.oss.lib.common.crypto.Jwt;
+import cn.home1.oss.lib.security.api.BaseUserDetailsAuthenticationProvider;
+import cn.home1.oss.lib.security.api.GenericUser;
+import cn.home1.oss.lib.security.api.User;
+import cn.home1.oss.lib.security.internal.preauth.PreAuthTestUserFilter;
+import cn.home1.oss.lib.security.internal.preauth.PreAuthTokenAuthenticationProvider;
+import cn.home1.oss.lib.security.internal.preauth.PreAuthTokenFilter;
+import cn.home1.oss.lib.security.internal.preauth.PreAuthTokenProcessingFilter;
+import cn.home1.oss.lib.webmvc.api.DomainResolver;
+import cn.home1.oss.lib.webmvc.api.JsonToken;
+import cn.home1.oss.lib.webmvc.api.JsonWebToken;
+import cn.home1.oss.lib.webmvc.api.RequestResolver;
+import cn.home1.oss.lib.webmvc.api.SecureToken;
+import cn.home1.oss.lib.webmvc.api.TokenBasedCookie;
+import cn.home1.oss.lib.webmvc.api.TypeSafeCookie;
+import cn.home1.oss.lib.webmvc.api.TypeSafeToken;
+import cn.home1.oss.lib.webmvc.api.UrlEncodedToken;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Created by zhanghaolun on 16/8/19.
+ */
+@Order(PreAuthConfiguration.ORDER_PRE_AUTH)
+@Configuration
+@ConfigurationProperties(prefix = APP_SECURITY)
+<span class="nc" id="L60">@Slf4j</span>
+<span class="nc" id="L61">public class PreAuthConfiguration extends SecurityConfigurerAdapter&lt;PreAuthConfiguration&gt; {</span>
+
+  public static final int ORDER_PRE_AUTH = BasicAuthConfiguration.ORDER_BASIC_AUTH + 1;
+
+  static final String PRE_AUTH_AUTHENTICATION_PROVIDER = &quot;preAuthAuthenticationProvider&quot;;
+
+  @Autowired
+  private AppProperties appProperties;
+  @Autowired
+  private DomainResolver domainResolver;
+  @Autowired
+  private Environment environment;
+  @Autowired
+  private ObjectMapper objectMapper;
+  @Qualifier(PERMITED_REQUEST_MATCHER)
+  @Autowired(required = false)
+  private RequestMatcher permitedRequestMatcher;
+  @Autowired
+  private RequestResolver requestResolver;
+  @Autowired
+  private ServerProperties serverProperties;
+
+  @Autowired(required = false)
+  @SuppressWarnings(&quot;rawtypes&quot;)
+  private BaseUserDetailsAuthenticationProvider userDetailsAuthenticationProvider;
+
+  public static int getMaxAge(final ServerProperties serverProperties) {
+<span class="nc" id="L88">    final Integer maxAge = serverProperties.getSession().getCookie().getMaxAge();</span>
+<span class="nc" id="L89">    final int defaultMaxAge = (int) TimeUnit.DAYS.toSeconds(1L);</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">    return maxAge != null ? maxAge : defaultMaxAge;</span>
+  }
+
+  @Override
+  public void configure(final HttpSecurity http) {
+<span class="nc bnc" id="L95" title="All 2 branches missed.">    if (this.appProperties.getSecurityEnabled()) {</span>
+<span class="nc" id="L96">      final PreAuthTokenFilter preAuthTokenFilter = this.preAuthTokenFilter();</span>
+<span class="nc" id="L97">      http.addFilterBefore(preAuthTokenFilter, UsernamePasswordAuthenticationFilter.class);</span>
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">      if (this.appProperties.getSecurityUseTestUser()) {</span>
+<span class="nc" id="L100">        http.addFilterAfter(this.preAuthTestUserFilter(), BasicAuthenticationFilter.class);</span>
+<span class="nc" id="L101">        http.addFilterAfter(this.preAuthTokenProcessingFilter(), PreAuthTestUserFilter.class);</span>
+      } else {
+<span class="nc" id="L103">        http.addFilterAfter(this.preAuthTokenProcessingFilter(), BasicAuthenticationFilter.class);</span>
+      }
+    }
+<span class="nc" id="L106">  }</span>
+
+  @Bean(name = GENERIC_USER_COOKIE)
+  public TypeSafeCookie&lt;GenericUser&gt; genericUserCookie() {
+    // server.session.cookie.comment= # Comment for the session cookie.
+    // server.session.cookie.domain= # Domain for the session cookie.
+    // server.session.cookie.http-only= # &quot;HttpOnly&quot; flag for the session cookie.
+    // server.session.cookie.max-age= # Maximum age of the session cookie in seconds.
+    // server.session.cookie.name= # Session cookie name.
+    // server.session.cookie.path= # Path of the session cookie.
+    // server.session.cookie.secure= # &quot;Secure&quot; flag for the session cookie.
+
+<span class="nc" id="L118">    final TypeSafeToken&lt;GenericUser&gt; token = this.genericUserToken();</span>
+<span class="nc" id="L119">    return new TokenBasedCookie&lt;&gt;( //</span>
+      this.domainResolver, //
+<span class="nc" id="L121">      true, //</span>
+<span class="nc" id="L122">      getMaxAge(this.serverProperties), //</span>
+      &quot;generic_user&quot;, //
+<span class="nc" id="L124">      false, //</span>
+      token //
+    );
+  }
+
+  @Bean(name = GENERIC_USER_TOKEN)
+  public TypeSafeToken&lt;GenericUser&gt; genericUserToken() {
+<span class="nc" id="L131">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+
+<span class="nc" id="L133">    TypeSafeToken&lt;GenericUser&gt; token = new JsonToken&lt;&gt;(GenericUser.class, this.objectMapper);</span>
+
+<span class="nc" id="L135">    final Jwt jwtCipher = Cryptos.cipher(appSecurityProperties.getJwtKey());</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">    if (jwtCipher != null) {</span>
+<span class="nc" id="L137">      token = new JsonWebToken&lt;&gt;(token, jwtCipher, getMaxAge(this.serverProperties));</span>
+    } else {
+<span class="nc" id="L139">      log.warn(&quot;INSECURE ! JwtKey not set. Using plain text token.&quot;);</span>
+    }
+
+<span class="nc" id="L142">    final EncodeCipher cookieCipher = Cryptos.cipher(appSecurityProperties.getCookieKey());</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">    if (cookieCipher != null) {</span>
+<span class="nc" id="L144">      token = new SecureToken&lt;&gt;(token, cookieCipher);</span>
+    }
+
+<span class="nc" id="L147">    token = new UrlEncodedToken&lt;&gt;(token);</span>
+<span class="nc" id="L148">    return token;</span>
+  }
+
+  public PreAuthTokenFilter preAuthTokenFilter() {
+<span class="nc" id="L152">    final PreAuthTokenFilter filter = new PreAuthTokenFilter();</span>
+<span class="nc" id="L153">    filter.setCookie(this.genericUserCookie());</span>
+<span class="nc" id="L154">    filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L155">    filter.setPermitedRequestMatcher(this.permitedRequestMatcher);</span>
+<span class="nc" id="L156">    filter.setToken(this.genericUserToken());</span>
+<span class="nc" id="L157">    return filter;</span>
+  }
+
+  public PreAuthTokenProcessingFilter preAuthTokenProcessingFilter() {
+<span class="nc" id="L161">    final PreAuthTokenProcessingFilter filter = new PreAuthTokenProcessingFilter();</span>
+<span class="nc" id="L162">    filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L163">    return filter;</span>
+  }
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  public PreAuthTestUserFilter preAuthTestUserFilter() {
+    final PreAuthTestUserFilter filter;
+<span class="nc bnc" id="L169" title="All 2 branches missed.">    if (this.appProperties.getSecurityUseTestUser()) {</span>
+<span class="nc" id="L170">      final String defaultTestUser = this.appProperties.getSecurityDefaultTestUser();</span>
+<span class="nc" id="L171">      final List&lt;User&gt; testUsers = this.userDetailsAuthenticationProvider.initTestUsers();</span>
+<span class="nc" id="L172">      filter = new PreAuthTestUserFilter(defaultTestUser, testUsers);</span>
+<span class="nc" id="L173">      filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L174">      filter.setToken(this.genericUserToken());</span>
+<span class="nc" id="L175">    } else {</span>
+<span class="nc" id="L176">      this.userDetailsAuthenticationProvider.deleteTestUsers();</span>
+<span class="nc" id="L177">      filter = null;</span>
+    }
+<span class="nc" id="L179">    return filter;</span>
+  }
+
+  @Bean(name = PRE_AUTH_AUTHENTICATION_PROVIDER)
+  @ConditionalOnAppSecurity(ENABLED)
+  public AuthenticationProvider preAuthAuthenticationProvider() {
+    // this.appProperties.getSecurityUseTestUser() ? new NoOpPreAuthenticatedAuthenticationProvider()
+<span class="nc" id="L186">    return new PreAuthTokenAuthenticationProvider(FALSE);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

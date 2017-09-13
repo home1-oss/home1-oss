@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebApplicationSecurityAutoConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.starter</a> &gt; <span class="el_source">WebApplicationSecurityAutoConfiguration.java</span></div><h1>WebApplicationSecurityAutoConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.starter;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
+
+import com.google.common.collect.ImmutableList;
+
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.lib.errorhandle.starter.ErrorHandleAutoConfiguration;
+import cn.home1.oss.lib.security.CompositeAuthenticationProvider;
+import cn.home1.oss.lib.security.api.BaseUserDetailsAuthenticationProvider;
+import cn.home1.oss.lib.security.internal.feign.FeignTokenConfiguration;
+import cn.home1.oss.lib.security.internal.zuul.ZuulTokenConfiguration;
+import cn.home1.oss.lib.webmvc.starter.WebApplicationAutoConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.security.FallbackWebSecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.web.context.NullSecurityContextRepository;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * &lt;p&gt;
+ * see: {@link org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration}.
+ * see: {@link org.springframework.security.config.annotation.web.builders.WebSecurity}.
+ * see: {@link org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * see: {@link org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler}.
+ * see: {@link org.springframework.security.access.PermissionEvaluator}.
+ * &lt;/p&gt;
+ * Created by zhanghaolun on 16/6/28.
+ */
+@AutoConfigureAfter({ //
+  WebApplicationAutoConfiguration.class, //
+  ErrorHandleAutoConfiguration.class, //
+  SecurityAutoConfiguration.class})
+@AutoConfigureBefore(FallbackWebSecurityAutoConfiguration.class)
+@ConditionalOnClass(WebSecurityConfigurerAdapter.class)
+@Configuration
+@Import({ //
+  VerifyCodeConfiguration.class, //
+  PermitedRequestConfiguration.class, //
+  PreAuthConfiguration.class, //
+  BasicAuthConfiguration.class, //
+  FormAuthConfiguration.class, //
+  CsrfConfiguration.class, //
+  MethodSecurityConfiguration.class, //
+  FeignTokenConfiguration.class, //
+  ZuulTokenConfiguration.class, //
+  SwaggerConfiguration.class})
+@Order(WebApplicationSecurityAutoConfiguration.ORDER_AFTER_MANAGEMENT_BEFORE_FALLBACK)
+<span class="nc" id="L75">@Slf4j</span>
+<span class="nc" id="L76">public class WebApplicationSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {</span>
+
+  /**
+   * between LOWEST_PRECEDENCE - 5 and LOWEST_PRECEDENCE - 10.
+   */
+  public static final int ORDER_AFTER_MANAGEMENT_BEFORE_FALLBACK = LOWEST_PRECEDENCE - 6;
+
+  @Autowired
+  private AppProperties appProperties;
+
+  @Qualifier(PermitedRequestConfiguration.PERMITED_REQUESTS)
+  @Autowired
+  public Map&lt;String, List&lt;String&gt;&gt; permitedRequests;
+
+  @Autowired
+  private AuthenticationManager parentAuthenticationManager;
+  @Qualifier(PreAuthConfiguration.PRE_AUTH_AUTHENTICATION_PROVIDER)
+  @Autowired(required = false)
+  private AuthenticationProvider preAuthAuthenticationProvider;
+  @Autowired(required = false)
+  @SuppressWarnings(&quot;rawtypes&quot;)
+  private BaseUserDetailsAuthenticationProvider userDetailsAuthenticationProvider;
+
+  @Autowired(required = false)
+  private List&lt;SecurityConfigurer&gt; securityConfigurers;
+
+  // see: ResourceOwnerPasswordTokenGranter,
+  // AuthorizationServerEndpointsConfigurer,
+  // ApprovalStoreUserApprovalHandler#updateAfterApproval
+  @Override
+  protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+<span class="nc bnc" id="L107" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.securityConfigurers()) {</span>
+<span class="nc" id="L108">      configurer.configure(auth);</span>
+<span class="nc" id="L109">    }</span>
+
+<span class="nc" id="L111">    final List&lt;AuthenticationProvider&gt; providers = newArrayList(</span>
+      this.preAuthAuthenticationProvider, //
+      this.userDetailsAuthenticationProvider //
+<span class="nc" id="L114">    ).stream().filter(Objects::nonNull).collect(toList());</span>
+
+<span class="nc bnc" id="L116" title="All 2 branches missed.">    if (!providers.isEmpty()) {</span>
+<span class="nc" id="L117">      final CompositeAuthenticationProvider provider = new CompositeAuthenticationProvider();</span>
+<span class="nc" id="L118">      provider.setDelegates(ImmutableList.copyOf(providers));</span>
+
+<span class="nc" id="L120">      auth //</span>
+<span class="nc" id="L121">        .eraseCredentials(false) //</span>
+<span class="nc" id="L122">        .parentAuthenticationManager(this.parentAuthenticationManager) //</span>
+        // build a ProviderManager of a DaoAuthenticationProvider
+        // .userDetailsService(this.userService) //
+        // .passwordEncoder(this.userService.getPasswordEncoder()) //
+        // .and()
+<span class="nc" id="L127">        .authenticationProvider(provider);</span>
+    }
+<span class="nc" id="L129">  }</span>
+
+  @Override
+  protected void configure(final HttpSecurity http) throws Exception {
+<span class="nc" id="L133">    http.securityContext().securityContextRepository(new NullSecurityContextRepository()); // not use session</span>
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">    if (this.appProperties.getSecurityEnabled()) {</span>
+      //final String contextPath = this.serverProperties.getContextPath();
+      //final RequestMatcher contextPatchMatcher = isNotBlank(contextPath)
+      //  ? new AntPathRequestMatcher(this.serverProperties.getPath(contextPath) + &quot;/**&quot;, null) : null;
+<span class="nc" id="L139">      ExpressionUrlAuthorizationConfigurer&lt;HttpSecurity&gt;.ExpressionInterceptUrlRegistry registry = //</span>
+        http
+          //.requestMatcher(AnyRequestMatcher.INSTANCE)
+<span class="nc" id="L142">          .authorizeRequests();</span>
+
+<span class="nc bnc" id="L144" title="All 2 branches missed.">      for (final Map.Entry&lt;String, List&lt;String&gt;&gt; entry : this.permitedRequests.entrySet()) {</span>
+<span class="nc" id="L145">        final String method = entry.getKey();</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        final HttpMethod httpMethod = isBlank(method) ? null : HttpMethod.valueOf(method);</span>
+<span class="nc" id="L147">        final String[] patterns = entry.getValue().stream().toArray(String[]::new);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (httpMethod == null) {</span>
+<span class="nc" id="L149">          registry = registry.antMatchers(patterns).permitAll();</span>
+        } else {
+<span class="nc" id="L151">          registry = registry.antMatchers(httpMethod, patterns).permitAll();</span>
+        }
+<span class="nc" id="L153">      }</span>
+    }
+
+<span class="nc bnc" id="L156" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.securityConfigurers()) {</span>
+<span class="nc" id="L157">      configurer.configure(http);</span>
+<span class="nc" id="L158">    }</span>
+
+<span class="nc bnc" id="L160" title="All 2 branches missed.">    if (this.appProperties.getSecurityEnabled()) {</span>
+<span class="nc" id="L161">      http //</span>
+<span class="nc" id="L162">        .authorizeRequests() //</span>
+<span class="nc" id="L163">        .anyRequest().authenticated();</span>
+    } else {
+<span class="nc" id="L165">      http //</span>
+<span class="nc" id="L166">        .authorizeRequests() //</span>
+<span class="nc" id="L167">        .anyRequest().permitAll() //</span>
+      ;
+    }
+
+<span class="nc" id="L171">    http.headers().frameOptions().sameOrigin();</span>
+<span class="nc" id="L172">  }</span>
+
+  @Override
+  public void init(final WebSecurity web) throws Exception {
+<span class="nc bnc" id="L176" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.securityConfigurers()) {</span>
+<span class="nc" id="L177">      configurer.init(web);</span>
+<span class="nc" id="L178">    }</span>
+<span class="nc" id="L179">    super.init(web);</span>
+<span class="nc" id="L180">  }</span>
+
+  public List&lt;SecurityConfigurer&gt; securityConfigurers() {
+<span class="nc bnc" id="L183" title="All 2 branches missed.">    final List&lt;SecurityConfigurer&gt; all = this.securityConfigurers != null ? this.securityConfigurers : newArrayList();</span>
+<span class="nc" id="L184">    final List&lt;SecurityConfigurer&gt; sorted = all.stream().sorted().collect(toList());</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : sorted) {</span>
+<span class="nc" id="L186">      log.info(&quot;security configurer '{}', order '{}'&quot;, configurer.getClass().getName(), configurer.getOrder());</span>
+<span class="nc" id="L187">    }</span>
+<span class="nc" id="L188">    return sorted;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

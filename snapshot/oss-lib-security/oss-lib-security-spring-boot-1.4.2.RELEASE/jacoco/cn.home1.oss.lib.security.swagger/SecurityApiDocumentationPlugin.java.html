@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityApiDocumentationPlugin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.swagger</a> &gt; <span class="el_source">SecurityApiDocumentationPlugin.java</span></div><h1>SecurityApiDocumentationPlugin.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.swagger;
+
+import static cn.home1.oss.boot.autoconfigure.AppType.RESOURCE;
+import static com.google.common.base.Predicates.or;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static springfox.documentation.builders.PathSelectors.regex;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
+
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.boot.autoconfigure.AppSecurityProperties;
+import cn.home1.oss.lib.common.crypto.KeyExpression;
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.security.api.GenericUser;
+import cn.home1.oss.lib.security.internal.rest.RestfulLoginPublicKeyFilter;
+import cn.home1.oss.lib.swagger.ManualRequestHandler;
+import cn.home1.oss.lib.swagger.SwaggerUtils;
+import cn.home1.oss.lib.swagger.model.ApiOperationInfo;
+import cn.home1.oss.lib.swagger.model.ApiRequest;
+
+import com.fasterxml.classmate.TypeResolver;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
+import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition;
+import org.springframework.web.servlet.mvc.condition.ParamsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
+import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
+
+import springfox.documentation.RequestHandler;
+import springfox.documentation.builders.ResponseMessageBuilder;
+import springfox.documentation.schema.DefaultGenericTypeNamingStrategy;
+import springfox.documentation.schema.ModelRef;
+import springfox.documentation.service.ResponseMessage;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.DocumentationPlugin;
+import springfox.documentation.spi.service.contexts.DocumentationContext;
+import springfox.documentation.spi.service.contexts.DocumentationContextBuilder;
+import springfox.documentation.swagger.common.SwaggerPluginSupport;
+
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * equivalent to @Bean public Docket securityDocket() {... }.
+ */
+@Order(value = SwaggerPluginSupport.SWAGGER_PLUGIN_ORDER)
+<span class="nc" id="L61">public class SecurityApiDocumentationPlugin implements DocumentationPlugin {</span>
+
+  @Autowired
+  private TypeResolver typeResolver;
+  @Autowired
+  private AppProperties appProperties;
+
+  @Override
+  public DocumentationContext configure(final DocumentationContextBuilder documentationContextBuilder) {
+<span class="nc" id="L70">    documentationContextBuilder</span>
+<span class="nc" id="L71">      .apiInfo(SwaggerUtils.apiInfo(&quot;oss-lib-security&quot;, &quot;oss-lib-security's security endpoints&quot;))</span>
+<span class="nc" id="L72">      .groupName(&quot;security&quot;)</span>
+<span class="nc" id="L73">      .pathMapping(Optional.absent())</span>
+<span class="nc" id="L74">      .genericsNaming(new DefaultGenericTypeNamingStrategy())</span>
+<span class="nc" id="L75">      .requestHandlers(this.requestHandlers())</span>
+<span class="nc" id="L76">      .additionalModels(Sets.newHashSet(this.typeResolver.resolve(ResolvedError.class)));</span>
+<span class="nc" id="L77">    return documentationContextBuilder.build();</span>
+  }
+
+  private List&lt;RequestHandler&gt; requestHandlers() {
+<span class="nc" id="L81">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+    // TODO add oauth endpoints
+    // TODO conditional filter
+    // finish how to add description
+<span class="nc" id="L85">    final List&lt;RequestHandler&gt; result = newArrayList();</span>
+<span class="nc bnc" id="L86" title="All 4 branches missed.">    if (appSecurityProperties.getEnabled() &amp;&amp; this.appProperties.getType() != RESOURCE) {</span>
+<span class="nc" id="L87">      result.add( // formAuth loginPage</span>
+<span class="nc" id="L88">        ManualRequestHandler.requestHandlerBuilder()</span>
+<span class="nc" id="L89">          .consumes(new ConsumesRequestCondition())</span>
+<span class="nc" id="L90">          .declaringClass(DefaultLoginPageGeneratingFilter.class)</span>
+<span class="nc" id="L91">          .groupName(DefaultLoginPageGeneratingFilter.class.getSimpleName())</span>
+<span class="nc" id="L92">          .headers(new HeadersRequestCondition())</span>
+<span class="nc" id="L93">          .parameters(newArrayList())</span>
+<span class="nc" id="L94">          .params(new ParamsRequestCondition())</span>
+<span class="nc" id="L95">          .patternsCondition(new PatternsRequestCondition(appSecurityProperties.getLoginPage()))</span>
+<span class="nc" id="L96">          .produces(new ProducesRequestCondition(TEXT_HTML_VALUE))</span>
+<span class="nc" id="L97">          .returnType(this.typeResolver.resolve(String.class))</span>
+<span class="nc" id="L98">          .supportedMethods(new RequestMethodsRequestCondition(GET))</span>
+<span class="nc" id="L99">          .build()</span>
+      );
+<span class="nc" id="L101">      result.add( // formAuth loginProcessingUrl</span>
+<span class="nc" id="L102">        ManualRequestHandler.requestHandlerBuilder()</span>
+<span class="nc" id="L103">          .consumes(new ConsumesRequestCondition())</span>
+<span class="nc" id="L104">          .declaringClass(UsernamePasswordAuthenticationFilter.class)</span>
+<span class="nc" id="L105">          .groupName(UsernamePasswordAuthenticationFilter.class.getSimpleName())</span>
+<span class="nc" id="L106">          .headers(new HeadersRequestCondition())</span>
+<span class="nc" id="L107">          .parameters(newArrayList( //</span>
+          //  new ResolvedMethodParameter(&quot;username&quot;, null, TYPE_RESOLVER.resolve(String.class))
+          ))
+<span class="nc" id="L110">          .apiOperationInfo(ApiOperationInfo.builder()</span>
+<span class="nc" id="L111">            .notes(&quot;用户登录请求处理&quot;)</span>
+<span class="nc" id="L112">            .apiRequest(ApiRequest.builder()</span>
+<span class="nc" id="L113">              .parameters(newArrayList())</span>
+<span class="nc" id="L114">              .build()</span>
+<span class="nc" id="L115">              .addParameter(&quot;username&quot;, &quot;enter your user name&quot;, true)</span>
+<span class="nc" id="L116">              .addParameter(&quot;password&quot;, &quot;enter your password&quot;, true)</span>
+<span class="nc" id="L117">              .addParameter(&quot;_csrf&quot;, &quot;Cross-site request forgery&quot;, false)</span>
+<span class="nc" id="L118">              .addParameter(&quot;remember-me&quot;, &quot;So remember me?&quot;, false))</span>
+<span class="nc" id="L119">            .build()</span>
+<span class="nc" id="L120">          ).patternsCondition(new PatternsRequestCondition(appSecurityProperties.getLoginProcessingUrl()))</span>
+<span class="nc" id="L121">          .produces(new ProducesRequestCondition(APPLICATION_JSON_VALUE))</span>
+<span class="nc" id="L122">          .returnType(this.typeResolver.resolve(GenericUser.class))</span>
+<span class="nc" id="L123">          .supportedMethods(new RequestMethodsRequestCondition(POST))</span>
+<span class="nc" id="L124">          .build()</span>
+
+      );
+<span class="nc" id="L127">      result.add( // formAuth loginPublicKeyUrl</span>
+<span class="nc" id="L128">        ManualRequestHandler.requestHandlerBuilder()</span>
+<span class="nc" id="L129">          .consumes(new ConsumesRequestCondition())</span>
+<span class="nc" id="L130">          .declaringClass(RestfulLoginPublicKeyFilter.class)</span>
+<span class="nc" id="L131">          .groupName(RestfulLoginPublicKeyFilter.class.getSimpleName())</span>
+<span class="nc" id="L132">          .headers(new HeadersRequestCondition())</span>
+<span class="nc" id="L133">          .parameters(newArrayList())</span>
+<span class="nc" id="L134">          .params(new ParamsRequestCondition())</span>
+<span class="nc" id="L135">          .patternsCondition(new PatternsRequestCondition(appSecurityProperties.getLoginPublicKeyUrl()))</span>
+<span class="nc" id="L136">          .produces(new ProducesRequestCondition(APPLICATION_JSON_VALUE))</span>
+<span class="nc" id="L137">          .returnType(this.typeResolver.resolve(KeyExpression.class))</span>
+<span class="nc" id="L138">          .supportedMethods(new RequestMethodsRequestCondition(GET))</span>
+<span class="nc" id="L139">          .build()</span>
+      );
+<span class="nc" id="L141">      result.add( // formAuth logoutUrl</span>
+<span class="nc" id="L142">        ManualRequestHandler.requestHandlerBuilder()</span>
+<span class="nc" id="L143">          .consumes(new ConsumesRequestCondition())</span>
+<span class="nc" id="L144">          .declaringClass(LogoutFilter.class)</span>
+<span class="nc" id="L145">          .groupName(LogoutFilter.class.getSimpleName())</span>
+<span class="nc" id="L146">          .headers(new HeadersRequestCondition())</span>
+<span class="nc" id="L147">          .parameters(newArrayList())</span>
+<span class="nc" id="L148">          .params(new ParamsRequestCondition())</span>
+<span class="nc" id="L149">          .patternsCondition(new PatternsRequestCondition(appSecurityProperties.getLogoutUrl()))</span>
+<span class="nc" id="L150">          .produces(new ProducesRequestCondition(APPLICATION_JSON_VALUE))</span>
+<span class="nc" id="L151">          .returnType(this.typeResolver.resolve(Void.class))</span>
+<span class="nc" id="L152">          .supportedMethods(new RequestMethodsRequestCondition(POST))</span>
+<span class="nc" id="L153">          .build()</span>
+      );
+    }
+<span class="nc" id="L156">    return result;</span>
+  }
+
+  @Override
+  public DocumentationType getDocumentationType() {
+<span class="nc" id="L161">    return DocumentationType.SWAGGER_2;</span>
+  }
+
+  @Override
+  public String getGroupName() {
+<span class="nc" id="L166">    return &quot;security&quot;;</span>
+  }
+
+  @Override
+  public boolean isEnabled() {
+<span class="nc" id="L171">    return true;</span>
+  }
+
+  @Override
+  public boolean supports(final DocumentationType delimiter) {
+<span class="nc" id="L176">    return DocumentationType.SWAGGER_2.equals(delimiter);</span>
+  }
+
+  /**
+   * @return securityPaths
+   * @deprecated remove this later.
+   */
+  @Deprecated
+  public Predicate&lt;String&gt; securityPaths() {
+<span class="nc" id="L185">    final String securityBasePath = this.appProperties.getSecurity().getBasePath();</span>
+<span class="nc" id="L186">    return or(regex(securityBasePath + &quot;/.*&quot;), regex(&quot;/oauth/.*&quot;));</span>
+  }
+
+  private static List&lt;ResponseMessage&gt; responseMessages() {
+<span class="nc" id="L190">    final List&lt;ResponseMessage&gt; responseMessages = newArrayList();</span>
+<span class="nc" id="L191">    responseMessages.add(new ResponseMessageBuilder()</span>
+<span class="nc" id="L192">      .code(400).message(&quot;400diy&quot;)</span>
+<span class="nc" id="L193">      .responseModel(new ModelRef(&quot;cn.home1.oss.lib.errorhandle.api.ResolvedError&quot;))</span>
+<span class="nc" id="L194">      .build());</span>
+<span class="nc" id="L195">    return responseMessages;</span>
+  }
+
+  /**
+   * @return responseMessages
+   * @deprecated remove this later.
+   */
+  @Deprecated
+  static Map&lt;RequestMethod, List&lt;ResponseMessage&gt;&gt; additionalResponseMessages() {
+<span class="nc" id="L204">    final Map&lt;RequestMethod, List&lt;ResponseMessage&gt;&gt; additionalResponseMessages = new EnumMap&lt;&gt;(RequestMethod.class);</span>
+<span class="nc" id="L205">    final List&lt;ResponseMessage&gt; responseMessages = responseMessages();</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">    for (final RequestMethod requestMethod : RequestMethod.values()) {</span>
+<span class="nc" id="L207">      additionalResponseMessages.put(requestMethod, responseMessages);</span>
+    }
+<span class="nc" id="L209">    return additionalResponseMessages;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

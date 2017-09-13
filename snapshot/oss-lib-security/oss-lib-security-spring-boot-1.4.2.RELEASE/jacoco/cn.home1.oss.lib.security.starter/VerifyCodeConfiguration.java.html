@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VerifyCodeConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.starter</a> &gt; <span class="el_source">VerifyCodeConfiguration.java</span></div><h1>VerifyCodeConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.starter;
+
+import static cn.home1.oss.boot.autoconfigure.AppSecurityProperties.APP_SECURITY;
+import static cn.home1.oss.boot.autoconfigure.AppType.MIXED;
+import static cn.home1.oss.boot.autoconfigure.AppType.RESTFUL;
+import static cn.home1.oss.boot.autoconfigure.AppType.TEMPLATE;
+import static org.springframework.boot.autoconfigure.security.SecurityProperties.DEFAULT_FILTER_ORDER;
+
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.boot.autoconfigure.AppSecurity;
+import cn.home1.oss.boot.autoconfigure.ConditionalOnAppSecurity;
+import cn.home1.oss.boot.autoconfigure.ConditionalOnAppType;
+import cn.home1.oss.lib.security.internal.VerifyCodeFilter;
+import cn.home1.oss.lib.security.internal.preauth.PreAuthTokenFilter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
+/**
+ * Created by zhanghaolun on 16/8/19.
+ */
+
+@ConditionalOnAppSecurity(AppSecurity.ENABLED)
+@ConditionalOnAppType({MIXED, RESTFUL, TEMPLATE})
+@Configuration
+@Order(VerifyCodeConfiguration.ORDER_VERIFY_CODE)
+<span class="nc" id="L31">public class VerifyCodeConfiguration extends SecurityConfigurerAdapter&lt;VerifyCodeConfiguration&gt; {</span>
+
+  public static final int ORDER_VERIFY_CODE = DEFAULT_FILTER_ORDER + 1;
+
+  @Autowired
+  private AppProperties appProperties;
+
+  @Override
+  public void configure(final HttpSecurity http) {
+<span class="nc bnc" id="L40" title="All 2 branches missed.">    if (this.appProperties.getSecurity().getVerifyCode()) {</span>
+<span class="nc" id="L41">      http.addFilterAfter(this.verifyCodeFilter(), PreAuthTokenFilter.class);</span>
+    }
+<span class="nc" id="L43">  }</span>
+
+  @Bean
+  @ConditionalOnProperty(prefix = APP_SECURITY, name = &quot;verifyCode&quot;, havingValue = &quot;true&quot;)
+  public VerifyCodeFilter verifyCodeFilter() { // TODO is filter bean ok, twice?
+<span class="nc" id="L48">    return new VerifyCodeFilter();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StaticPrivilege.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.api</a> &gt; <span class="el_source">StaticPrivilege.java</span></div><h1>StaticPrivilege.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.api;
+
+import cn.home1.oss.lib.common.DiscoverableEnum;
+
+import org.springframework.security.core.GrantedAuthority;
+
+/**
+ * User should define enum which implements this interface.
+ * Created by zhanghaolun on 16/7/14.
+ */
+public interface StaticPrivilege&lt;T extends Enum&lt;T&gt; &amp; StaticPrivilege&lt;T&gt;&gt;
+    extends DiscoverableEnum&lt;T&gt;, GrantedAuthority {
+
+  String PRIVILEGE_PREFIX = &quot;PRIVILEGE_&quot;;
+
+  static String toAuthority(final String resource, final String action) {
+<span class="nc" id="L17">    return PRIVILEGE_PREFIX + resource + &quot;_&quot; + action;</span>
+  }
+
+  String getAction();
+
+  @Override
+  default String getAuthority() {
+<span class="nc" id="L24">    return toAuthority(getResource(), getAction());</span>
+  }
+
+  String getResource();
+
+  @Override
+  default String getText() {
+<span class="nc" id="L31">    return this.getAuthority();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

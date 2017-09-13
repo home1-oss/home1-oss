@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseUserDetailsAuthenticationProvider.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.api</a> &gt; <span class="el_source">BaseUserDetailsAuthenticationProvider.java</span></div><h1>BaseUserDetailsAuthenticationProvider.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.api;
+
+import static cn.home1.oss.boot.autoconfigure.AppProperties.getEnvironment;
+import static cn.home1.oss.boot.autoconfigure.AppProperties.getProdEnvironment;
+import static cn.home1.oss.boot.autoconfigure.AppSecurityProperties.ENCRYPTED_FIELD_PREFIX;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
+import cn.home1.oss.lib.common.crypto.EncodeCipher;
+import cn.home1.oss.lib.security.internal.BaseGrantedAuthority;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Created by zhanghaolun on 16/7/6.
+ */
+<span class="nc" id="L41">@Slf4j</span>
+<span class="nc" id="L42">public abstract class BaseUserDetailsAuthenticationProvider&lt;U extends User&gt;</span>
+  extends org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider
+  implements AuthenticationProvider, UserDetailsService, ApplicationListener&lt;ContextRefreshedEvent&gt; {
+
+<span class="nc" id="L46">  @Getter</span>
+  private EncodeCipher cipher;
+  @Autowired(required = false)
+<span class="nc" id="L49">  @Setter</span>
+<span class="nc" id="L50">  @Getter</span>
+  private PasswordEncoder passwordEncoder;
+  @Autowired(required = false)
+  private SecurityProperties securityProperties;
+
+  @Override
+  protected final void additionalAuthenticationChecks( //
+    final org.springframework.security.core.userdetails.UserDetails userDetails, //
+    final UsernamePasswordAuthenticationToken authentication //
+  ) throws AuthenticationException {
+    // no-op
+<span class="nc" id="L61">  }</span>
+
+  @Override
+  public final org.springframework.security.core.userdetails.UserDetails loadUserByUsername( //
+    final String username //
+  ) throws UsernameNotFoundException {
+<span class="nc" id="L67">    final GenericUser found = this.findEverywhere(username);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">    if (found != null) {</span>
+<span class="nc" id="L69">      return found;</span>
+    } else {
+<span class="nc" id="L71">      throw new UsernameNotFoundException(username);</span>
+    }
+  }
+
+  @Override
+  protected final org.springframework.security.core.userdetails.UserDetails retrieveUser( //
+    final String username, //
+    final UsernamePasswordAuthenticationToken authentication //
+  ) throws AuthenticationException {
+<span class="nc bnc" id="L80" title="All 2 branches missed.">    if (log.isDebugEnabled()) {</span>
+<span class="nc" id="L81">      log.debug(&quot;retrieveUser: {}&quot;, username);</span>
+    }
+
+<span class="nc" id="L84">    final String passwordInput = (String) authentication.getCredentials();</span>
+<span class="nc" id="L85">    final String password = decryptIfEncrypted(passwordInput);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">    if (isBlank(password)) {</span>
+<span class="nc" id="L87">      log.warn(&quot;Username {}: no password provided&quot;, username);</span>
+<span class="nc" id="L88">      throw new BadCredentialsException(&quot;Please enter password&quot;);</span>
+    }
+
+<span class="nc" id="L91">    final GenericUser user = this.findEverywhere(username);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">    if (user == null) {</span>
+<span class="nc" id="L93">      log.warn(&quot;Username {} password {}: user not found&quot;, username, password);</span>
+<span class="nc" id="L94">      throw new UsernameNotFoundException(username);</span>
+    }
+
+<span class="nc" id="L97">    final PasswordEncoder passwordEncoder = this.getPasswordEncoder();</span>
+    final Boolean passwordMatches;
+<span class="nc bnc" id="L99" title="All 2 branches missed.">    if (passwordEncoder != null) {</span>
+<span class="nc" id="L100">      passwordMatches = passwordEncoder.matches(password, user.getPassword());</span>
+    } else {
+<span class="nc" id="L102">      passwordMatches = org.apache.commons.lang3.StringUtils.equals(password, user.getPassword());</span>
+    }
+<span class="nc bnc" id="L104" title="All 2 branches missed.">    if (!passwordMatches) {</span>
+<span class="nc" id="L105">      log.warn(&quot;Username {} password {}: invalid password&quot;, username, password);</span>
+<span class="nc" id="L106">      throw new BadCredentialsException(&quot;Invalid Login&quot;);</span>
+    }
+
+<span class="nc bnc" id="L109" title="All 2 branches missed.">    if (!user.isEnabled()) {</span>
+<span class="nc" id="L110">      log.warn(&quot;Username {}: disabled&quot;, username);</span>
+<span class="nc" id="L111">      throw new BadCredentialsException(&quot;User disabled&quot;);</span>
+    }
+
+<span class="nc" id="L114">    return user;</span>
+  }
+
+  public final GenericUser findEverywhere(final String username) {
+<span class="nc" id="L118">    final User user = this.findByName(username);</span>
+
+    final GenericUser result;
+<span class="nc bnc" id="L121" title="All 2 branches missed.">    if (user == null) {</span>
+<span class="nc" id="L122">      result = this.findSecurityUser(username);</span>
+    } else {
+<span class="nc" id="L124">      result = GenericUser.fromUser(user);</span>
+    }
+<span class="nc" id="L126">    return result;</span>
+  }
+
+  protected final GenericUser findSecurityUser(final String username) {
+    final GenericUser result;
+<span class="nc bnc" id="L131" title="All 2 branches missed.">    if (this.securityProperties == null) {</span>
+<span class="nc" id="L132">      result = null;</span>
+    } else {
+<span class="nc" id="L134">      final SecurityProperties.User securityUser = this.securityProperties.getUser();</span>
+<span class="nc bnc" id="L135" title="All 6 branches missed.">      if (securityUser != null &amp;&amp; isNotBlank(securityUser.getName()) &amp;&amp; securityUser.getName().equals(username)) {</span>
+<span class="nc" id="L136">        final Set&lt;GrantedAuthority&gt; authorities = securityUser.getRole() //</span>
+<span class="nc" id="L137">          .stream() //</span>
+<span class="nc" id="L138">          .map(role -&gt; new BaseGrantedAuthority(Security.ROLE_PREFIX + role)) //</span>
+<span class="nc" id="L139">          .collect(toSet());</span>
+<span class="nc" id="L140">        final PasswordEncoder passwordEncoder = this.getPasswordEncoder();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        final String password = passwordEncoder != null ? //</span>
+<span class="nc" id="L142">          passwordEncoder.encode(securityUser.getPassword()) : securityUser.getPassword();</span>
+
+<span class="nc" id="L144">        final UserDetails userDetails = UserDetails.userDetailsBuilder() //</span>
+<span class="nc" id="L145">          .authorities(authorities) //</span>
+<span class="nc" id="L146">          .enabled(true) //</span>
+<span class="nc" id="L147">          .id(&quot;&quot;) //</span>
+<span class="nc" id="L148">          .name(securityUser.getName()) //</span>
+<span class="nc" id="L149">          .password(password) //</span>
+<span class="nc" id="L150">          .properties(ImmutableMap.of()) //</span>
+<span class="nc" id="L151">          .build();</span>
+<span class="nc" id="L152">        result = GenericUser.fromUser(userDetails);</span>
+<span class="nc" id="L153">      } else {</span>
+<span class="nc" id="L154">        result = null;</span>
+      }
+    }
+<span class="nc" id="L157">    return result;</span>
+  }
+
+  // ------------------------------ it users ------------------------------
+
+  String decryptIfEncrypted(final String text) {
+    final String result;
+<span class="nc bnc" id="L164" title="All 2 branches missed.">    if (text == null) {</span>
+<span class="nc" id="L165">      result = null;</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">    } else if (text.startsWith(ENCRYPTED_FIELD_PREFIX)) {</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">      checkState(this.cipher != null, &quot;Encrypt not supported.&quot;);</span>
+<span class="nc" id="L168">      result = this.cipher.decrypt(text.substring(ENCRYPTED_FIELD_PREFIX.length()));</span>
+    } else {
+<span class="nc" id="L170">      result = text;</span>
+    }
+<span class="nc" id="L172">    return result;</span>
+  }
+
+  @Override
+  public void onApplicationEvent(final ContextRefreshedEvent event) {
+<span class="nc" id="L177">    final Boolean prodEnvironment = getProdEnvironment(getEnvironment(event.getApplicationContext().getEnvironment()));</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">    if (!prodEnvironment) {</span>
+<span class="nc" id="L179">      log.info(&quot;init test users on non-production environment.&quot;);</span>
+<span class="nc" id="L180">      this.initTestUsers();</span>
+    } else {
+<span class="nc" id="L182">      log.info(&quot;skip init test users on production environment.&quot;);</span>
+    }
+<span class="nc" id="L184">  }</span>
+
+  protected abstract List&lt;U&gt; testUsers();
+
+  public final List&lt;U&gt; initTestUsers() {
+<span class="nc" id="L189">    final List&lt;U&gt; users = this.testUsers();</span>
+<span class="nc" id="L190">    final List&lt;U&gt; result = newArrayListWithExpectedSize(users.size());</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">    for (final U user : users) {</span>
+<span class="nc" id="L192">      final U found = this.findByName(user.getName());</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">      if (found == null) {</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        final Set&lt;GrantedAuthority&gt; authorities = user.getAuthorities() != null ? //</span>
+<span class="nc" id="L195">          user.getAuthorities() : //</span>
+<span class="nc" id="L196">          ImmutableSet.of();</span>
+<span class="nc" id="L197">        authorities.forEach(this::saveRole);</span>
+<span class="nc" id="L198">        result.add(this.save(user));</span>
+<span class="nc bnc" id="L199" title="All 4 branches missed.">      } else if (!found.isEnabled() || !found.equals(user)) {</span>
+<span class="nc" id="L200">        this.delete(found);</span>
+<span class="nc" id="L201">        result.add(this.save(user));</span>
+      } else {
+<span class="nc" id="L203">        result.add(found);</span>
+      }
+<span class="nc" id="L205">    }</span>
+<span class="nc" id="L206">    return result;</span>
+  }
+
+  public List&lt;U&gt; deleteTestUsers() {
+<span class="nc" id="L210">    final List&lt;U&gt; users = this.testUsers();</span>
+<span class="nc" id="L211">    final List&lt;U&gt; result = newArrayListWithExpectedSize(users.size());</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">    for (final U user : users) {</span>
+<span class="nc" id="L213">      final U found = this.findByName(user.getName());</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">      if (found != null) {</span>
+<span class="nc" id="L215">        this.delete(found);</span>
+      }
+<span class="nc" id="L217">    }</span>
+<span class="nc" id="L218">    return result;</span>
+  }
+
+  public final void setCipher(final EncodeCipher cipher) {
+<span class="nc" id="L222">    this.cipher = cipher;</span>
+<span class="nc" id="L223">  }</span>
+
+  protected abstract U findByName(String username);
+
+  protected abstract U save(U user);
+
+  protected abstract void delete(U user);
+
+  protected abstract GrantedAuthority saveRole(GrantedAuthority authority);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

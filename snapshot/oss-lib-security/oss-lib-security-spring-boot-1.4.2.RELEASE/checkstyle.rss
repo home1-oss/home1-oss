@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<rss version="0.91">
+  <channel>
+    <title>oss-lib-security-spring-boot-1.4.2.RELEASE - Checkstyle report</title>
+    <link>https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE</link>
+    <description>oss-lib-security-spring-boot-1.4.2.RELEASE - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2017</copyright>
+    <item>
+      <title>File: 61,
+             Errors: 0,
+             Warnings: 3,
+             Infos: 0
+      </title>
+            <link>https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html</link>
+      <description>
+        <p>Click <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.VerifyCodeProvider.java">cn/home1/oss/lib/security/api/VerifyCodeProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.PermitedRequestConfiguration.java">cn/home1/oss/lib/security/starter/PermitedRequestConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.swagger.AbstractAfterOperationBuilderBuildPlugin.java">cn/home1/oss/lib/security/swagger/AbstractAfterOperationBuilderBuildPlugin.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.VerifyCodeFilter.java">cn/home1/oss/lib/security/internal/VerifyCodeFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.AbstractRole.java">cn/home1/oss/lib/security/api/AbstractRole.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.BaseUserDetailsAuthenticationProvider.java">cn/home1/oss/lib/security/api/BaseUserDetailsAuthenticationProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.BaseGrantedAuthority.java">cn/home1/oss/lib/security/internal/BaseGrantedAuthority.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.zuul.ZuulTokenConfiguration.java">cn/home1/oss/lib/security/internal/zuul/ZuulTokenConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.template.TemplateAuthenticationFailureHandler.java">cn/home1/oss/lib/security/internal/template/TemplateAuthenticationFailureHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#git.properties">git.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.BasicAuthConfiguration.java">cn/home1/oss/lib/security/starter/BasicAuthConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.UserDetails.java">cn/home1/oss/lib/security/api/UserDetails.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.PreAuthConfiguration.java">cn/home1/oss/lib/security/starter/PreAuthConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.preauth.PreAuthTokenCookieClearingLogoutHandler.java">cn/home1/oss/lib/security/internal/preauth/PreAuthTokenCookieClearingLogoutHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.AllowAllPermissionEvaluator.java">cn/home1/oss/lib/security/AllowAllPermissionEvaluator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.template.TemplateAuthenticationLogoutSuccessHandler.java">cn/home1/oss/lib/security/internal/template/TemplateAuthenticationLogoutSuccessHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.template.TemplateAuthenticationEntryPoint.java">cn/home1/oss/lib/security/internal/template/TemplateAuthenticationEntryPoint.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.VerifyCodeConfiguration.java">cn/home1/oss/lib/security/starter/VerifyCodeConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.SecurityConfigurerAdapter.java">cn/home1/oss/lib/security/starter/SecurityConfigurerAdapter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.rest.RestfulLogoutDisabledFilter.java">cn/home1/oss/lib/security/internal/rest/RestfulLogoutDisabledFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.AbstractUser.java">cn/home1/oss/lib/security/api/AbstractUser.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.AbstractGrantedAuthority.java">cn/home1/oss/lib/security/api/AbstractGrantedAuthority.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.crypto.ReentrantBCryptPasswordEncoder.java">cn/home1/oss/lib/security/crypto/ReentrantBCryptPasswordEncoder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.template.SmartRedirectStrategy.java">cn/home1/oss/lib/security/internal/template/SmartRedirectStrategy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.rest.RestfulAuthenticationFailureHandler.java">cn/home1/oss/lib/security/internal/rest/RestfulAuthenticationFailureHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.feign.FeignTokenConfiguration.java">cn/home1/oss/lib/security/internal/feign/FeignTokenConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.rest.RestfulAuthenticationEntryPoint.java">cn/home1/oss/lib/security/internal/rest/RestfulAuthenticationEntryPoint.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.CompositeAuthenticationProvider.java">cn/home1/oss/lib/security/CompositeAuthenticationProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.ContextAuthTokenAuditor.java">cn/home1/oss/lib/security/internal/ContextAuthTokenAuditor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.swagger.AuthenticationTokenHeaderBuilderPlugin.java">cn/home1/oss/lib/security/swagger/AuthenticationTokenHeaderBuilderPlugin.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.User.java">cn/home1/oss/lib/security/api/User.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.preauth.PreAuthTokenFilter.java">cn/home1/oss/lib/security/internal/preauth/PreAuthTokenFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.preauth.PreAuthTokenProcessingFilter.java">cn/home1/oss/lib/security/internal/preauth/PreAuthTokenProcessingFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.GenericUser.java">cn/home1/oss/lib/security/api/GenericUser.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.WebApplicationSecurityAutoConfiguration.java">cn/home1/oss/lib/security/starter/WebApplicationSecurityAutoConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.zuul.ContextAuthTokenZuulFilter.java">cn/home1/oss/lib/security/internal/zuul/ContextAuthTokenZuulFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.SecurityConfigurer.java">cn/home1/oss/lib/security/starter/SecurityConfigurer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.CsrfHeaderFilter.java">cn/home1/oss/lib/security/CsrfHeaderFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.rest.RestfulLoginPublicKeyFilter.java">cn/home1/oss/lib/security/internal/rest/RestfulLoginPublicKeyFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.rest.RestfulLogoutSuccessHandler.java">cn/home1/oss/lib/security/internal/rest/RestfulLogoutSuccessHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.swagger.BasicAuthHeaderBuilderPlugin.java">cn/home1/oss/lib/security/swagger/BasicAuthHeaderBuilderPlugin.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.MethodSecurityPermissionEvaluator.java">cn/home1/oss/lib/security/MethodSecurityPermissionEvaluator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.template.TemplateAuthenticationSuccessHandler.java">cn/home1/oss/lib/security/internal/template/TemplateAuthenticationSuccessHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.feign.ContextAuthTokenFeignRequestInterceptor.java">cn/home1/oss/lib/security/internal/feign/ContextAuthTokenFeignRequestInterceptor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.rest.RestfulBasicAuthenticationEntryPoint.java">cn/home1/oss/lib/security/internal/rest/RestfulBasicAuthenticationEntryPoint.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.swagger.SecurityApiDocumentationPlugin.java">cn/home1/oss/lib/security/swagger/SecurityApiDocumentationPlugin.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.MethodSecurityConfiguration.java">cn/home1/oss/lib/security/starter/MethodSecurityConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.AuthenticationTokens.java">cn/home1/oss/lib/security/internal/AuthenticationTokens.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.rest.RestfulAuthenticationSuccessHandler.java">cn/home1/oss/lib/security/internal/rest/RestfulAuthenticationSuccessHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.template.EncryptDefaultLoginPageGeneratingFilter.java">cn/home1/oss/lib/security/internal/template/EncryptDefaultLoginPageGeneratingFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.OAuth2Utils.java">cn/home1/oss/lib/security/api/OAuth2Utils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.CsrfConfiguration.java">cn/home1/oss/lib/security/starter/CsrfConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.preauth.PreAuthTestUserFilter.java">cn/home1/oss/lib/security/internal/preauth/PreAuthTestUserFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.Security.java">cn/home1/oss/lib/security/api/Security.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.starter.FormAuthConfiguration.java">cn/home1/oss/lib/security/starter/FormAuthConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.StaticPrivilege.java">cn/home1/oss/lib/security/api/StaticPrivilege.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.rest.RestfulLoginDisabledFilter.java">cn/home1/oss/lib/security/internal/rest/RestfulLoginDisabledFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.api.AbstractStaticPrivilege.java">cn/home1/oss/lib/security/api/AbstractStaticPrivilege.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.internal.preauth.PreAuthTokenAuthenticationProvider.java">cn/home1/oss/lib/security/internal/preauth/PreAuthTokenAuthenticationProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#org.springframework.security.config.annotation.web.configurers.EncryptDefaultLoginPageConfigurer.java">org/springframework/security/config/annotation/web/configurers/EncryptDefaultLoginPageConfigurer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/home1-oss/oss-lib-security/oss-lib-security-spring-boot-1.4.2.RELEASE/checkstyle.html#cn.home1.oss.lib.security.swagger.AbstractSecurityApiListingPlugin.java">cn/home1/oss/lib/security/swagger/AbstractSecurityApiListingPlugin.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

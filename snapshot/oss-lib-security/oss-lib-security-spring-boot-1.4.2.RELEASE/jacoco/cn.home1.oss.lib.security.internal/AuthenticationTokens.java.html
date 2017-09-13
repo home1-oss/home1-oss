@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationTokens.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.internal</a> &gt; <span class="el_source">AuthenticationTokens.java</span></div><h1>AuthenticationTokens.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.internal;
+
+import static cn.home1.oss.lib.security.api.GenericUser.isGenericUser;
+
+import com.google.common.collect.ImmutableSet;
+
+import cn.home1.oss.lib.security.api.GenericUser;
+import cn.home1.oss.lib.webmvc.api.TypeSafeToken;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import java.util.Collection;
+
+/**
+ * Created by zhanghaolun on 16/10/30.
+ */
+@SuppressWarnings({&quot;PMD.AbstractNaming&quot;, &quot;PMD.AbstractClassWithoutAbstractMethod&quot;})
+public abstract class AuthenticationTokens {
+
+<span class="nc" id="L24">  private AuthenticationTokens() {</span>
+<span class="nc" id="L25">  }</span>
+
+  public static PreAuthenticatedAuthenticationToken authenticated( //
+    final PreAuthenticatedAuthenticationToken authentication //
+  ) {
+    final PreAuthenticatedAuthenticationToken result;
+
+<span class="nc bnc" id="L32" title="All 2 branches missed.">    if (authentication == null) {</span>
+<span class="nc" id="L33">      result = null;</span>
+    } else {
+<span class="nc" id="L35">      authentication.setAuthenticated(true);</span>
+<span class="nc" id="L36">      authentication.eraseCredentials();</span>
+
+<span class="nc" id="L38">      final Object principal = authentication.getPrincipal();</span>
+<span class="nc" id="L39">      final Object credentials = authentication.getCredentials();</span>
+
+<span class="nc bnc" id="L41" title="All 2 branches missed.">      final GenericUser genericUser = isGenericUser(principal) ? (GenericUser) principal : null;</span>
+
+<span class="nc bnc" id="L43" title="All 2 branches missed.">      if (genericUser == null) {</span>
+<span class="nc" id="L44">        result = authentication;</span>
+      } else {
+<span class="nc" id="L46">        genericUser.eraseCredentials();</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        final Collection&lt;GrantedAuthority&gt; authorities = genericUser.getAuthorities() != null ? //</span>
+<span class="nc" id="L48">          genericUser.getAuthorities() : ImmutableSet.of();</span>
+<span class="nc" id="L49">        result = new PreAuthenticatedAuthenticationToken(principal, credentials, authorities);</span>
+      }
+    }
+<span class="nc" id="L52">    return result;</span>
+  }
+
+  public static String rawToken(final Authentication authentication, final TypeSafeToken&lt;GenericUser&gt; token) {
+    // TODO find OAuth2Authentication's header Authorization: Bearer?
+
+    final String result;
+<span class="nc bnc" id="L59" title="All 2 branches missed.">    if (authentication instanceof PreAuthenticatedAuthenticationToken) {</span>
+<span class="nc" id="L60">      final Object principal = authentication.getPrincipal();</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">      final GenericUser genericUser = isGenericUser(principal) ? (GenericUser) principal : null;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">      result = genericUser != null ? (String) authentication.getCredentials() : null;</span>
+<span class="nc" id="L63">    } else {</span>
+<span class="nc" id="L64">      final GenericUser genericUser = GenericUser.fromPrincipal(authentication);</span>
+<span class="nc" id="L65">      result = token.toToken(genericUser);</span>
+    }
+<span class="nc" id="L67">    return result;</span>
+  }
+
+  public static Boolean tokenInSecurityContext() {
+<span class="nc" id="L71">    final SecurityContext securityContext = SecurityContextHolder.getContext();</span>
+<span class="nc" id="L72">    final Authentication authentication = securityContext.getAuthentication();</span>
+<span class="nc bnc" id="L73" title="All 4 branches missed.">    return authentication != null &amp;&amp; authentication.isAuthenticated();</span>
+  }
+
+  public static String tokenFromSecurityContext(final TypeSafeToken&lt;GenericUser&gt; token) {
+<span class="nc" id="L77">    final SecurityContext securityContext = SecurityContextHolder.getContext();</span>
+<span class="nc" id="L78">    final Authentication authentication = securityContext.getAuthentication();</span>
+
+    final String result;
+<span class="nc bnc" id="L81" title="All 4 branches missed.">    if (authentication != null &amp;&amp; authentication.isAuthenticated()) {</span>
+<span class="nc" id="L82">      result = AuthenticationTokens.rawToken(authentication, token);</span>
+    } else {
+<span class="nc" id="L84">      result = null;</span>
+    }
+
+<span class="nc" id="L87">    return result;</span>
+  }
+
+  //  public static boolean containsUserInfo(final Authentication authentication) {
+  //    final boolean result;
+  //    if (authentication == null) {
+  //      result = false;
+  //    } else if (authentication instanceof OAuth2Authentication) {
+  //      final OAuth2Authentication oAuth2Auth = (OAuth2Authentication) authentication;
+  //      result = !oAuth2Auth.isClientOnly();
+  //    } else if (authentication instanceof AbstractAuthenticationToken) {
+  //      // PreAuthenticatedAuthenticationToken
+  //      result = isGenericUser(authentication.getPrincipal());
+  //    } else {
+  //      result = false;
+  //    }
+  //    return result;
+  //  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

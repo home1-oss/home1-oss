@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericUser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.api</a> &gt; <span class="el_source">GenericUser.java</span></div><h1>GenericUser.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.api;
+
+import static cn.home1.oss.lib.common.CodecUtils.urlDecode;
+import static cn.home1.oss.lib.common.CodecUtils.urlEncode;
+import static cn.home1.oss.lib.security.api.OAuth2Utils.fromOAuth2Authentication;
+import static cn.home1.oss.lib.security.api.OAuth2Utils.isOAuth2Authentication;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Thread.currentThread;
+import static java.util.stream.Collectors.toSet;
+import static lombok.AccessLevel.PACKAGE;
+import static lombok.AccessLevel.PRIVATE;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.splitPreserveAllTokens;
+
+import com.google.common.collect.ImmutableSet;
+
+import cn.home1.oss.lib.common.Defaults;
+import cn.home1.oss.lib.common.JaxbMapAdapter;
+import cn.home1.oss.lib.common.JaxbUtils;
+import cn.home1.oss.lib.security.internal.BaseGrantedAuthority;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
+import org.joda.time.DateTime;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.util.ClassUtils;
+
+import java.security.Principal;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+/**
+ * A generic token of user. Never extends GenericUser, use {@link GenericUser#fromPrincipal} {@link
+ * GenericUser#fromUser}. username =&amp;gt; type:id:name:tel:wx
+ */
+@XmlRootElement(name = &quot;genericUser&quot;)
+@XmlAccessorType(XmlAccessType.FIELD)
+<span class="pc" id="L67">@Builder(builderMethodName = &quot;genericUserBuilder&quot;)</span>
+<span class="pc bpc" id="L68" title="2 of 4 branches missed.">@AllArgsConstructor(access = PACKAGE)</span>
+<span class="fc" id="L69">@NoArgsConstructor(access = PRIVATE)</span>
+<span class="pc bpc" id="L70" title="38 of 52 branches missed.">@EqualsAndHashCode(exclude = {&quot;timestamp&quot;, &quot;uuid&quot;})</span>
+<span class="nc" id="L71">@ToString</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">@Setter(value = PRIVATE)</span>
+@Getter
+<span class="fc" id="L74">@Slf4j</span>
+@SuppressWarnings({&quot;PMD&quot;, &quot;serial&quot;})
+public final class GenericUser //
+  implements org.springframework.security.core.userdetails.UserDetails, CredentialsContainer {
+
+  public static final String GENERIC_USER_COOKIE = &quot;genericUserCookie&quot;;
+  public static final String GENERIC_USER_TOKEN = &quot;genericUserToken&quot;;
+  static final String DELIMITER = &quot;+&quot;;
+  static final String USER_TYPE_UNKNOWN = &quot;UNKNOWN&quot;;
+  private static final String CLASS_OAUTH2_AUTHENTICATION = //
+    &quot;org.springframework.security.oauth2.provider.OAuth2Authentication&quot;;
+  private static final Boolean OAUTH2_AUTHENTICATION_PRESENT;
+
+  static {
+<span class="fc" id="L88">    OAUTH2_AUTHENTICATION_PRESENT = ClassUtils.isPresent( //</span>
+<span class="fc" id="L89">      CLASS_OAUTH2_AUTHENTICATION, currentThread().getContextClassLoader());</span>
+<span class="fc" id="L90">  }</span>
+
+<span class="fc" id="L92">  private boolean accountNonExpired;</span>
+<span class="fc" id="L93">  private boolean accountNonLocked;</span>
+  @ApiModelProperty(dataType = &quot;java.lang.String&quot;, example = &quot;ADMIN,USER,OTHER&quot;)
+  @XmlElementWrapper(name = &quot;authorities&quot;)
+  @XmlElement(name = &quot;authority&quot;, type = BaseGrantedAuthority.class)
+<span class="fc" id="L97">  private Set&lt;GrantedAuthority&gt; authorities;</span>
+<span class="fc" id="L98">  private boolean credentialsNonExpired;</span>
+<span class="fc" id="L99">  private boolean enabled;</span>
+<span class="fc" id="L100">  private String password;</span>
+<span class="fc" id="L101">  private String username;</span>
+
+  @XmlJavaTypeAdapter(value = JaxbMapAdapter.class, type = Map.class)
+<span class="fc" id="L104">  private Map&lt;String, String&gt; properties;</span>
+  @ApiModelProperty(hidden = true)
+  @NonNull
+  @XmlJavaTypeAdapter(value = JaxbUtils.DatimeAdapter.class, type = DateTime.class)
+<span class="fc" id="L108">  private DateTime timestamp;</span>
+  @NonNull
+<span class="fc" id="L110">  private String uuid;</span>
+
+  public static GenericUser fromPrincipal(final Principal principal) {
+    final GenericUser result;
+<span class="nc bnc" id="L114" title="All 2 branches missed.">    if (principal == null) {</span>
+<span class="nc" id="L115">      result = null;</span>
+    } else {
+<span class="nc bnc" id="L117" title="All 2 branches missed.">      if (principal instanceof PreAuthenticatedAuthenticationToken) {</span>
+<span class="nc" id="L118">        final PreAuthenticatedAuthenticationToken token = (PreAuthenticatedAuthenticationToken) principal;</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        result = isGenericUser(token.getPrincipal()) ? (GenericUser) token.getPrincipal() : null;</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">      } else if (principal instanceof UsernamePasswordAuthenticationToken) {</span>
+<span class="nc" id="L121">        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        result = isGenericUser(token.getPrincipal()) ? (GenericUser) token.getPrincipal() : null;</span>
+<span class="nc bnc" id="L123" title="All 4 branches missed.">      } else if (OAUTH2_AUTHENTICATION_PRESENT &amp;&amp; isOAuth2Authentication(principal)) {</span>
+<span class="nc" id="L124">        result = fromOAuth2Authentication(principal);</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">      } else if (principal instanceof Authentication) {</span>
+<span class="nc" id="L126">        final Authentication authentication = (Authentication) principal;</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        result = isGenericUser(authentication.getPrincipal()) ? (GenericUser) authentication.getPrincipal() : null;</span>
+<span class="nc" id="L128">      } else {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        if (log.isInfoEnabled()) {</span>
+<span class="nc" id="L130">          log.info(&quot;unknown principal: {}:{}&quot;, principal.getClass(), principal);</span>
+        }
+<span class="nc" id="L132">        result = null;</span>
+      }
+    }
+<span class="nc" id="L135">    return result;</span>
+  }
+
+  public static Optional&lt;GenericUser&gt; fromSecurityContext() {
+<span class="nc" id="L139">    final SecurityContext securityContext = SecurityContextHolder.getContext();</span>
+<span class="nc" id="L140">    final Authentication authentication = securityContext.getAuthentication();</span>
+<span class="nc" id="L141">    return Optional.ofNullable(fromPrincipal(authentication));</span>
+  }
+
+  public static GenericUser fromUser(final User user) {
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">    return user != null ? fromUser(user, uuid()) : null;</span>
+  }
+
+  private static GenericUser fromUser(final User user, final String uuid) {
+    final GenericUser output;
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">    if (user == null) {</span>
+<span class="nc" id="L151">      output = null;</span>
+    } else {
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">      final Set&lt;GrantedAuthority&gt; authorities = user.getAuthorities() != null ? //</span>
+<span class="fc" id="L154">        user.getAuthorities().stream() //</span>
+<span class="fc" id="L155">          .map(authority -&gt; new BaseGrantedAuthority(authority.getAuthority())) //</span>
+<span class="pc" id="L156">          .collect(toSet()) : ImmutableSet.of();</span>
+<span class="fc" id="L157">      output = new GenericUser();</span>
+<span class="fc" id="L158">      output.setAccountNonExpired(user.isAccountNonExpired());</span>
+<span class="fc" id="L159">      output.setAccountNonLocked(user.isAccountNonLocked());</span>
+<span class="fc" id="L160">      output.setAuthorities(authorities);</span>
+<span class="fc" id="L161">      output.setCredentialsNonExpired(user.isCredentialsNonExpired());</span>
+<span class="fc" id="L162">      output.setEnabled(user.isEnabled());</span>
+      // DaoAuthenticationProvider#additionalAuthenticationChecks need this value
+<span class="fc" id="L164">      output.setPassword(user.getPassword());</span>
+<span class="fc" id="L165">      output.setUsername(toUsername(user));</span>
+<span class="fc" id="L166">      output.setProperties(user.getProperties());</span>
+
+<span class="fc" id="L168">      output.setTimestamp(Defaults.now());</span>
+<span class="fc" id="L169">      output.setUuid(uuid);</span>
+    }
+<span class="fc" id="L171">    return output;</span>
+  }
+
+  public static boolean isGenericUser(final Object object) {
+<span class="nc bnc" id="L175" title="All 4 branches missed.">    return object != null &amp;&amp; GenericUser.class.isAssignableFrom(object.getClass());</span>
+  }
+
+  public static boolean isGenericUserLogin(final GenericUser genericUser) {
+<span class="nc bnc" id="L179" title="All 6 branches missed.">    return genericUser != null &amp;&amp; isNotBlank(genericUser.getId()) &amp;&amp; !USER_TYPE_UNKNOWN.equals(genericUser.getType());</span>
+  }
+
+  private static String toUsername(final User user) {
+<span class="fc" id="L183">    final String type = checkNotNull(user, &quot;null user&quot;).getType();</span>
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">    final String id = user.getId() != null ? user.getId() : &quot;&quot;;</span>
+<span class="fc" id="L185">    final String name = user.getName();</span>
+<span class="fc" id="L186">    return toUsername(type, id, name);</span>
+  }
+
+  static String toUsername(final String type, final String id, final String name) {
+<span class="fc" id="L190">    return urlEncode(type) + DELIMITER //</span>
+<span class="fc" id="L191">      + urlEncode(id) + DELIMITER //</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">      + urlEncode(isNotBlank(name) ? name : &quot;&quot;);</span>
+  }
+
+  public static GenericUser unknownUser() {
+<span class="nc" id="L196">    return GenericUser.genericUserBuilder() //</span>
+<span class="nc" id="L197">      .authorities(ImmutableSet.of()) //</span>
+<span class="nc" id="L198">      .enabled(FALSE) //</span>
+<span class="nc" id="L199">      .username(GenericUser.toUsername(GenericUser.USER_TYPE_UNKNOWN, &quot;&quot;, GenericUser.USER_TYPE_UNKNOWN)) //</span>
+<span class="nc" id="L200">      .password(&quot;&quot;) //</span>
+<span class="nc" id="L201">      .accountNonExpired(FALSE) //</span>
+<span class="nc" id="L202">      .accountNonLocked(FALSE) //</span>
+<span class="nc" id="L203">      .credentialsNonExpired(FALSE) //</span>
+<span class="nc" id="L204">      .timestamp(Defaults.now()) //</span>
+<span class="nc" id="L205">      .uuid(GenericUser.uuid()) //</span>
+<span class="nc" id="L206">      .build();</span>
+  }
+
+  private static String uuid() {
+<span class="fc" id="L210">    return UUID.randomUUID().toString().replaceAll(&quot;-&quot;, &quot;&quot;);</span>
+  }
+
+  @Override
+  public void eraseCredentials() {
+<span class="nc" id="L215">    this.password = null;</span>
+<span class="nc" id="L216">  }</span>
+
+  @JsonIgnore
+  public String getType() {
+<span class="nc" id="L220">    return this.fromUsername(0, null);</span>
+  }
+
+  // @JsonIgnore//api needs expose id
+  public String getId() {
+<span class="fc" id="L225">    return this.fromUsername(1, &quot;&quot;);</span>
+  }
+
+  @JsonIgnore
+  public String getName() {
+<span class="nc" id="L230">    return this.fromUsername(2, &quot;&quot;);</span>
+  }
+
+  private String fromUsername(final int index, final String defaultValue) {
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">    return isNotBlank(this.username) ? urlDecode(splitPreserveAllTokens(this.username, DELIMITER)[index]) :</span>
+      defaultValue;
+  }
+
+  private void setUuid(final String uuid) {
+<span class="fc" id="L239">    checkArgument(isNotBlank(uuid));</span>
+<span class="fc" id="L240">    this.uuid = uuid.replaceAll(&quot;-&quot;, &quot;&quot;);</span>
+<span class="fc" id="L241">  }</span>
+
+  public UserDetails toUserInfo() {
+<span class="nc" id="L244">    return UserDetails.userDetailsBuilder()</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">      .authorities(this.getAuthorities() != null ? this.getAuthorities() : ImmutableSet.of())</span>
+<span class="nc" id="L246">      .enabled(this.isEnabled())</span>
+<span class="nc" id="L247">      .id(this.getId())</span>
+<span class="nc" id="L248">      .name(this.getName())</span>
+<span class="nc" id="L249">      .password(&quot;[PROTECTED]&quot;)</span>
+<span class="nc" id="L250">      .properties(this.getProperties())</span>
+<span class="nc" id="L251">      .build();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

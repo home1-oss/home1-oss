@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractUser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.api</a> &gt; <span class="el_source">AbstractUser.java</span></div><h1>AbstractUser.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.api;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.Map;
+
+/**
+ * Created by zhanghaolun on 16/10/28.
+ */
+<span class="fc" id="L13">public abstract class AbstractUser implements User {</span>
+
+  /**
+   * default user type.
+   */
+  public static final String USER_TYPE_USER = &quot;UT_USER&quot;;
+
+  public void disable() {
+<span class="nc" id="L21">    this.setEnabled(false);</span>
+<span class="nc" id="L22">  }</span>
+
+  @Override
+  public void enable() {
+<span class="nc" id="L26">    this.setEnabled(true);</span>
+<span class="nc" id="L27">  }</span>
+
+  @Override
+  public void eraseCredentials() {
+<span class="nc" id="L31">    this.setPassword(null);</span>
+<span class="nc" id="L32">  }</span>
+
+  @Override
+  public Map&lt;String, String&gt; getProperties() {
+<span class="nc" id="L36">    return ImmutableMap.of();</span>
+  }
+
+  @Override
+  public String getType() {
+<span class="fc" id="L41">    return USER_TYPE_USER;</span>
+  }
+
+  @Override
+  public String getUsername() {
+<span class="nc" id="L46">    return this.getName();</span>
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isAccountNonExpired() {
+<span class="fc" id="L52">    return this.isEnabled();</span>
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isAccountNonLocked() {
+<span class="fc" id="L58">    return this.isEnabled();</span>
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isCredentialsNonExpired() {
+<span class="fc" id="L64">    return this.isEnabled();</span>
+  }
+
+  protected abstract void setEnabled(boolean enabled);
+
+  protected abstract void setPassword(String password);
+
+  @Override
+  public boolean equals(final Object obj) {
+    final boolean result;
+<span class="nc bnc" id="L74" title="All 2 branches missed.">    if (obj != null) {</span>
+<span class="nc bnc" id="L75" title="All 4 branches missed.">      if (this.getClass() == obj.getClass() || AbstractUser.class.isAssignableFrom(obj.getClass())) {</span>
+<span class="nc" id="L76">        final AbstractUser rhs = (AbstractUser) obj;</span>
+<span class="nc" id="L77">        result = this.getName().equals(rhs.getName());</span>
+<span class="nc" id="L78">      } else {</span>
+<span class="nc" id="L79">        result = false;</span>
+      }
+    } else {
+<span class="nc" id="L82">      result = false;</span>
+    }
+<span class="nc" id="L84">    return result;</span>
+  }
+
+  @Override
+  public int hashCode() {
+<span class="nc" id="L89">    return this.getName().hashCode();</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc" id="L94">    return MoreObjects.toStringHelper(this.getClass()) //</span>
+<span class="nc" id="L95">      .add(&quot;name&quot;, this.getName()) //</span>
+<span class="nc" id="L96">      .add(&quot;enabled&quot;, this.isEnabled()) //</span>
+<span class="nc" id="L97">      .toString();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

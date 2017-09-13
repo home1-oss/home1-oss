@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VerifyCodeFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.internal</a> &gt; <span class="el_source">VerifyCodeFilter.java</span></div><h1>VerifyCodeFilter.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.internal;
+
+import static cn.home1.oss.lib.security.internal.preauth.PreAuthTokenFilter.ATTR_PRINCIPAL;
+import static cn.home1.oss.lib.security.starter.FormAuthConfiguration.FORM_AUTHENTICATION_ENTRYPOINT;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import cn.home1.oss.lib.security.api.GenericUser;
+import cn.home1.oss.lib.security.api.Security;
+import cn.home1.oss.lib.security.api.VerifyCodeProvider;
+import cn.home1.oss.lib.webmvc.api.RequestResolver;
+
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.web.filter.GenericFilterBean;
+
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * TODO Note: Not a bean, avoid auto pick-up.
+ * before UsernamePasswordAuthenticationFilter.
+ *
+ * &lt;p&gt;
+ * Created by zhanghaolun on 16/7/14.
+ * &lt;/p&gt;
+ */
+<span class="nc bnc" id="L42" title="All 6 branches missed.">@Setter</span>
+<span class="nc" id="L43">@Slf4j</span>
+<span class="nc" id="L44">public class VerifyCodeFilter extends GenericFilterBean {</span>
+
+  /**
+   * will be invoked when authentication fails. Typically an instance of {@link
+   * org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint}.
+   */
+  @Qualifier(FORM_AUTHENTICATION_ENTRYPOINT)
+  @Autowired
+  @NonNull
+  private AuthenticationEntryPoint formAuthenticationEntryPoint;
+
+  @Autowired(required = false)
+  @NonNull
+  private VerifyCodeProvider codeVerifyProvider;
+
+  @Autowired
+  @NonNull
+  private RequestResolver requestResolver;
+
+  @Override
+  public void doFilter( //
+    final ServletRequest req, final ServletResponse res, final FilterChain chain //
+  ) throws IOException, ServletException {
+<span class="nc" id="L67">    final HttpServletRequest request = (HttpServletRequest) req;</span>
+<span class="nc" id="L68">    final HttpServletResponse response = (HttpServletResponse) res;</span>
+
+    try {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">      if (this.authenticationIsRequired(request)) {</span>
+<span class="nc" id="L72">        final GenericUser principal = (GenericUser) request.getAttribute(ATTR_PRINCIPAL);</span>
+<span class="nc" id="L73">        this.authenticate(request, principal);</span>
+      }
+<span class="nc" id="L75">    } catch (final AuthenticationException failed) {</span>
+<span class="nc" id="L76">      SecurityContextHolder.clearContext();</span>
+
+<span class="nc bnc" id="L78" title="All 2 branches missed.">      if (log.isTraceEnabled()) {</span>
+<span class="nc" id="L79">        log.trace(&quot;AUTH authentication failed. not login.&quot;, failed);</span>
+      }
+
+<span class="nc" id="L82">      this.formAuthenticationEntryPoint.commence(request, response, failed);</span>
+<span class="nc" id="L83">      return;</span>
+<span class="nc" id="L84">    }</span>
+
+<span class="nc" id="L86">    chain.doFilter(request, response);</span>
+<span class="nc" id="L87">  }</span>
+
+  private boolean authenticationIsRequired(final HttpServletRequest request) {
+    // TODO fix this, 有context-path的情况下可能不对
+<span class="nc bnc" id="L91" title="All 4 branches missed.">    return Security.authenticationIsRequired() &amp;&amp; this.requestResolver.isLoginRequest(request);</span>
+  }
+
+  private void authenticate( //
+    final HttpServletRequest request, //
+    final GenericUser principal //
+  ) throws AuthenticationException {
+<span class="nc" id="L98">    final String code = request.getParameter(&quot;verifycode&quot;);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">    if (isBlank(code)) {</span>
+<span class="nc" id="L100">      throw new BadCredentialsException(&quot;verifycode is required&quot;);</span>
+    }
+<span class="nc" id="L102">    final String uuid = principal.getUuid();</span>
+<span class="nc" id="L103">    final Boolean match = this.codeVerifyProvider.match(uuid, code);</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">    if (!match) {</span>
+<span class="nc" id="L105">      throw new BadCredentialsException(&quot;verifycode not match&quot;);</span>
+    }
+<span class="nc" id="L107">  }</span>
+
+  public String getCodeUrl() {
+<span class="nc" id="L110">    return this.codeVerifyProvider.getCodeUrl();</span>
+  }
+
+  @Autowired
+  @Override
+  public void setEnvironment(final Environment environment) {
+<span class="nc" id="L116">    super.setEnvironment(environment);</span>
+<span class="nc" id="L117">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

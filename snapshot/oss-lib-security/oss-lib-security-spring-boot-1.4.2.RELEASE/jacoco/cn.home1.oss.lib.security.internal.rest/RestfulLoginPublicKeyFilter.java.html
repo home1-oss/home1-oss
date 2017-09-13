@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestfulLoginPublicKeyFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.internal.rest</a> &gt; <span class="el_source">RestfulLoginPublicKeyFilter.java</span></div><h1>RestfulLoginPublicKeyFilter.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.internal.rest;
+
+import static com.google.common.base.Preconditions.checkState;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpMethod.GET;
+
+import cn.home1.oss.lib.common.crypto.KeyExpression;
+import cn.home1.oss.lib.errorhandle.internal.RestfulExceptionHandler;
+import cn.home1.oss.lib.webmvc.internal.DefaultHttpEntityMethodProcessor;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpEntity;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Note: Not a bean, avoid auto pick-up.
+ * Created by zhanghaolun on 16/7/11.
+ */
+<span class="nc" id="L40">@Slf4j</span>
+public class RestfulLoginPublicKeyFilter extends GenericFilterBean {
+
+  private final KeyExpression key;
+
+  private RequestMatcher requestMatcher;
+
+  @Autowired
+<span class="nc" id="L48">  @Setter</span>
+  private RestfulExceptionHandler exceptionHandler;
+  @Autowired
+<span class="nc" id="L51">  @Setter</span>
+  private DefaultHttpEntityMethodProcessor httpEntityMethodProcessor;
+
+  public RestfulLoginPublicKeyFilter(final KeyExpression publicKey) {
+<span class="nc" id="L55">    super();</span>
+<span class="nc" id="L56">    this.key = publicKey;</span>
+<span class="nc" id="L57">  }</span>
+
+  public KeyExpression getKey() {
+<span class="nc" id="L60">    return this.key;</span>
+  }
+
+  @Override
+  public void doFilter( //
+    final ServletRequest req, //
+    final ServletResponse res, //
+    final FilterChain chain //
+  ) throws IOException, ServletException {
+<span class="nc" id="L69">    final HttpServletRequest request = (HttpServletRequest) req;</span>
+<span class="nc" id="L70">    final HttpServletResponse response = (HttpServletResponse) res;</span>
+
+<span class="nc bnc" id="L72" title="All 2 branches missed.">    if (!this.isKeyRequest(request, response)) {</span>
+<span class="nc" id="L73">      chain.doFilter(request, response);</span>
+    } else {
+<span class="nc" id="L75">      final HttpEntity&lt;KeyExpression&gt; returnValue = new HttpEntity&lt;&gt;(this.getKey());</span>
+<span class="nc" id="L76">      final Method method = ClassUtils.getMethod(RestfulLoginPublicKeyFilter.class, &quot;getKey&quot;);</span>
+<span class="nc" id="L77">      final MethodParameter returnTypeMethodParam = new MethodParameter(method, -1);</span>
+<span class="nc" id="L78">      final MethodParameter returnType = new MethodParameter(returnTypeMethodParam);</span>
+<span class="nc" id="L79">      final ModelAndViewContainer mavContainer = new ModelAndViewContainer();</span>
+<span class="nc" id="L80">      final NativeWebRequest webRequest = new ServletWebRequest(request, response);</span>
+      try {
+<span class="nc" id="L82">        checkState(isNotBlank(this.key.getValue()), &quot;The key you request is not present.&quot;);</span>
+<span class="nc" id="L83">        this.httpEntityMethodProcessor.handleReturnValue(returnValue, returnType, mavContainer, webRequest);</span>
+<span class="nc" id="L84">      } catch (final Exception ex) {</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (log.isWarnEnabled()) {</span>
+<span class="nc" id="L86">          log.warn(&quot;Failed to process. Output a error response: {}&quot;, returnValue, ex);</span>
+        }
+<span class="nc" id="L88">        this.exceptionHandler.resolveAndHandle(request, response, ex);</span>
+<span class="nc" id="L89">      }</span>
+    }
+<span class="nc" id="L91">  }</span>
+
+  @SuppressWarnings({&quot;squid:S1172&quot;})
+  protected boolean isKeyRequest( //
+    final HttpServletRequest request, //
+    final HttpServletResponse response //
+  ) {
+<span class="nc" id="L98">    return this.requestMatcher.matches(request);</span>
+  }
+
+  public void setRequestMatcher(final RequestMatcher requestMatcher) {
+<span class="nc" id="L102">    Assert.notNull(requestMatcher, &quot;requestMatcher cannot be null&quot;);</span>
+<span class="nc" id="L103">    this.requestMatcher = requestMatcher;</span>
+<span class="nc" id="L104">  }</span>
+
+  public void setFilterProcessesUrl(final String filterProcessesUrl) {
+<span class="nc" id="L107">    this.requestMatcher = new AntPathRequestMatcher(filterProcessesUrl, GET.name());</span>
+<span class="nc" id="L108">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

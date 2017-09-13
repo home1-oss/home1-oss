@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./TemplateAuthenticationEntryPoint.html" title="cn.home1.oss.lib.security.internal.template.TemplateAuthenticationEntryPoint" alt="" coords="15,390,1145,519"/>
+<area shape="rect" id="node1" href="./TemplateAuthenticationEntryPoint.html" title="&lt;TABLE&gt;" alt="" coords="5,385,1155,525"/>
+<area shape="rect" id="node2_1" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/web/authentication/LoginUrlAuthenticationEntryPoint.html" title="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint" alt="" coords="180,11,980,331"/>
+<area shape="rect" id="node2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/web/authentication/LoginUrlAuthenticationEntryPoint.html" title="&lt;TABLE&gt;" alt="" coords="169,5,991,336"/>
+</map>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CsrfConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.starter</a> &gt; <span class="el_source">CsrfConfiguration.java</span></div><h1>CsrfConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.starter;
+
+import cn.home1.oss.lib.security.CsrfHeaderFilter;
+
+import lombok.SneakyThrows;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+
+/**
+ * Created by zhanghaolun on 16/8/19.
+ */
+@Order(CsrfConfiguration.ORDER_CSRF)
+@Configuration
+<span class="nc" id="L21">public class CsrfConfiguration extends SecurityConfigurerAdapter&lt;CsrfConfiguration&gt; {</span>
+
+  public static final int ORDER_CSRF = VerifyCodeConfiguration.ORDER_VERIFY_CODE + 1;
+
+  @Autowired(required = false)
+  private SecurityProperties securityProperties;
+
+<span class="nc" id="L28">  @SneakyThrows</span>
+  @Override
+  public void configure(final HttpSecurity http) {
+    // TODO CSRF的 cookie, header, 各种前端全支持
+    // RESOURCE 应用不开启CSRF
+<span class="nc bnc" id="L33" title="All 4 branches missed.">    if (this.securityProperties != null &amp;&amp; this.securityProperties.isEnableCsrf()) {</span>
+<span class="nc" id="L34">      http.csrf() //</span>
+<span class="nc" id="L35">        .csrfTokenRepository(this.csrfTokenRepository()) //</span>
+<span class="nc" id="L36">        .and() //</span>
+<span class="nc" id="L37">        .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class); //</span>
+    } else {
+<span class="nc" id="L39">      http.csrf() //</span>
+<span class="nc" id="L40">        .disable();</span>
+    }
+
+<span class="nc bnc" id="L43" title="All 4 branches missed.">    if (this.securityProperties != null &amp;&amp; this.securityProperties.getHeaders().isXss()) {</span>
+<span class="nc" id="L44">      http.headers().xssProtection().xssProtectionEnabled(true);</span>
+    } else {
+<span class="nc" id="L46">      http.headers().xssProtection().disable();</span>
+    }
+<span class="nc" id="L48">  }</span>
+
+  private CsrfTokenRepository csrfTokenRepository() {
+    // TODO test cookie token repository not session
+    // cookie csrf token is less secure than http session csrf token, but it is stateless.
+    // http only prevent javascript access the cookie, it is more secure.
+    //final HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+<span class="nc" id="L55">    final CookieCsrfTokenRepository repository = new CookieCsrfTokenRepository(); // since 4.1.0</span>
+<span class="nc" id="L56">    repository.setCookieHttpOnly(true);</span>
+<span class="nc" id="L57">    repository.setHeaderName(&quot;X-XSRF-TOKEN&quot;);</span>
+<span class="nc" id="L58">    repository.setParameterName(&quot;_csrf&quot;);</span>
+<span class="nc" id="L59">    return repository;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

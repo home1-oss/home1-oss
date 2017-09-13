@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EncryptDefaultLoginPageConfigurer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">org.springframework.security.config.annotation.web.configurers</a> &gt; <span class="el_source">EncryptDefaultLoginPageConfigurer.java</span></div><h1>EncryptDefaultLoginPageConfigurer.java</h1><pre class="source lang-java linenums">package org.springframework.security.config.annotation.web.configurers;
+
+import static cn.home1.oss.lib.security.internal.template.TemplateAuthenticationEntryPoint.templateEntryPoint;
+import static org.springframework.util.ClassUtils.isAssignableValue;
+import static org.springframework.util.ReflectionUtils.findField;
+import static org.springframework.util.ReflectionUtils.getField;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
+
+import cn.home1.oss.lib.errorhandle.api.ExceptionResolver;
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.security.internal.template.EncryptDefaultLoginPageGeneratingFilter;
+import cn.home1.oss.lib.security.internal.template.TemplateAuthenticationEntryPoint;
+import cn.home1.oss.lib.webmvc.api.TypeSafeCookie;
+
+import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/**
+ * Created by zhanghaolun on 16/11/9.
+ */
+public class EncryptDefaultLoginPageConfigurer&lt;H extends HttpSecurityBuilder&lt;H&gt;&gt; extends
+  AbstractHttpConfigurer&lt;DefaultLoginPageConfigurer&lt;H&gt;, H&gt; {
+
+  private final String loginPage;
+  private final Boolean useDefaultLoginPage;
+  private final ExceptionResolver&lt;Throwable&gt; exceptionResolver;
+  private final TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie;
+
+  private DefaultLoginPageGeneratingFilter loginPageGeneratingFilter;
+
+  public EncryptDefaultLoginPageConfigurer( //
+    final String loginPage, //
+    final String publicKey, //
+    final Boolean useDefaultLoginPage, //
+    final ExceptionResolver&lt;Throwable&gt; exceptionResolver, //
+    final TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie //
+  ) {
+<span class="nc" id="L46">    super();</span>
+
+<span class="nc" id="L48">    final EncryptDefaultLoginPageGeneratingFilter filter = new EncryptDefaultLoginPageGeneratingFilter();</span>
+<span class="nc" id="L49">    filter.setRsaPublicKey(publicKey);</span>
+<span class="nc" id="L50">    filter.setLoginPageUrl(loginPage);</span>
+<span class="nc" id="L51">    this.loginPage = loginPage;</span>
+<span class="nc" id="L52">    this.loginPageGeneratingFilter = filter;</span>
+<span class="nc" id="L53">    this.useDefaultLoginPage = useDefaultLoginPage;</span>
+
+<span class="nc" id="L55">    this.exceptionResolver = exceptionResolver;</span>
+<span class="nc" id="L56">    this.resolvedErrorCookie = resolvedErrorCookie;</span>
+<span class="nc" id="L57">  }</span>
+
+  @Override
+  public void init(final H http) throws Exception {
+<span class="nc" id="L61">    http.setSharedObject(DefaultLoginPageGeneratingFilter.class, this.loginPageGeneratingFilter);</span>
+<span class="nc" id="L62">  }</span>
+
+  @Override
+  @SuppressWarnings(&quot;unchecked&quot;)
+  public void configure(final H http) throws Exception {
+<span class="nc" id="L67">    final ExceptionHandlingConfigurer&lt;?&gt; exceptionConf = http.getConfigurer(ExceptionHandlingConfigurer.class);</span>
+    //final AuthenticationEntryPoint authenticationEntryPoint = exceptionConf != null ?
+    // exceptionConf.getAuthenticationEntryPoint() : null;
+
+<span class="nc bnc" id="L71" title="All 4 branches missed.">    if (this.loginPageGeneratingFilter.isEnabled() &amp;&amp; this.useDefaultLoginPage) { // authenticationEntryPoint == null</span>
+<span class="nc" id="L72">      this.loginPageGeneratingFilter.setLoginPageUrl(this.loginPage);</span>
+<span class="nc" id="L73">      this.configure(exceptionConf);</span>
+<span class="nc" id="L74">      this.loginPageGeneratingFilter = postProcess(this.loginPageGeneratingFilter);</span>
+<span class="nc" id="L75">      http.addFilter(this.loginPageGeneratingFilter);</span>
+    }
+<span class="nc" id="L77">  }</span>
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  private void configure(final ExceptionHandlingConfigurer&lt;?&gt; exceptionHandling) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">    if (exceptionHandling == null) {</span>
+<span class="nc" id="L82">      return;</span>
+    }
+    // using DelegatingAuthenticationEntryPoint
+    // AbstractAuthenticationFilterConfigurer#registerDefaultAuthenticationEntryPoint()
+<span class="nc" id="L86">    final Field field = findField(ExceptionHandlingConfigurer.class, &quot;defaultEntryPointMappings&quot;, LinkedHashMap.class);</span>
+<span class="nc" id="L87">    makeAccessible(field);</span>
+<span class="nc" id="L88">    final Map&lt;RequestMatcher, AuthenticationEntryPoint&gt; defaultEntryPointMappings = //</span>
+<span class="nc" id="L89">      (Map&lt;RequestMatcher, AuthenticationEntryPoint&gt;) getField(field, exceptionHandling);</span>
+
+<span class="nc bnc" id="L91" title="All 2 branches missed.">    for (final Entry&lt;RequestMatcher, AuthenticationEntryPoint&gt; entry : defaultEntryPointMappings.entrySet()) {</span>
+<span class="nc" id="L92">      final AuthenticationEntryPoint value = entry.getValue();</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">      if (isAssignableValue(LoginUrlAuthenticationEntryPoint.class, value)) {</span>
+        ///final LoginUrlAuthenticationEntryPoint current = (LoginUrlAuthenticationEntryPoint) value;
+<span class="nc" id="L95">        final TemplateAuthenticationEntryPoint replacement = templateEntryPoint( //</span>
+          this.loginPage, this.exceptionResolver, this.resolvedErrorCookie);
+<span class="nc" id="L97">        entry.setValue(replacement);</span>
+      }
+<span class="nc" id="L99">    }</span>
+<span class="nc" id="L100">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

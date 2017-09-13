@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestfulAuthenticationSuccessHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.internal.rest</a> &gt; <span class="el_source">RestfulAuthenticationSuccessHandler.java</span></div><h1>RestfulAuthenticationSuccessHandler.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.internal.rest;
+
+import static cn.home1.oss.lib.security.api.GenericUser.GENERIC_USER_COOKIE;
+import static cn.home1.oss.lib.security.api.GenericUser.GENERIC_USER_TOKEN;
+import static cn.home1.oss.lib.security.api.Security.HEADER_AUTH_TOKEN;
+
+import cn.home1.oss.lib.errorhandle.internal.RestfulExceptionHandler;
+import cn.home1.oss.lib.security.api.GenericUser;
+import cn.home1.oss.lib.security.api.UserDetails;
+import cn.home1.oss.lib.webmvc.api.TypeSafeCookie;
+import cn.home1.oss.lib.webmvc.api.TypeSafeToken;
+import cn.home1.oss.lib.webmvc.internal.DefaultHttpEntityMethodProcessor;
+
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Created by zhanghaolun on 16/6/28.
+ */
+<span class="nc" id="L39">@Slf4j</span>
+<span class="nc" id="L40">public class RestfulAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {</span>
+
+  @Qualifier(GENERIC_USER_COOKIE)
+  @Autowired(required = false)
+<span class="nc" id="L44">  @Setter</span>
+  private TypeSafeCookie&lt;GenericUser&gt; cookie;
+  @Autowired
+  @NonNull
+<span class="nc bnc" id="L48" title="All 2 branches missed.">  @Setter</span>
+  private RestfulExceptionHandler exceptionHandler;
+  @Autowired
+<span class="nc" id="L51">  @Setter</span>
+  private DefaultHttpEntityMethodProcessor httpEntityMethodProcessor;
+  @Qualifier(GENERIC_USER_TOKEN)
+  @Autowired(required = false)
+<span class="nc" id="L55">  @Setter</span>
+  private TypeSafeToken&lt;GenericUser&gt; token;
+
+  public static RestfulAuthenticationSuccessHandler restfulSuccessHandler( //
+    final TypeSafeCookie&lt;GenericUser&gt; cookie, //
+    final RestfulExceptionHandler exceptionHandler, //
+    final DefaultHttpEntityMethodProcessor httpEntityMethodProcessor, //
+    final TypeSafeToken&lt;GenericUser&gt; token //
+  ) {
+<span class="nc" id="L64">    final RestfulAuthenticationSuccessHandler handler = new RestfulAuthenticationSuccessHandler();</span>
+<span class="nc" id="L65">    handler.setCookie(cookie);</span>
+<span class="nc" id="L66">    handler.setExceptionHandler(exceptionHandler);</span>
+<span class="nc" id="L67">    handler.setHttpEntityMethodProcessor(httpEntityMethodProcessor);</span>
+<span class="nc" id="L68">    handler.setToken(token);</span>
+<span class="nc" id="L69">    return handler;</span>
+  }
+
+  @Override
+  public void onAuthenticationSuccess( //
+    final HttpServletRequest request, //
+    final HttpServletResponse response, //
+    final Authentication authentication //
+  ) throws IOException, ServletException {
+<span class="nc" id="L78">    clearAuthenticationAttributes(request);</span>
+
+<span class="nc" id="L80">    final GenericUser user = GenericUser.fromPrincipal(authentication);</span>
+<span class="nc" id="L81">    user.eraseCredentials();</span>
+
+<span class="nc bnc" id="L83" title="All 2 branches missed.">    if (this.cookie != null) {</span>
+<span class="nc" id="L84">      this.cookie.setCookie(request, response, user);</span>
+    }
+
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    if (this.token != null) {</span>
+<span class="nc" id="L88">      final String token = this.token.toToken(user);</span>
+<span class="nc" id="L89">      response.setHeader(HEADER_AUTH_TOKEN, token);</span>
+    }
+
+<span class="nc" id="L92">    final HttpEntity&lt;UserDetails&gt; returnValue = new HttpEntity&lt;&gt;(user.toUserInfo());</span>
+
+<span class="nc" id="L94">    final Method method = ClassUtils.getMethod(GenericUser.class, &quot;toUserInfo&quot;);</span>
+<span class="nc" id="L95">    final MethodParameter returnTypeMethodParam = new MethodParameter(method, -1);</span>
+<span class="nc" id="L96">    final MethodParameter returnType = new MethodParameter(returnTypeMethodParam);</span>
+<span class="nc" id="L97">    final ModelAndViewContainer mavContainer = new ModelAndViewContainer();</span>
+<span class="nc" id="L98">    final NativeWebRequest webRequest = new ServletWebRequest(request, response);</span>
+    try {
+<span class="nc" id="L100">      this.httpEntityMethodProcessor.handleReturnValue(returnValue, returnType, mavContainer, webRequest);</span>
+<span class="nc" id="L101">    } catch (final Exception ex) {</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">      if (log.isWarnEnabled()) {</span>
+<span class="nc" id="L103">        log.warn(&quot;Failed to process response: {}&quot;, returnValue, ex);</span>
+      }
+<span class="nc" id="L105">      this.exceptionHandler.resolveAndHandle(request, response, ex);</span>
+<span class="nc" id="L106">    }</span>
+<span class="nc" id="L107">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FormAuthConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.starter</a> &gt; <span class="el_source">FormAuthConfiguration.java</span></div><h1>FormAuthConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.starter;
+
+import static cn.home1.oss.boot.autoconfigure.AppSecurity.ENABLED;
+import static cn.home1.oss.boot.autoconfigure.AppType.MIXED;
+import static cn.home1.oss.boot.autoconfigure.AppType.RESOURCE;
+import static cn.home1.oss.boot.autoconfigure.AppType.RESTFUL;
+import static cn.home1.oss.boot.autoconfigure.AppType.TEMPLATE;
+import static cn.home1.oss.lib.errorhandle.api.ResolvedError.RESOLVED_ERROR_COOKIE;
+import static cn.home1.oss.lib.security.api.GenericUser.GENERIC_USER_COOKIE;
+import static cn.home1.oss.lib.security.api.GenericUser.GENERIC_USER_TOKEN;
+import static cn.home1.oss.lib.security.internal.rest.RestfulAuthenticationEntryPoint.restfulEntryPoint;
+import static cn.home1.oss.lib.security.internal.template.TemplateAuthenticationEntryPoint.templateEntryPoint;
+import static cn.home1.oss.lib.security.internal.template.TemplateAuthenticationFailureHandler.templateFailureHandler;
+import static cn.home1.oss.lib.security.internal.template.TemplateAuthenticationLogoutSuccessHandler.templateLogoutSuccessHandler;
+import static cn.home1.oss.lib.security.internal.template.TemplateAuthenticationSuccessHandler.templateSuccessHandler;
+import static com.google.common.base.Preconditions.checkState;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpMethod.GET;
+
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.boot.autoconfigure.AppSecurityProperties;
+import cn.home1.oss.boot.autoconfigure.AppType;
+import cn.home1.oss.boot.autoconfigure.ConditionalOnAppSecurity;
+import cn.home1.oss.boot.autoconfigure.ConditionalOnAppType;
+import cn.home1.oss.boot.autoconfigure.OnAppTypeCondition;
+import cn.home1.oss.lib.common.crypto.Cryptos;
+import cn.home1.oss.lib.common.crypto.KeyExpression;
+import cn.home1.oss.lib.common.crypto.Rsa;
+import cn.home1.oss.lib.common.crypto.RsaKey;
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.errorhandle.internal.RestfulExceptionHandler;
+import cn.home1.oss.lib.security.api.BaseUserDetailsAuthenticationProvider;
+import cn.home1.oss.lib.security.api.GenericUser;
+import cn.home1.oss.lib.security.crypto.ReentrantBCryptPasswordEncoder;
+import cn.home1.oss.lib.security.internal.preauth.PreAuthTokenCookieClearingLogoutHandler;
+import cn.home1.oss.lib.security.internal.rest.RestfulAuthenticationFailureHandler;
+import cn.home1.oss.lib.security.internal.rest.RestfulAuthenticationSuccessHandler;
+import cn.home1.oss.lib.security.internal.rest.RestfulLoginDisabledFilter;
+import cn.home1.oss.lib.security.internal.rest.RestfulLoginPublicKeyFilter;
+import cn.home1.oss.lib.security.internal.rest.RestfulLogoutDisabledFilter;
+import cn.home1.oss.lib.security.internal.rest.RestfulLogoutSuccessHandler;
+import cn.home1.oss.lib.webmvc.api.TypeSafeCookie;
+import cn.home1.oss.lib.webmvc.api.TypeSafeToken;
+import cn.home1.oss.lib.webmvc.internal.DefaultHttpEntityMethodProcessor;
+
+import lombok.SneakyThrows;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.EncryptDefaultLoginPageConfigurer;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+/**
+ * Created by zhanghaolun on 16/8/19.
+ */
+@Order(FormAuthConfiguration.ORDER_FORM_AUTH)
+@Configuration
+<span class="nc" id="L74">public class FormAuthConfiguration extends SecurityConfigurerAdapter&lt;FormAuthConfiguration&gt; {</span>
+
+  public static final int ORDER_FORM_AUTH = BasicAuthConfiguration.ORDER_BASIC_AUTH - 10;
+
+  public static final String LOGIN_CIPHER = &quot;loginCipher&quot;;
+  public static final String FORM_AUTHENTICATION_ENTRYPOINT = &quot;formAuthenticationEntryPoint&quot;;
+
+  @Autowired
+  private AppProperties appProperties;
+
+  @Autowired
+  private Environment environment;
+
+  @Autowired
+  private RestfulExceptionHandler exceptionHandler;
+
+  @Qualifier(RESOLVED_ERROR_COOKIE)
+  @Autowired
+  private TypeSafeCookie&lt;ResolvedError&gt; resolvedErrorCookie;
+
+  @Qualifier(GENERIC_USER_COOKIE)
+  @Autowired(required = false)
+  private TypeSafeCookie&lt;GenericUser&gt; genericUserCookie;
+
+  @Qualifier(GENERIC_USER_TOKEN)
+  @Autowired(required = false)
+  private TypeSafeToken&lt;GenericUser&gt; genericUserToken;
+
+  @Autowired
+  private DefaultHttpEntityMethodProcessor httpEntityMethodProcessor;
+
+  @Autowired
+  private ServerProperties serverProperties;
+
+  @Autowired(required = false)
+  @SuppressWarnings(&quot;rawtypes&quot;)
+  private BaseUserDetailsAuthenticationProvider userDetailsAuthenticationProvider;
+
+<span class="nc" id="L112">  @SneakyThrows</span>
+  @Override
+  public void configure(final HttpSecurity http) {
+<span class="nc" id="L115">    final AuthenticationEntryPoint formAuthenticationEntryPoint = this.formAuthenticationEntryPoint();</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">    if (formAuthenticationEntryPoint != null) {</span>
+      // TODO accessDeniedHandler
+<span class="nc" id="L118">      http.exceptionHandling().authenticationEntryPoint(formAuthenticationEntryPoint);</span>
+    }
+    // TODO RememberMeAuthenticationFilter
+
+<span class="nc" id="L122">    final AppType appType = this.appProperties.getType();</span>
+<span class="nc" id="L123">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+<span class="nc bnc" id="L124" title="All 4 branches missed.">    if (appSecurityProperties.getEnabled() &amp;&amp; appType != RESOURCE) {</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">      checkState(this.userDetailsAuthenticationProvider != null, //</span>
+        &quot;must define a bean that extends &quot; //
+<span class="nc" id="L127">          + BaseUserDetailsAuthenticationProvider.class.getName() //</span>
+          + &quot; to enable form authentication&quot;);
+
+<span class="nc" id="L130">      final KeyExpression loginKey = appSecurityProperties.getLoginKey();</span>
+      final String publicKey;
+<span class="nc bnc" id="L132" title="All 2 branches missed.">      if (loginKey.isPresent()) {</span>
+<span class="nc" id="L133">        final Rsa rsa = Cryptos.cipher(loginKey);</span>
+<span class="nc" id="L134">        this.userDetailsAuthenticationProvider.setCipher(rsa);</span>
+<span class="nc" id="L135">        publicKey = RsaKey.extractPublicKey(rsa.getEncryptor().getKey().getKeyExpression());</span>
+<span class="nc" id="L136">      } else {</span>
+<span class="nc" id="L137">        publicKey = &quot;&quot;;</span>
+      }
+
+      // see: http://docs.spring.io/spring-security/site/docs/4.1.3.RELEASE/guides/html5/form-javaconfig.html
+      // see: org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer
+      // see: org.springframework.security.config.annotation.web.configurers.DefaultLoginPageConfigurer
+      // if loginPage or authenticationEntryPoint is set, there will not be loginPageGeneratingFilter
+<span class="nc" id="L144">      final Boolean useDefaultLoginPage = appSecurityProperties.useDefaultLoginPage(this.environment);</span>
+<span class="nc" id="L145">      http.apply(new EncryptDefaultLoginPageConfigurer&lt;&gt;( //</span>
+<span class="nc" id="L146">        appSecurityProperties.getLoginPage(), //</span>
+        publicKey, //
+        useDefaultLoginPage, //
+<span class="nc" id="L149">        this.exceptionHandler.getExceptionResolver(), //</span>
+        this.resolvedErrorCookie //
+      ));
+<span class="nc" id="L152">      final FormLoginConfigurer&lt;HttpSecurity&gt; formLogin = http.formLogin();</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">      if (!useDefaultLoginPage) {</span>
+<span class="nc" id="L154">        formLogin.loginPage(appSecurityProperties.getLoginPage()); // this will disable default loginPage</span>
+        //.permitAll() // permitAll only works with HttpSecurity.authorizeRequests()
+      }
+<span class="nc" id="L157">      final String loginProcessingUrl = appSecurityProperties.getLoginProcessingUrl();</span>
+<span class="nc" id="L158">      final String logoutUrl = appSecurityProperties.getLogoutUrl();</span>
+<span class="nc" id="L159">      formLogin</span>
+<span class="nc" id="L160">        .loginProcessingUrl(loginProcessingUrl)</span>
+<span class="nc" id="L161">        .failureHandler(this.authenticationFailureHandler()) //</span>
+<span class="nc" id="L162">        .successHandler(this.authenticationSuccessHandler()) //</span>
+<span class="nc" id="L163">        .and() //</span>
+<span class="nc" id="L164">        .logout() //</span>
+<span class="nc" id="L165">        .logoutUrl(logoutUrl)//.permitAll() // permitAll only works with HttpSecurity.authorizeRequests()</span>
+<span class="nc" id="L166">        .addLogoutHandler(this.logoutHandler()) //</span>
+<span class="nc" id="L167">        .logoutSuccessHandler(this.logoutSuccessHandler());</span>
+<span class="nc" id="L168">    } else {</span>
+<span class="nc" id="L169">      http.formLogin().disable() //</span>
+<span class="nc" id="L170">        .logout().disable() //</span>
+      ;
+
+<span class="nc bnc" id="L173" title="All 4 branches missed.">      if (appType == MIXED || appType == RESTFUL) {</span>
+<span class="nc" id="L174">        http</span>
+<span class="nc" id="L175">          .addFilterBefore(this.loginDisabledFilter(), UsernamePasswordAuthenticationFilter.class) //</span>
+<span class="nc" id="L176">          .addFilterBefore(this.logoutDisabledFilter(), RestfulLoginDisabledFilter.class) //</span>
+        ;
+      }
+    }
+
+<span class="nc" id="L181">    final RestfulLoginPublicKeyFilter restfulLoginPublicKeyFilter = this.restfulLoginPublicKeyFilter();</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">    if (restfulLoginPublicKeyFilter != null) {</span>
+<span class="nc" id="L183">      http.addFilterBefore(restfulLoginPublicKeyFilter, UsernamePasswordAuthenticationFilter.class);</span>
+    }
+<span class="nc" id="L185">  }</span>
+
+  @Bean
+  @ConditionalOnAppSecurity(ENABLED)
+  @ConditionalOnAppType({MIXED, RESTFUL, TEMPLATE})
+  public PreAuthTokenCookieClearingLogoutHandler logoutHandler() {
+<span class="nc" id="L191">    return new PreAuthTokenCookieClearingLogoutHandler();</span>
+  }
+
+  public LogoutSuccessHandler logoutSuccessHandler() {
+    final LogoutSuccessHandler handler;
+<span class="nc bnc" id="L196" title="All 2 branches missed.">    if (this.appProperties.getType() == TEMPLATE) {</span>
+<span class="nc" id="L197">      handler = templateLogoutSuccessHandler();</span>
+    } else {
+<span class="nc" id="L199">      handler = new RestfulLogoutSuccessHandler();</span>
+    }
+<span class="nc" id="L201">    return handler;</span>
+  }
+
+  public RestfulLoginPublicKeyFilter restfulLoginPublicKeyFilter() {
+<span class="nc" id="L205">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+
+    final RestfulLoginPublicKeyFilter filter;
+<span class="nc bnc" id="L208" title="All 2 branches missed.">    if (appSecurityProperties.getEnabled() &amp;&amp; //</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">      OnAppTypeCondition.matches(this.appProperties.getType(), MIXED, RESTFUL) &amp;&amp; //</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">      appSecurityProperties.getLoginKey().isPresent()) {</span>
+<span class="nc" id="L211">      final String loginPublicKeyUrl = appSecurityProperties.getLoginPublicKeyUrl();</span>
+<span class="nc" id="L212">      final KeyExpression publicKey = new RsaKey(appSecurityProperties.getLoginKey()).getPublicKey();</span>
+<span class="nc" id="L213">      filter = new RestfulLoginPublicKeyFilter(publicKey);</span>
+<span class="nc" id="L214">      filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L215">      filter.setExceptionHandler(this.exceptionHandler);</span>
+<span class="nc" id="L216">      filter.setHttpEntityMethodProcessor(this.httpEntityMethodProcessor);</span>
+<span class="nc" id="L217">      filter.setRequestMatcher(new AntPathRequestMatcher(loginPublicKeyUrl, GET.name()));</span>
+<span class="nc" id="L218">    } else {</span>
+<span class="nc" id="L219">      filter = null;</span>
+    }
+<span class="nc" id="L221">    return filter;</span>
+  }
+
+  public RestfulLoginDisabledFilter loginDisabledFilter() {
+<span class="nc" id="L225">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+
+    final RestfulLoginDisabledFilter filter;
+<span class="nc bnc" id="L228" title="All 2 branches missed.">    if (!appSecurityProperties.getEnabled() &amp;&amp; //</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">      OnAppTypeCondition.matches(this.appProperties.getType(), MIXED, RESTFUL)) {</span>
+<span class="nc" id="L230">      filter = new RestfulLoginDisabledFilter();</span>
+<span class="nc" id="L231">      filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L232">      filter.setFilterProcessesUrl(appSecurityProperties.getLoginProcessingUrl());</span>
+<span class="nc" id="L233">      filter.setPostOnly(true);</span>
+<span class="nc" id="L234">      filter.setExceptionHandler(this.exceptionHandler);</span>
+    } else {
+<span class="nc" id="L236">      filter = null;</span>
+    }
+<span class="nc" id="L238">    return filter;</span>
+  }
+
+  public RestfulLogoutDisabledFilter logoutDisabledFilter() {
+<span class="nc" id="L242">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+
+    final RestfulLogoutDisabledFilter filter;
+<span class="nc bnc" id="L245" title="All 2 branches missed.">    if (!appSecurityProperties.getEnabled() &amp;&amp; //</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">      OnAppTypeCondition.matches(this.appProperties.getType(), MIXED, RESTFUL)) {</span>
+
+<span class="nc" id="L248">      filter = new RestfulLogoutDisabledFilter();</span>
+<span class="nc" id="L249">      filter.setEnvironment(this.environment);</span>
+<span class="nc" id="L250">      filter.setFilterProcessesUrl(appSecurityProperties.getLogoutUrl());</span>
+<span class="nc" id="L251">      filter.setExceptionHandler(this.exceptionHandler);</span>
+    } else {
+<span class="nc" id="L253">      filter = null;</span>
+    }
+<span class="nc" id="L255">    return filter;</span>
+  }
+
+  @Bean
+  @ConditionalOnAppSecurity(ENABLED)
+  @ConditionalOnAppType({MIXED, RESTFUL, TEMPLATE})
+  public AuthenticationFailureHandler authenticationFailureHandler() {
+<span class="nc" id="L262">    final AppType appType = this.appProperties.getType();</span>
+<span class="nc" id="L263">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+<span class="nc" id="L264">    final String authFailureHandler = appSecurityProperties.getAuthFailureHandler();</span>
+<span class="nc" id="L265">    final String loginPage = appSecurityProperties.getLoginPage();</span>
+
+    final AuthenticationFailureHandler failureHandler;
+<span class="nc bnc" id="L268" title="All 2 branches missed.">    if (isBlank(authFailureHandler)) {</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">      if (appType == TEMPLATE) {</span>
+<span class="nc" id="L270">        failureHandler = templateFailureHandler( //</span>
+<span class="nc" id="L271">          loginPage, this.exceptionHandler.getExceptionResolver(), this.resolvedErrorCookie);</span>
+      } else {
+<span class="nc" id="L273">        failureHandler = RestfulAuthenticationFailureHandler.restfulFailureHandler(this.exceptionHandler);</span>
+      }
+    } else {
+<span class="nc bnc" id="L276" title="All 2 branches missed.">      if (&quot;restful&quot;.equalsIgnoreCase(authFailureHandler)) {</span>
+<span class="nc" id="L277">        failureHandler = RestfulAuthenticationFailureHandler.restfulFailureHandler(this.exceptionHandler);</span>
+      } else {
+<span class="nc" id="L279">        failureHandler = templateFailureHandler( //</span>
+<span class="nc" id="L280">          loginPage, this.exceptionHandler.getExceptionResolver(), this.resolvedErrorCookie);</span>
+      }
+    }
+
+<span class="nc" id="L284">    return failureHandler;</span>
+  }
+
+  @Bean
+  @ConditionalOnAppSecurity(ENABLED)
+  @ConditionalOnAppType({MIXED, RESTFUL, TEMPLATE})
+  public AuthenticationSuccessHandler authenticationSuccessHandler() {
+<span class="nc" id="L291">    final AppType appType = this.appProperties.getType();</span>
+<span class="nc" id="L292">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+<span class="nc" id="L293">    final String authSucessHandler = appSecurityProperties.getAuthSucessHandler();</span>
+
+    final AuthenticationSuccessHandler successHandler;
+<span class="nc bnc" id="L296" title="All 2 branches missed.">    if (isBlank(authSucessHandler)) {</span>
+<span class="nc bnc" id="L297" title="All 2 branches missed.">      if (appType == TEMPLATE) {</span>
+<span class="nc" id="L298">        successHandler = templateSuccessHandler(&quot;/&quot;); // TODO redirectUrl</span>
+      } else {
+<span class="nc" id="L300">        successHandler = RestfulAuthenticationSuccessHandler.restfulSuccessHandler( //</span>
+          this.genericUserCookie, //
+          this.exceptionHandler, //
+          this.httpEntityMethodProcessor, //
+          this.genericUserToken //
+        );
+      }
+    } else {
+<span class="nc bnc" id="L308" title="All 2 branches missed.">      if (&quot;restful&quot;.equalsIgnoreCase(authSucessHandler)) {</span>
+<span class="nc" id="L309">        successHandler = RestfulAuthenticationSuccessHandler.restfulSuccessHandler( //</span>
+          this.genericUserCookie, //
+          this.exceptionHandler, //
+          this.httpEntityMethodProcessor, //
+          this.genericUserToken //
+        );
+      } else {
+<span class="nc" id="L316">        successHandler = templateSuccessHandler(authSucessHandler);</span>
+      }
+    }
+
+
+<span class="nc" id="L321">    return successHandler;</span>
+  }
+
+  /**
+   * always enabled.
+   *
+   * @return authenticationEntryPoint
+   */
+  @Bean(name = FORM_AUTHENTICATION_ENTRYPOINT)
+  public AuthenticationEntryPoint formAuthenticationEntryPoint() {
+<span class="nc" id="L331">    final AppType appType = this.appProperties.getType();</span>
+<span class="nc" id="L332">    final AppSecurityProperties appSecurityProperties = this.appProperties.getSecurity();</span>
+<span class="nc" id="L333">    final String authEntryPoint = appSecurityProperties.getAuthEntryPoint();</span>
+<span class="nc" id="L334">    final String loginPage = appSecurityProperties.getLoginPage();</span>
+
+    final AuthenticationEntryPoint entryPoint;
+<span class="nc bnc" id="L337" title="All 2 branches missed.">    if (isBlank(authEntryPoint)) {</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">      if (appType == TEMPLATE) {</span>
+<span class="nc" id="L339">        final Boolean useDefaultLoginPage = appSecurityProperties.useDefaultLoginPage(this.environment);</span>
+<span class="nc bnc" id="L340" title="All 2 branches missed.">        if (useDefaultLoginPage) {</span>
+<span class="nc" id="L341">          entryPoint = null;</span>
+        } else {
+          // this will disable default loginPage
+<span class="nc" id="L344">          entryPoint = templateEntryPoint( //</span>
+<span class="nc" id="L345">            loginPage, this.exceptionHandler.getExceptionResolver(), this.resolvedErrorCookie);</span>
+        }
+<span class="nc" id="L347">      } else {</span>
+<span class="nc" id="L348">        entryPoint = restfulEntryPoint(this.exceptionHandler);</span>
+      }
+    } else {
+<span class="nc bnc" id="L351" title="All 2 branches missed.">      if (&quot;401&quot;.equals(authEntryPoint)) {</span>
+<span class="nc" id="L352">        final String sessionCookieName = this.serverProperties.getSession().getCookie().getName();</span>
+<span class="nc" id="L353">        final String headerValue = &quot;Session realm=\&quot;&quot; + //</span>
+<span class="nc bnc" id="L354" title="All 2 branches missed.">          (isNotBlank(sessionCookieName) ? sessionCookieName : &quot;JSESSIONID&quot;) + // TODO is this realm ok?</span>
+          &quot;\&quot;&quot;;
+<span class="nc" id="L356">        entryPoint = new Http401AuthenticationEntryPoint(headerValue);</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">      } else if (&quot;403&quot;.equals(authEntryPoint)) {</span>
+<span class="nc" id="L358">        entryPoint = new Http403ForbiddenEntryPoint();</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">      } else if (&quot;loginPage&quot;.equalsIgnoreCase(authEntryPoint)) {</span>
+<span class="nc" id="L360">        entryPoint = templateEntryPoint( //</span>
+<span class="nc" id="L361">          loginPage, this.exceptionHandler.getExceptionResolver(), this.resolvedErrorCookie);</span>
+      } else {
+<span class="nc" id="L363">        entryPoint = restfulEntryPoint(this.exceptionHandler);</span>
+      }
+    }
+
+<span class="nc" id="L367">    return entryPoint;</span>
+  }
+
+  /**
+   * always enabled.
+   *
+   * @return passwordEncoder
+   */
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    //return NoOpPasswordEncoder.getInstance();
+<span class="nc" id="L378">    return new ReentrantBCryptPasswordEncoder();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

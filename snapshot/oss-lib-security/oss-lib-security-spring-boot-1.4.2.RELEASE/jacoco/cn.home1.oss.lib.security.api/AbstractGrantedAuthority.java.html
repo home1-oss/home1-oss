@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractGrantedAuthority.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.api</a> &gt; <span class="el_source">AbstractGrantedAuthority.java</span></div><h1>AbstractGrantedAuthority.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.api;
+
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Comparator;
+
+/**
+ * Created by haolun on 17/1/4.
+ */
+<span class="nc" id="L10">public abstract class AbstractGrantedAuthority implements GrantedAuthority, Comparable&lt;GrantedAuthority&gt; {</span>
+
+<span class="nc" id="L12">  public static final Comparator&lt;GrantedAuthority&gt; COMPARATOR = (lhs, rhs) -&gt; {</span>
+    final int result;
+<span class="nc bnc" id="L14" title="All 4 branches missed.">    if (lhs != null &amp;&amp; rhs != null) {</span>
+<span class="nc" id="L15">      result = lhs.getAuthority().compareTo(rhs.getAuthority());</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">    } else if (lhs != null) { // rhs == null</span>
+<span class="nc" id="L17">      result = 1;</span>
+    } else { // lhs == null &amp;&amp; rhs != null
+<span class="nc" id="L19">      result = -1;</span>
+    }
+<span class="nc" id="L21">    return result;</span>
+  };
+
+  @Override
+  public int compareTo(final GrantedAuthority rhs) {
+<span class="nc" id="L26">    return AbstractGrantedAuthority.COMPARATOR.compare(this, rhs);</span>
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    final boolean result;
+<span class="nc bnc" id="L32" title="All 2 branches missed.">    if (obj != null) {</span>
+<span class="nc bnc" id="L33" title="All 4 branches missed.">      if (this.getClass() == obj.getClass() || GrantedAuthority.class.isAssignableFrom(obj.getClass())) {</span>
+<span class="nc" id="L34">        final GrantedAuthority rhs = (GrantedAuthority) obj;</span>
+<span class="nc" id="L35">        result = this.getAuthority().equals(rhs.getAuthority());</span>
+<span class="nc" id="L36">      } else {</span>
+<span class="nc" id="L37">        result = false;</span>
+      }
+    } else {
+<span class="nc" id="L40">      result = false;</span>
+    }
+<span class="nc" id="L42">    return result;</span>
+  }
+
+  @Override
+  public int hashCode() {
+<span class="nc" id="L47">    return this.getAuthority().hashCode();</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc" id="L52">    return this.getAuthority();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

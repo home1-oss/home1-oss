@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MethodSecurityPermissionEvaluator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security</a> &gt; <span class="el_source">MethodSecurityPermissionEvaluator.java</span></div><h1>MethodSecurityPermissionEvaluator.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security;
+
+import cn.home1.oss.boot.autoconfigure.AppUtils;
+import cn.home1.oss.lib.common.DiscoverableEnums;
+import cn.home1.oss.lib.security.api.GenericUser;
+import cn.home1.oss.lib.security.api.StaticPrivilege;
+import cn.home1.oss.lib.security.internal.BaseGrantedAuthority;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.core.Authentication;
+
+import java.io.Serializable;
+
+/**
+ * Created by zhanghaolun on 16/7/13.
+ */
+<span class="nc" id="L19">@Slf4j</span>
+<span class="nc" id="L20">public class MethodSecurityPermissionEvaluator implements PermissionEvaluator {</span>
+
+  public static final String HAS_PERMISSION_3 =
+    &quot;permissionEvaluator hasPermission(authentication, targetDomainObject, permission)&quot;;
+  public static final String HAS_PERMISSION_4 =
+    &quot;permissionEvaluator hasPermission(authentication, targetId, targetType, permission)&quot;;
+
+  private Boolean securityEnabled;
+
+  private PermissionEvaluator projectPermissionEvaluator;
+  @SuppressWarnings(&quot;rawtypes&quot;)
+  private DiscoverableEnums&lt;? extends StaticPrivilege&gt; staticPrivileges;
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  public void setProjectPermissionEvaluator(final PermissionEvaluator projectPermissionEvaluator) {
+<span class="nc" id="L35">    final String basePackage = AppUtils.appBasePackage(projectPermissionEvaluator.getClass().getName().split(&quot;\\.&quot;)[0]);</span>
+<span class="nc" id="L36">    this.staticPrivileges = DiscoverableEnums.discoverableEnums(basePackage, StaticPrivilege.class);</span>
+<span class="nc" id="L37">    this.projectPermissionEvaluator = projectPermissionEvaluator;</span>
+<span class="nc" id="L38">  }</span>
+
+  boolean hasStaticPermission( //
+    final GenericUser genericUser, //
+    final String targetDomainObject, //
+    final String permission //
+  ) {
+<span class="nc" id="L45">    final String privilege = StaticPrivilege.toAuthority(targetDomainObject, permission);</span>
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L47">    final StaticPrivilege found = this.staticPrivileges.convert(privilege);</span>
+
+<span class="nc bnc" id="L49" title="All 2 branches missed.">    return genericUser != null &amp;&amp; //</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">      genericUser.getAuthorities() != null &amp;&amp; //</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">      genericUser.getAuthorities().contains(new BaseGrantedAuthority(found.getAuthority()));</span>
+  }
+
+  @Override
+  public boolean hasPermission(final Authentication authentication, final Object targetDomainObject,
+    final Object permission) {
+    final boolean hasPermission;
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    if (!this.securityEnabled) {</span>
+<span class="nc" id="L59">      log.info(&quot;{} securityEnabled not enabled, returning true&quot;, HAS_PERMISSION_3);</span>
+<span class="nc" id="L60">      hasPermission = true;</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">    } else if (authentication == null) {</span>
+<span class="nc" id="L62">      log.warn(&quot;{} authentication is null, returning false&quot;, HAS_PERMISSION_3);</span>
+<span class="nc" id="L63">      hasPermission = false;</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">    } else if (targetDomainObject == null) {</span>
+<span class="nc" id="L65">      log.warn(&quot;{} targetDomainObject is null, returning false&quot;, HAS_PERMISSION_3);</span>
+<span class="nc" id="L66">      hasPermission = false;</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">    } else if (permission == null) {</span>
+<span class="nc" id="L68">      log.warn(&quot;{} permission is null, returning false&quot;, HAS_PERMISSION_3);</span>
+<span class="nc" id="L69">      hasPermission = false;</span>
+    } else {
+<span class="nc" id="L71">      final GenericUser genericUser = GenericUser.fromPrincipal(authentication);</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">      if (String.class.isAssignableFrom(targetDomainObject.getClass())</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        &amp;&amp; String.class.isAssignableFrom(permission.getClass())) {</span>
+<span class="nc" id="L74">        hasPermission = this.hasStaticPermission(genericUser, targetDomainObject.toString(), permission.toString());</span>
+      } else {
+<span class="nc" id="L76">        hasPermission = this.projectPermissionEvaluator.hasPermission(authentication, targetDomainObject, permission);</span>
+      }
+    }
+<span class="nc" id="L79">    return hasPermission;</span>
+  }
+
+  @Override
+  public boolean hasPermission(final Authentication authentication, final Serializable targetId,
+    final String targetType, final Object permission) {
+    final boolean hasPermission;
+<span class="nc bnc" id="L86" title="All 2 branches missed.">    if (!this.securityEnabled) {</span>
+<span class="nc" id="L87">      log.info(&quot;{} securityEnabled not enabled, returning true&quot;, HAS_PERMISSION_4);</span>
+<span class="nc" id="L88">      hasPermission = true;</span>
+    } else {
+      // Not required here.
+<span class="nc" id="L91">      log.warn(&quot;{} not implemented, returning false&quot;, HAS_PERMISSION_4);</span>
+<span class="nc" id="L92">      hasPermission = false;</span>
+    }
+<span class="nc" id="L94">    return hasPermission;</span>
+  }
+
+  public void setSecurityEnabled(final Boolean securityEnabled) {
+<span class="nc" id="L98">    this.securityEnabled = securityEnabled;</span>
+<span class="nc" id="L99">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

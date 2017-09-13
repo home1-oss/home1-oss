@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Security.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.api</a> &gt; <span class="el_source">Security.java</span></div><h1>Security.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.api;
+
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+@SuppressWarnings({&quot;PMD.AbstractNaming&quot;, &quot;PMD.AbstractClassWithoutAbstractMethod&quot;})
+public abstract class Security {
+
+  public static final String AUTHORITY_PREFIX = &quot;AUTHORITY_&quot;;
+  public static final String ROLE_PREFIX = &quot;ROLE_&quot;;
+
+  public static final String HEADER_AUTH_TOKEN = &quot;X-Auth-Token&quot;; // X-AuthenticationToken
+
+<span class="nc" id="L17">  private Security() {</span>
+<span class="nc" id="L18">  }</span>
+
+  public static boolean authenticationIsRequired() {
+    // Only reauthenticate if username doesn't match SecurityContextHolder and user isn't
+    // authenticated
+    // (see SEC-53)
+<span class="nc" id="L24">    final SecurityContext securityContext = SecurityContextHolder.getContext();</span>
+<span class="nc" id="L25">    final Authentication existingAuth = securityContext.getAuthentication();</span>
+
+<span class="nc bnc" id="L27" title="All 4 branches missed.">    if (existingAuth == null || !existingAuth.isAuthenticated()) {</span>
+<span class="nc" id="L28">      return true;</span>
+    }
+
+    // Limit username comparison to providers which use usernames (ie
+    // UsernamePasswordAuthenticationToken, PreAuthenticatedAuthenticationToken)
+    // (see SEC-348)
+<span class="nc bnc" id="L34" title="All 2 branches missed.">    if (existingAuth instanceof PreAuthenticatedAuthenticationToken) {</span>
+<span class="nc" id="L35">      final GenericUser unknown_user = GenericUser.unknownUser();</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">      if (!existingAuth.getName().equals(unknown_user.getUsername())) {</span>
+<span class="nc" id="L37">        return true;</span>
+      }
+    }
+
+    // Handle unusual condition where an AnonymousAuthenticationToken is already present
+    // This shouldn't happen very often, as BasicProcessingFitler is meant to be earlier in the
+    // filter
+    // chain than AnonymousAuthenticationFilter. Nevertheless, presence of both an
+    // AnonymousAuthenticationToken
+    // together with a BASIC authentication request header should indicate reauthentication using
+    // the
+    // BASIC protocol is desirable. This behaviour is also consistent with that provided by form and
+    // digest,
+    // both of which force re-authentication if the respective header is detected (and in doing so
+    // replace
+    // any existing AnonymousAuthenticationToken). See SEC-610.
+<span class="nc" id="L53">    return existingAuth instanceof AnonymousAuthenticationToken;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

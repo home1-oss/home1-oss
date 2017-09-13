@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractAfterOperationBuilderBuildPlugin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.swagger</a> &gt; <span class="el_source">AbstractAfterOperationBuilderBuildPlugin.java</span></div><h1>AbstractAfterOperationBuilderBuildPlugin.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.swagger;
+
+import static com.google.common.collect.Sets.newHashSet;
+import static springfox.documentation.schema.ResolvedTypes.modelRefFactory;
+
+import cn.home1.oss.lib.errorhandle.api.ResolvedError;
+import cn.home1.oss.lib.swagger.ManualRequestHandler;
+import cn.home1.oss.lib.swagger.model.ApiOperationInfo;
+
+import com.fasterxml.classmate.TypeResolver;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+
+import springfox.documentation.RequestHandler;
+import springfox.documentation.builders.OperationBuilder;
+import springfox.documentation.builders.ResponseMessageBuilder;
+import springfox.documentation.schema.ModelReference;
+import springfox.documentation.schema.TypeNameExtractor;
+import springfox.documentation.service.ResponseMessage;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.schema.contexts.ModelContext;
+import springfox.documentation.spi.service.OperationBuilderPlugin;
+import springfox.documentation.spi.service.contexts.OperationContext;
+import springfox.documentation.spi.service.contexts.RequestMappingContext;
+
+import java.lang.reflect.Field;
+import java.util.Set;
+
+/**
+ * Created on 16/11/1. Desc : Run after scanning operationBuilder plugin
+ */
+<span class="nc" id="L35">@Slf4j</span>
+<span class="nc" id="L36">abstract public class AbstractAfterOperationBuilderBuildPlugin implements OperationBuilderPlugin {</span>
+
+<span class="nc" id="L38">  private static final String MANUAL_REQUEST_HANDLER = ManualRequestHandler.class.getSimpleName();</span>
+
+  @Autowired
+  private TypeNameExtractor nameExtractor;
+
+  @Autowired
+  protected TypeResolver typeResolver;
+
+  @Override
+  public void apply(final OperationContext context) {
+    try {
+      // 处理自定义的请求处理器
+<span class="nc bnc" id="L50" title="All 2 branches missed.">      if (MANUAL_REQUEST_HANDLER.equals(context.getName())) {</span>
+
+        // get requestContext
+<span class="nc" id="L53">        Field privateStringField = OperationContext.class.getDeclaredField(&quot;requestContext&quot;);</span>
+<span class="nc" id="L54">        privateStringField.setAccessible(true);</span>
+<span class="nc" id="L55">        final RequestMappingContext requestMappingContext = //</span>
+<span class="nc" id="L56">          (RequestMappingContext) privateStringField.get(context);</span>
+
+        // get handler
+<span class="nc" id="L59">        privateStringField = RequestMappingContext.class.getDeclaredField(&quot;handler&quot;);</span>
+<span class="nc" id="L60">        privateStringField.setAccessible(true);</span>
+<span class="nc" id="L61">        final RequestHandler requestHandler = (RequestHandler) privateStringField.get(requestMappingContext);</span>
+
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        if (requestHandler instanceof ManualRequestHandler) {</span>
+<span class="nc" id="L64">          this.processRequestHandler(context, (ManualRequestHandler) requestHandler);</span>
+        }
+      }
+
+      // 处理响应的错误码对应的ResolveError
+<span class="nc" id="L69">      processResponseModel(context);</span>
+<span class="nc" id="L70">    } catch (final ReflectiveOperationException ex) {</span>
+<span class="nc" id="L71">      log.error(&quot;swagger plugin error.&quot;, ex);</span>
+<span class="nc" id="L72">    }</span>
+<span class="nc" id="L73">  }</span>
+
+  private void processRequestHandler(final OperationContext context, final ManualRequestHandler manualRequestHandler) {
+<span class="nc" id="L76">    final ApiOperationInfo apiOperationInfo = manualRequestHandler.getApiOperationInfo();</span>
+
+<span class="nc bnc" id="L78" title="All 2 branches missed.">    if (apiOperationInfo != null) {</span>
+      // 接口描述
+<span class="nc" id="L80">      context.operationBuilder().notes(apiOperationInfo.getNotes());</span>
+      // 请求参数处理
+<span class="nc bnc" id="L82" title="All 2 branches missed.">      if (apiOperationInfo.getApiRequest().getParameters() != null) {</span>
+<span class="nc" id="L83">        context.operationBuilder().parameters(apiOperationInfo.getApiRequest().getParameters());</span>
+      }
+    }
+<span class="nc" id="L86">  }</span>
+
+  /**
+   * 为错误码的响应增加Model的映射 @cn.home1.oss.lib.errorhandle.api.ResolvedError
+   */
+  private void processResponseModel(final OperationContext context) {
+    try {
+<span class="nc" id="L93">      final OperationBuilder operationBuilder = context.operationBuilder();</span>
+<span class="nc" id="L94">      final Field privateStringField = OperationBuilder.class.getDeclaredField(&quot;responseMessages&quot;);</span>
+<span class="nc" id="L95">      privateStringField.setAccessible(true);</span>
+<span class="nc" id="L96">      final Set&lt;ResponseMessage&gt; responseMessages = (Set&lt;ResponseMessage&gt;) privateStringField.get(operationBuilder);</span>
+
+<span class="nc" id="L98">      final ModelContext modelContext = this.modelContext(context);</span>
+<span class="nc" id="L99">      final ModelReference responseModel = modelRefFactory(modelContext, this.nameExtractor) //</span>
+<span class="nc" id="L100">        .apply(context.alternateFor(this.typeResolver.resolve(ResolvedError.class)));</span>
+
+<span class="nc" id="L102">      final Set&lt;ResponseMessage&gt; responseMessagesProcessed = newHashSet();</span>
+<span class="nc" id="L103">      responseMessages.stream().forEach((responseMessage -&gt; {</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (!isSuccessful(responseMessage.getCode())) {</span>
+<span class="nc" id="L105">          responseMessagesProcessed.add(new ResponseMessageBuilder()</span>
+<span class="nc" id="L106">            .code(responseMessage.getCode())</span>
+<span class="nc" id="L107">            .message(responseMessage.getMessage())</span>
+<span class="nc" id="L108">            .responseModel(responseModel)</span>
+<span class="nc" id="L109">            .build());</span>
+        }
+<span class="nc" id="L111">      }));</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">      if (!responseMessagesProcessed.isEmpty()) {</span>
+<span class="nc" id="L113">        context.operationBuilder().responseMessages(responseMessagesProcessed);</span>
+      }
+<span class="nc" id="L115">    } catch (final NoSuchFieldException | IllegalAccessException ex) {</span>
+<span class="nc" id="L116">      log.info(&quot;error processResponseModel.&quot;, ex);</span>
+<span class="nc" id="L117">    }</span>
+<span class="nc" id="L118">  }</span>
+
+  abstract protected ModelContext modelContext(OperationContext context);
+
+  /**
+   * 判断是否是成功的响应.
+   */
+  private static boolean isSuccessful(final int code) {
+    try {
+<span class="nc" id="L127">      return HttpStatus.Series.SUCCESSFUL.equals(HttpStatus.Series.valueOf(code));</span>
+<span class="nc" id="L128">    } catch (final Exception ignored) {</span>
+<span class="nc" id="L129">      log.info(&quot;error check httpStatus {}.&quot;, code, ignored);</span>
+<span class="nc" id="L130">      return false;</span>
+    }
+  }
+
+  @Override
+  public boolean supports(final DocumentationType delimiter) {
+<span class="nc" id="L136">    return DocumentationType.SWAGGER_2.equals(delimiter);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

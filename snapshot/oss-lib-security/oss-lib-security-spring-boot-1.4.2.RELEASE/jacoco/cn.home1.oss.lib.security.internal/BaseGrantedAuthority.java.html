@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseGrantedAuthority.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.internal</a> &gt; <span class="el_source">BaseGrantedAuthority.java</span></div><h1>BaseGrantedAuthority.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.internal;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.SpringSecurityCoreVersion;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.util.Assert;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
+
+/**
+ * Created by Meifans on 17/1/13.
+ */
+@XmlRootElement(name = &quot;authority&quot;)
+<span class="fc" id="L21">@NoArgsConstructor(access = AccessLevel.PRIVATE)</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">@Setter(AccessLevel.PRIVATE)</span>
+@Getter
+public class BaseGrantedAuthority implements GrantedAuthority {
+
+  private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
+
+  @NonNull
+  @XmlValue
+<span class="fc" id="L30">  private String authority;</span>
+
+<span class="fc" id="L32">  public BaseGrantedAuthority(final String role) {</span>
+<span class="fc" id="L33">    Assert.hasText(role, &quot;A granted authority textual representation is required&quot;);</span>
+<span class="fc" id="L34">    this.authority = role;</span>
+<span class="fc" id="L35">  }</span>
+
+  @Override
+  public String toString() {
+<span class="fc" id="L39">    return this.authority;</span>
+  }
+
+  public boolean equals(final Object obj) {
+    final boolean result;
+
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">    if (this != obj) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">      if (obj instanceof BaseGrantedAuthority) {</span>
+<span class="fc" id="L47">        result = this.authority.equals(((BaseGrantedAuthority) obj).getAuthority());</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">      } else if (obj instanceof SimpleGrantedAuthority) {</span>
+<span class="fc" id="L49">        result = this.authority.equals(((SimpleGrantedAuthority) obj).getAuthority());</span>
+      } else {
+<span class="nc" id="L51">        result = false;</span>
+      }
+    } else {
+<span class="nc" id="L54">      result = false;</span>
+    }
+
+<span class="fc" id="L57">    return result;</span>
+  }
+
+  public int hashCode() {
+<span class="fc" id="L61">    return this.authority.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

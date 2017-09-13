@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MethodSecurityConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-lib-security-spring-boot-1.4.2.RELEASE</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.lib.security.starter</a> &gt; <span class="el_source">MethodSecurityConfiguration.java</span></div><h1>MethodSecurityConfiguration.java</h1><pre class="source lang-java linenums">package cn.home1.oss.lib.security.starter;
+
+import static cn.home1.oss.boot.autoconfigure.AppSecurity.ENABLED;
+
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.boot.autoconfigure.ConditionalOnAppSecurity;
+import cn.home1.oss.lib.security.MethodSecurityPermissionEvaluator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.access.expression.DenyAllPermissionEvaluator;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
+
+/**
+ * Created by zhanghaolun on 16/7/13.
+ */
+@EnableGlobalMethodSecurity(jsr250Enabled = true, securedEnabled = true, prePostEnabled = true)
+@ConditionalOnAppSecurity(ENABLED)
+@ConditionalOnBean(value = {PermissionEvaluator.class})
+<span class="nc" id="L24">public class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {</span>
+
+  @Autowired
+  private AppProperties appProperties;
+
+  @Autowired(required = false)
+  private PermissionEvaluator projectPermissionEvaluator;
+
+  @Override
+  protected MethodSecurityExpressionHandler createExpressionHandler() {
+    final PermissionEvaluator permissionEvaluator;
+<span class="nc bnc" id="L35" title="All 2 branches missed.">    if (this.projectPermissionEvaluator != null) {</span>
+<span class="nc" id="L36">      final MethodSecurityPermissionEvaluator methodSecurityPermissionEvaluator =</span>
+        new MethodSecurityPermissionEvaluator();
+<span class="nc" id="L38">      methodSecurityPermissionEvaluator.setSecurityEnabled(this.appProperties.getSecurityEnabled());</span>
+<span class="nc" id="L39">      methodSecurityPermissionEvaluator.setProjectPermissionEvaluator(this.projectPermissionEvaluator);</span>
+<span class="nc" id="L40">      permissionEvaluator = methodSecurityPermissionEvaluator;</span>
+<span class="nc" id="L41">    } else {</span>
+<span class="nc" id="L42">      permissionEvaluator = new DenyAllPermissionEvaluator();</span>
+    }
+
+<span class="nc" id="L45">    final DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();</span>
+<span class="nc" id="L46">    expressionHandler.setPermissionEvaluator(permissionEvaluator);</span>
+<span class="nc" id="L47">    return expressionHandler;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
