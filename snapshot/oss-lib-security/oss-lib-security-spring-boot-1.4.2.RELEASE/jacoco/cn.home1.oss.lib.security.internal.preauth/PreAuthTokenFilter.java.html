@@ -64,7 +64,7 @@ import javax.servlet.http.HttpServletResponse;
 <span class="nc" id="L64">    final HttpServletResponse response = (HttpServletResponse) res;</span>
 
 <span class="nc bnc" id="L66" title="All 2 branches missed.">    if (this.authenticationIsRequired()) {</span>
-<span class="nc" id="L67">      Object[] principalAndToken = this.findPrincipalAndToken(request);</span>
+<span class="nc" id="L67">      final Object[] principalAndToken = this.findPrincipalAndToken(request);</span>
 <span class="nc" id="L68">      final GenericUser principalFound = (GenericUser) principalAndToken[0];</span>
 <span class="nc" id="L69">      final String tokenFound = (String) principalAndToken[1];</span>
 

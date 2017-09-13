@@ -104,7 +104,7 @@ import java.util.Objects;
   // ApprovalStoreUserApprovalHandler#updateAfterApproval
   @Override
   protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-<span class="nc bnc" id="L107" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.securityConfigurers()) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.sortedSecurityConfigurers()) {</span>
 <span class="nc" id="L108">      configurer.configure(auth);</span>
 <span class="nc" id="L109">    }</span>
 
@@ -153,7 +153,7 @@ import java.util.Objects;
 <span class="nc" id="L153">      }</span>
     }
 
-<span class="nc bnc" id="L156" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.securityConfigurers()) {</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.sortedSecurityConfigurers()) {</span>
 <span class="nc" id="L157">      configurer.configure(http);</span>
 <span class="nc" id="L158">    }</span>
 
@@ -173,13 +173,13 @@ import java.util.Objects;
 
   @Override
   public void init(final WebSecurity web) throws Exception {
-<span class="nc bnc" id="L176" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.securityConfigurers()) {</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : this.sortedSecurityConfigurers()) {</span>
 <span class="nc" id="L177">      configurer.init(web);</span>
 <span class="nc" id="L178">    }</span>
 <span class="nc" id="L179">    super.init(web);</span>
 <span class="nc" id="L180">  }</span>
 
-  public List&lt;SecurityConfigurer&gt; securityConfigurers() {
+  public List&lt;SecurityConfigurer&gt; sortedSecurityConfigurers() {
 <span class="nc bnc" id="L183" title="All 2 branches missed.">    final List&lt;SecurityConfigurer&gt; all = this.securityConfigurers != null ? this.securityConfigurers : newArrayList();</span>
 <span class="nc" id="L184">    final List&lt;SecurityConfigurer&gt; sorted = all.stream().sorted().collect(toList());</span>
 <span class="nc bnc" id="L185" title="All 2 branches missed.">    for (final SecurityConfigurer configurer : sorted) {</span>

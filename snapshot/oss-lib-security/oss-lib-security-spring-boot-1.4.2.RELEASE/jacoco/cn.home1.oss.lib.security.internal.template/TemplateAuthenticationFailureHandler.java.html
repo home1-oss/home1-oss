@@ -102,7 +102,7 @@ public class TemplateAuthenticationFailureHandler implements AuthenticationFailu
 <span class="nc bnc" id="L102" title="All 2 branches missed.">    if (this.forwardToDestination) {</span>
 <span class="nc" id="L103">      request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);</span>
     } else {
-<span class="nc" id="L105">      HttpSession session = request.getSession(false);</span>
+<span class="nc" id="L105">      final HttpSession session = request.getSession(false);</span>
 
 <span class="nc bnc" id="L107" title="All 4 branches missed.">      if (session != null || this.allowSessionCreation) {</span>
 <span class="nc" id="L108">        request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);</span>

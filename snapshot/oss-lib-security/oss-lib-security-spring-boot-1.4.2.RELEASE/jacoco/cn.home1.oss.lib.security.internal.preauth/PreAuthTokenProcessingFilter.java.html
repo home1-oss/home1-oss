@@ -64,13 +64,15 @@ public class PreAuthTokenProcessingFilter extends GenericFilterBean {
 <span class="nc" id="L64">  private AuthenticationDetailsSource&lt;HttpServletRequest, ?&gt; authenticationDetailsSource;</span>
 <span class="nc" id="L65">  private RememberMeServices rememberMeServices;</span>
 
-<span class="nc" id="L67">  public PreAuthTokenProcessingFilter() {</span>
-<span class="nc" id="L68">    this.authenticationEntryPoint = null;</span>
-<span class="nc" id="L69">    this.authenticationManager = new NoOpAuthenticationManager();</span>
+  public PreAuthTokenProcessingFilter() {
+<span class="nc" id="L68">    super();</span>
 
-<span class="nc" id="L71">    this.authenticationDetailsSource = new WebAuthenticationDetailsSource();</span>
-<span class="nc" id="L72">    this.rememberMeServices = new NullRememberMeServices();</span>
-<span class="nc" id="L73">  }</span>
+<span class="nc" id="L70">    this.authenticationEntryPoint = null;</span>
+<span class="nc" id="L71">    this.authenticationManager = new NoOpAuthenticationManager();</span>
+
+<span class="nc" id="L73">    this.authenticationDetailsSource = new WebAuthenticationDetailsSource();</span>
+<span class="nc" id="L74">    this.rememberMeServices = new NullRememberMeServices();</span>
+<span class="nc" id="L75">  }</span>
 
   @Override
   public void doFilter( //
@@ -78,52 +80,52 @@ public class PreAuthTokenProcessingFilter extends GenericFilterBean {
     final ServletResponse res, //
     final FilterChain chain //
   ) throws IOException, ServletException {
-<span class="nc" id="L81">    final HttpServletRequest request = (HttpServletRequest) req;</span>
-<span class="nc" id="L82">    final HttpServletResponse response = (HttpServletResponse) res;</span>
+<span class="nc" id="L83">    final HttpServletRequest request = (HttpServletRequest) req;</span>
+<span class="nc" id="L84">    final HttpServletResponse response = (HttpServletResponse) res;</span>
 
     try {
-<span class="nc bnc" id="L85" title="All 2 branches missed.">      if (this.authenticationIsRequired()) {</span>
-<span class="nc" id="L86">        final GenericUser principal = (GenericUser) request.getAttribute(ATTR_PRINCIPAL);</span>
-<span class="nc" id="L87">        final String token = (String) request.getAttribute(ATTR_PRINCIPAL_TOKEN);</span>
-<span class="nc" id="L88">        request.removeAttribute(ATTR_PRINCIPAL);</span>
-<span class="nc" id="L89">        request.removeAttribute(ATTR_PRINCIPAL_TOKEN);</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">      if (this.authenticationIsRequired()) {</span>
+<span class="nc" id="L88">        final GenericUser principal = (GenericUser) request.getAttribute(ATTR_PRINCIPAL);</span>
+<span class="nc" id="L89">        final String token = (String) request.getAttribute(ATTR_PRINCIPAL_TOKEN);</span>
+<span class="nc" id="L90">        request.removeAttribute(ATTR_PRINCIPAL);</span>
+<span class="nc" id="L91">        request.removeAttribute(ATTR_PRINCIPAL_TOKEN);</span>
 
-<span class="nc" id="L91">        final AbstractAuthenticationToken authRequest = this.attempAuthentication(request, principal, token);</span>
-<span class="nc" id="L92">        authRequest.setDetails(this.authenticationDetailsSource.buildDetails(request));</span>
+<span class="nc" id="L93">        final AbstractAuthenticationToken authRequest = this.attempAuthentication(request, principal, token);</span>
+<span class="nc" id="L94">        authRequest.setDetails(this.authenticationDetailsSource.buildDetails(request));</span>
 
-<span class="nc" id="L94">        final Authentication authResult = this.authenticationManager.authenticate(authRequest);</span>
+<span class="nc" id="L96">        final Authentication authResult = this.authenticationManager.authenticate(authRequest);</span>
 
-<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (log.isTraceEnabled()) {</span>
-<span class="nc" id="L97">          log.trace(&quot;AUTH authentication success: {}, principal: {}&quot;, authResult, principal);</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (log.isTraceEnabled()) {</span>
+<span class="nc" id="L99">          log.trace(&quot;AUTH authentication success: {}, principal: {}&quot;, authResult, principal);</span>
         }
 
-<span class="nc" id="L100">        final SecurityContext securityContext = SecurityContextHolder.getContext();</span>
-<span class="nc" id="L101">        securityContext.setAuthentication(authResult);</span>
-<span class="nc" id="L102">        this.rememberMeServices.loginSuccess(request, response, authResult);</span>
-<span class="nc" id="L103">        this.onSuccessfulAuthentication(request, response, authResult);</span>
+<span class="nc" id="L102">        final SecurityContext securityContext = SecurityContextHolder.getContext();</span>
+<span class="nc" id="L103">        securityContext.setAuthentication(authResult);</span>
+<span class="nc" id="L104">        this.rememberMeServices.loginSuccess(request, response, authResult);</span>
+<span class="nc" id="L105">        this.onSuccessfulAuthentication(request, response, authResult);</span>
       }
-<span class="nc" id="L105">    } catch (final AuthenticationException failed) {</span>
-<span class="nc" id="L106">      SecurityContextHolder.clearContext();</span>
+<span class="nc" id="L107">    } catch (final AuthenticationException failed) {</span>
+<span class="nc" id="L108">      SecurityContextHolder.clearContext();</span>
 
-<span class="nc bnc" id="L108" title="All 2 branches missed.">      if (log.isTraceEnabled()) {</span>
-<span class="nc" id="L109">        log.trace(&quot;AUTH authentication failed. not login.&quot;, failed);</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">      if (log.isTraceEnabled()) {</span>
+<span class="nc" id="L111">        log.trace(&quot;AUTH authentication failed. not login.&quot;, failed);</span>
       }
 
-<span class="nc" id="L112">      this.rememberMeServices.loginFail(request, response);</span>
-<span class="nc" id="L113">      this.onUnsuccessfulAuthentication(request, response, failed);</span>
-<span class="nc bnc" id="L114" title="All 2 branches missed.">      if (this.getIgnoreFailure()) {</span>
-<span class="nc" id="L115">        chain.doFilter(request, response);</span>
+<span class="nc" id="L114">      this.rememberMeServices.loginFail(request, response);</span>
+<span class="nc" id="L115">      this.onUnsuccessfulAuthentication(request, response, failed);</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">      if (this.getIgnoreFailure()) {</span>
+<span class="nc" id="L117">        chain.doFilter(request, response);</span>
       } else {
-<span class="nc" id="L117">        this.authenticationEntryPoint.commence(request, response, failed);</span>
+<span class="nc" id="L119">        this.authenticationEntryPoint.commence(request, response, failed);</span>
       }
-<span class="nc" id="L119">      return;</span>
-<span class="nc" id="L120">    }</span>
+<span class="nc" id="L121">      return;</span>
+<span class="nc" id="L122">    }</span>
 
-<span class="nc" id="L122">    chain.doFilter(request, response);</span>
-<span class="nc" id="L123">  }</span>
+<span class="nc" id="L124">    chain.doFilter(request, response);</span>
+<span class="nc" id="L125">  }</span>
 
   private boolean authenticationIsRequired() {
-<span class="nc" id="L126">    return Security.authenticationIsRequired();</span>
+<span class="nc" id="L128">    return Security.authenticationIsRequired();</span>
   }
 
   @SuppressWarnings({&quot;PMD.UnusedFormalParameter&quot;, &quot;squid:S1172&quot;})
@@ -132,7 +134,7 @@ public class PreAuthTokenProcessingFilter extends GenericFilterBean {
     final GenericUser principal, //
     final String token
   ) {
-<span class="nc" id="L135">    return new PreAuthenticatedAuthenticationToken(principal, token);</span>
+<span class="nc" id="L137">    return new PreAuthenticatedAuthenticationToken(principal, token);</span>
   }
 
   @SuppressWarnings({&quot;squid:S1172&quot;})
@@ -142,7 +144,7 @@ public class PreAuthTokenProcessingFilter extends GenericFilterBean {
     final Authentication authResult //
   ) throws IOException {
     // Do nothing
-<span class="nc" id="L145">  }</span>
+<span class="nc" id="L147">  }</span>
 
   @SuppressWarnings({&quot;squid:S1172&quot;})
   protected void onUnsuccessfulAuthentication( //
@@ -151,23 +153,23 @@ public class PreAuthTokenProcessingFilter extends GenericFilterBean {
     final AuthenticationException failed //
   ) throws IOException {
     // Do nothing
-<span class="nc" id="L154">  }</span>
+<span class="nc" id="L156">  }</span>
 
   public Boolean getIgnoreFailure() {
-<span class="nc bnc" id="L157" title="All 2 branches missed.">    return this.authenticationEntryPoint == null;</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">    return this.authenticationEntryPoint == null;</span>
   }
 
   @Autowired
   @Override
   public void setEnvironment(final Environment environment) {
-<span class="nc" id="L163">    super.setEnvironment(environment);</span>
-<span class="nc" id="L164">  }</span>
+<span class="nc" id="L165">    super.setEnvironment(environment);</span>
+<span class="nc" id="L166">  }</span>
 
-<span class="nc" id="L166">  public static class NoOpAuthenticationManager implements AuthenticationManager {</span>
+<span class="nc" id="L168">  public static class NoOpAuthenticationManager implements AuthenticationManager {</span>
 
     @Override
     public Authentication authenticate(final Authentication authentication) {
-<span class="nc" id="L170">      return authentication;</span>
+<span class="nc" id="L172">      return authentication;</span>
     }
   }
 }

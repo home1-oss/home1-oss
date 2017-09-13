@@ -24,33 +24,34 @@ public abstract class Security {
 <span class="nc" id="L24">    final SecurityContext securityContext = SecurityContextHolder.getContext();</span>
 <span class="nc" id="L25">    final Authentication existingAuth = securityContext.getAuthentication();</span>
 
-<span class="nc bnc" id="L27" title="All 4 branches missed.">    if (existingAuth == null || !existingAuth.isAuthenticated()) {</span>
-<span class="nc" id="L28">      return true;</span>
-    }
-
-    // Limit username comparison to providers which use usernames (ie
-    // UsernamePasswordAuthenticationToken, PreAuthenticatedAuthenticationToken)
-    // (see SEC-348)
-<span class="nc bnc" id="L34" title="All 2 branches missed.">    if (existingAuth instanceof PreAuthenticatedAuthenticationToken) {</span>
-<span class="nc" id="L35">      final GenericUser unknown_user = GenericUser.unknownUser();</span>
-<span class="nc bnc" id="L36" title="All 2 branches missed.">      if (!existingAuth.getName().equals(unknown_user.getUsername())) {</span>
-<span class="nc" id="L37">        return true;</span>
+<span class="nc" id="L27">    boolean result = false;</span>
+<span class="nc bnc" id="L28" title="All 4 branches missed.">    if (existingAuth == null || !existingAuth.isAuthenticated()) {</span>
+<span class="nc" id="L29">      result = true;</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">    } else if (existingAuth instanceof PreAuthenticatedAuthenticationToken) {</span>
+      // Limit username comparison to providers which use usernames (ie
+      // UsernamePasswordAuthenticationToken, PreAuthenticatedAuthenticationToken)
+      // (see SEC-348)
+<span class="nc" id="L34">      final GenericUser unknown_user = GenericUser.unknownUser();</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">      if (!existingAuth.getName().equals(unknown_user.getUsername())) {</span>
+<span class="nc" id="L36">        result = true;</span>
       }
+<span class="nc" id="L38">    } else {</span>
+      // Handle unusual condition where an AnonymousAuthenticationToken is already present
+      // This shouldn't happen very often, as BasicProcessingFitler is meant to be earlier in the
+      // filter
+      // chain than AnonymousAuthenticationFilter. Nevertheless, presence of both an
+      // AnonymousAuthenticationToken
+      // together with a BASIC authentication request header should indicate reauthentication using
+      // the
+      // BASIC protocol is desirable. This behaviour is also consistent with that provided by form and
+      // digest,
+      // both of which force re-authentication if the respective header is detected (and in doing so
+      // replace
+      // any existing AnonymousAuthenticationToken). See SEC-610.
+<span class="nc" id="L51">      result = existingAuth instanceof AnonymousAuthenticationToken;</span>
     }
 
-    // Handle unusual condition where an AnonymousAuthenticationToken is already present
-    // This shouldn't happen very often, as BasicProcessingFitler is meant to be earlier in the
-    // filter
-    // chain than AnonymousAuthenticationFilter. Nevertheless, presence of both an
-    // AnonymousAuthenticationToken
-    // together with a BASIC authentication request header should indicate reauthentication using
-    // the
-    // BASIC protocol is desirable. This behaviour is also consistent with that provided by form and
-    // digest,
-    // both of which force re-authentication if the respective header is detected (and in doing so
-    // replace
-    // any existing AnonymousAuthenticationToken). See SEC-610.
-<span class="nc" id="L53">    return existingAuth instanceof AnonymousAuthenticationToken;</span>
+<span class="nc" id="L54">    return result;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

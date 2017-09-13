@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>        <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UsernameNotFoundException(username);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>      }
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">final</strong> PasswordEncoder passwordEncoder = <strong class="jxr_keyword">this</strong>.getPasswordEncoder();
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">final</strong> PasswordEncoder passwordEncoder = <strong class="jxr_keyword">this</strong>.passwordEncoder;
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">final</strong> Boolean passwordMatches;
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">if</strong> (passwordEncoder != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>       passwordMatches = passwordEncoder.matches(password, user.getPassword());
@@ -145,7 +145,7 @@
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>           .stream() <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>           .map(role -&gt; <strong class="jxr_keyword">new</strong> <a href="../../../../../../cn/home1/oss/lib/security/internal/BaseGrantedAuthority.html">BaseGrantedAuthority</a>(Security.ROLE_PREFIX + role)) <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>           .collect(toSet());
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">final</strong> PasswordEncoder passwordEncoder = <strong class="jxr_keyword">this</strong>.getPasswordEncoder();
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">final</strong> PasswordEncoder passwordEncoder = <strong class="jxr_keyword">this</strong>.passwordEncoder;
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">final</strong> String password = passwordEncoder != <strong class="jxr_keyword">null</strong> ? <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>           passwordEncoder.encode(securityUser.getPassword()) : securityUser.getPassword();
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> 
