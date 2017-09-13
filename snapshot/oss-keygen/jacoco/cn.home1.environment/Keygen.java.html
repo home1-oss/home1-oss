@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Keygen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-keygen</a> &gt; <a href="index.source.html" class="el_package">cn.home1.environment</a> &gt; <span class="el_source">Keygen.java</span></div><h1>Keygen.java</h1><pre class="source lang-java linenums">package cn.home1.environment;
+
+import cn.home1.oss.lib.common.crypto.AesCbcKey;
+import cn.home1.oss.lib.common.crypto.AesKeyGenerator;
+import cn.home1.oss.lib.common.crypto.JwtKeyGenerator;
+import cn.home1.oss.lib.common.crypto.RsaKeys;
+
+import org.springframework.boot.Banner;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+
+<span class="fc" id="L12">public class Keygen implements CommandLineRunner {</span>
+
+  public static void main(final String... args) {
+<span class="nc" id="L15">    new SpringApplicationBuilder()</span>
+<span class="nc" id="L16">        .sources(Keygen.class)</span>
+<span class="nc" id="L17">        .bannerMode(Banner.Mode.OFF)</span>
+<span class="nc" id="L18">        .run(args);</span>
+<span class="nc" id="L19">  }</span>
+
+  @Override
+  public void run(final String... args) throws Exception {
+<span class="nc bnc" id="L23" title="All 2 branches missed.">    if (args.length == 0) {</span>
+<span class="nc" id="L24">      System.err.println(this.usage());</span>
+    } else {
+<span class="nc" id="L26">      final String option = args[0];</span>
+<span class="nc" id="L27">      final String result = this.generateKey(option);</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">      if (result != null) {</span>
+<span class="nc" id="L29">        System.out.print(result);</span>
+      } else {
+<span class="nc" id="L31">        System.err.println(this.usage());</span>
+      }
+    }
+<span class="nc" id="L34">  }</span>
+
+  public String generateKey(final String option) {
+    final String spec;
+    final String result;
+<span class="pc bpc" id="L39" title="5 of 14 branches missed.">    switch (option) {</span>
+      case &quot;-aes&quot;:
+<span class="fc" id="L41">        spec = AesCbcKey.keySpec(256);</span>
+<span class="fc" id="L42">        result = new AesKeyGenerator(spec).generateKey().toString();</span>
+<span class="fc" id="L43">        break;</span>
+      case &quot;-jwt&quot;:
+<span class="fc" id="L45">        spec = &quot;HS512&quot;;</span>
+<span class="fc" id="L46">        result = new JwtKeyGenerator(spec).generateKey().toString();</span>
+<span class="fc" id="L47">        break;</span>
+      case &quot;-rsa&quot;:
+<span class="fc" id="L49">        final int keySize = 1024;</span>
+<span class="fc" id="L50">        result = RsaKeys.generateRsaKey(keySize);</span>
+<span class="fc" id="L51">        break;</span>
+      // support &quot;-jks&quot; ?
+      default:
+<span class="nc" id="L54">        result = null;</span>
+        break;
+    }
+<span class="fc" id="L57">    return result;</span>
+  }
+
+  private String usage() {
+<span class="nc" id="L61">    return &quot;&quot; + //</span>
+        &quot;Usage: java -jar oss-lib-common-*.jar [OPTION]\n&quot; + //
+        &quot;\t-aes\n&quot; + //
+        &quot;\t\tgenerate random AES CBC key\n&quot; + //
+        &quot;\t-jwt\n&quot; + //
+        &quot;\t\tgenerate random JWT HS512 key\n&quot; + //
+        &quot;\t-rsa\n&quot; + //
+        &quot;\t\tgenerate random RSA1024 key\n&quot; + //
+        &quot;&quot;;
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
