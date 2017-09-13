@@ -1,0 +1,16 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+oss-admin,cn.home1.oss.environment.admin.controller,AdminController,2,3,0,0,1,1,1,1,1,1
+oss-admin,cn.home1.oss.environment.admin.controller,GreetingController,0,7,0,0,0,3,0,2,0,2
+oss-admin,cn.home1.oss.environment.admin,BasicAuthFilter.new TypeReference() {...},6,0,0,0,1,0,1,0,1,0
+oss-admin,cn.home1.oss.environment.admin,WebMvcConfiguration,0,87,0,0,0,8,0,2,0,2
+oss-admin,cn.home1.oss.environment.admin,ServiceMonitor,0,57,0,0,0,12,0,4,0,4
+oss-admin,cn.home1.oss.environment.admin,BasicAuthFilter,154,9,8,0,31,3,7,2,3,2
+oss-admin,cn.home1.oss.environment.admin,PostFilterForClientInfo,74,9,4,0,15,3,4,2,2,2
+oss-admin,cn.home1.oss.environment.admin,ClientKey,267,0,36,0,27,0,32,0,14,0
+oss-admin,cn.home1.oss.environment.admin,PostFilterForClientInfo.new TypeReference() {...},6,0,0,0,1,0,1,0,1,0
+oss-admin,cn.home1.oss.environment.admin,AdminApplication.new DefaultResponseErrorHandler() {...},2,6,0,0,1,1,1,1,1,1
+oss-admin,cn.home1.oss.environment.admin,PatchedStatusUpdater,145,36,8,0,30,13,9,4,5,4
+oss-admin,cn.home1.oss.environment.admin,ClientKeyStore,32,8,2,0,5,2,6,1,5,1
+oss-admin,cn.home1.oss.environment.admin,AdminApplication,5,80,0,0,2,18,1,9,1,9
+oss-admin,cn.home1.oss.environment.admin,AbstractZuulFilter,5,12,0,0,2,5,2,2,2,2
+oss-admin,cn.home1.oss.environment.admin,WebSecurityConfig,0,165,0,0,0,30,0,3,0,3

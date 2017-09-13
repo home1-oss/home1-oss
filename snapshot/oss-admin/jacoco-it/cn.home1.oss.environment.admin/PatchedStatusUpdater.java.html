@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PatchedStatusUpdater.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-admin</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.environment.admin</a> &gt; <span class="el_source">PatchedStatusUpdater.java</span></div><h1>PatchedStatusUpdater.java</h1><pre class="source lang-java linenums">package cn.home1.oss.environment.admin;
+
+import static cn.home1.oss.lib.common.BasicAuthUtils.basicAuthHeader;
+import static org.springframework.http.HttpMethod.GET;
+
+import de.codecentric.boot.admin.event.ClientApplicationStatusChangedEvent;
+import de.codecentric.boot.admin.model.Application;
+import de.codecentric.boot.admin.model.StatusInfo;
+import de.codecentric.boot.admin.registry.StatusUpdater;
+import de.codecentric.boot.admin.registry.store.ApplicationStore;
+import de.codecentric.boot.admin.web.client.ApplicationOperations;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.Serializable;
+import java.util.Map;
+
+/**
+ * Created by Yuliang on 16/11/25.
+ */
+<span class="fc" id="L28">@Slf4j</span>
+public class PatchedStatusUpdater extends StatusUpdater {
+
+  private final ApplicationOperations applicationOps;
+
+  private final RestTemplate restTemplate;
+
+  private final ApplicationStore store;
+
+<span class="fc" id="L37">  private boolean active = false;</span>
+
+  private ApplicationEventPublisher publisher;
+
+  @Autowired
+  private BasicAuthFilter basicAuthFilter;
+  @Autowired
+  private ClientKeyStore clientKeyStore;
+
+  public PatchedStatusUpdater( //
+      final ApplicationStore store, //
+      final ApplicationOperations applicationOps, //
+      final RestTemplate restTemplate
+  ) {
+<span class="fc" id="L51">    super(store, applicationOps);</span>
+<span class="fc" id="L52">    this.applicationOps = applicationOps;</span>
+<span class="fc" id="L53">    this.store = store;</span>
+<span class="fc" id="L54">    this.restTemplate = restTemplate;</span>
+<span class="fc" id="L55">  }</span>
+
+  @Override
+  public void updateStatus(final Application application) {
+
+<span class="nc bnc" id="L60" title="All 2 branches missed.">    if (this.active) {</span>
+<span class="nc" id="L61">      final StatusInfo oldStatus = application.getStatusInfo();</span>
+<span class="nc" id="L62">      final StatusInfo newStatus = queryStatus(application);</span>
+
+<span class="nc" id="L64">      final Application newState = Application.create(application.getName()).withStatusInfo(newStatus).build();</span>
+<span class="nc" id="L65">      this.store.save(newState);</span>
+
+<span class="nc bnc" id="L67" title="All 2 branches missed.">      if (!newStatus.equals(oldStatus)) {</span>
+<span class="nc" id="L68">        this.publisher.publishEvent(new ClientApplicationStatusChangedEvent(newState, oldStatus, newStatus));</span>
+      }
+<span class="nc" id="L70">    } else {</span>
+<span class="nc" id="L71">      log.info(&quot;Application not started yet. Application update process not executed&quot;);</span>
+    }
+<span class="nc" id="L73">  }</span>
+
+  public void setActive(final boolean active) {
+<span class="fc" id="L76">    log.debug(&quot;Setting active property to: {}&quot;, active);</span>
+<span class="fc" id="L77">    this.active = active;</span>
+<span class="fc" id="L78">  }</span>
+
+  public boolean isActive() {
+<span class="nc" id="L81">    return this.active;</span>
+  }
+
+  @Override
+  public void setApplicationEventPublisher(final ApplicationEventPublisher publisher) {
+<span class="fc" id="L86">    this.publisher = publisher;</span>
+<span class="fc" id="L87">  }</span>
+
+<span class="fc" id="L89">  private static final Class&lt;Map&lt;String, Serializable&gt;&gt; RESPONSE_TYPE_MAP = (Class&lt;Map&lt;String, Serializable&gt;&gt;) (Class&lt;?&gt;) Map.class;</span>
+
+  @Override
+  protected StatusInfo queryStatus(final Application application) {
+//    StatusInfo resultStatus = StatusInfo.ofUnknown();
+//
+//    log.trace(&quot;Updating status for {}&quot;, application);
+//    try {
+//      final String url = application.getHealthUrl();
+//      ClientKey clientKey = this.clientKeyStore.find(application.getId());
+//
+//      if (clientKey == null) {
+//        final String infoUrl = getInfoUrl(url);
+//        clientKey = this.basicAuthFilter.requestForClientKey(application.getId(), infoUrl);
+//        this.clientKeyStore.save(clientKey);
+//      }
+//
+//      final HttpEntity&lt;String&gt; httpEntity = new HttpEntity&lt;&gt;(createBasicAuthHeaders(clientKey));
+//      final ResponseEntity&lt;Map&lt;String, Serializable&gt;&gt; response = this.operations.exchange(url, GET, httpEntity, RESPONSE_TYPE_MAP);
+//      log.debug(&quot;/health for {} responded with {}&quot;, application, response);
+//
+//      if (response.hasBody() &amp;&amp; response.getBody().get(&quot;status&quot;) instanceof String) {
+//        resultStatus = StatusInfo.valueOf((String) response.getBody().get(&quot;status&quot;));
+//      } else if (response.getStatusCode().is2xxSuccessful()) {
+//        resultStatus = StatusInfo.ofUp();
+//      } else {
+//        resultStatus = StatusInfo.ofDown();
+//      }
+//    } catch (final Exception ex) {
+//      if (&quot;OFFLINE&quot;.equals(application.getStatusInfo().getStatus())) {
+//        log.debug(&quot;Couldn't retrieve status for {}&quot;, application, ex);
+//      } else {
+//        log.warn(&quot;Couldn't retrieve status for {}&quot;, application, ex);
+//      }
+//      resultStatus = StatusInfo.ofOffline();
+//    }
+//
+//    return resultStatus;
+
+    try {
+<span class="nc" id="L129">      final String url = application.getHealthUrl();</span>
+<span class="nc" id="L130">      ClientKey clientKey = this.clientKeyStore.find(application.getId());</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">      if (clientKey == null) {</span>
+<span class="nc" id="L132">        final String infoUrl = getInfoUrl(url);</span>
+<span class="nc" id="L133">        clientKey = this.basicAuthFilter.requestForClientKey(application.getId(), infoUrl);</span>
+<span class="nc" id="L134">        this.clientKeyStore.save(clientKey);</span>
+      }
+<span class="nc" id="L136">      final HttpEntity&lt;String&gt; httpEntity = new HttpEntity&lt;&gt;(createBasicAuthHeaders(clientKey));</span>
+<span class="nc" id="L137">      final ResponseEntity&lt;Map&lt;String, Serializable&gt;&gt; response = this.restTemplate.exchange( //</span>
+          url, GET, httpEntity, RESPONSE_TYPE_MAP);
+
+<span class="nc" id="L140">      return convertStatusInfo(response);</span>
+<span class="nc" id="L141">    } catch (final Exception ex) {</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">      if (&quot;OFFLINE&quot;.equals(application.getStatusInfo().getStatus())) {</span>
+<span class="nc" id="L143">        log.debug(&quot;Couldn't retrieve status for {}&quot;, application, ex);</span>
+      } else {
+<span class="nc" id="L145">        log.info(&quot;Couldn't retrieve status for {}&quot;, application, ex);</span>
+      }
+<span class="nc" id="L147">      return convertStatusInfo(ex);</span>
+    }
+  }
+
+  private String getInfoUrl(final String url) {
+<span class="nc" id="L152">    return url.substring(0, url.lastIndexOf('/') + 1) + &quot;info&quot;;</span>
+  }
+
+  HttpHeaders createBasicAuthHeaders(final ClientKey clientKey) {
+<span class="nc" id="L156">    HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L157">    String authHeader = basicAuthHeader(clientKey.getUserName(), clientKey.getPassword());</span>
+<span class="nc" id="L158">    httpHeaders.set(&quot;Authorization&quot;, authHeader);</span>
+<span class="nc" id="L159">    return httpHeaders;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

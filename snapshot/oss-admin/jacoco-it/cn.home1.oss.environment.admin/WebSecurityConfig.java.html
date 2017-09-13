@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSecurityConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-admin</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.environment.admin</a> &gt; <span class="el_source">WebSecurityConfig.java</span></div><h1>WebSecurityConfig.java</h1><pre class="source lang-java linenums">package cn.home1.oss.environment.admin;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+/**
+ * Created by leo on 16/11/28.
+ */
+@Configuration
+@EnableWebSecurity
+<span class="fc" id="L16">public class WebSecurityConfig extends WebSecurityConfigurerAdapter {</span>
+
+  @Autowired
+  private SecurityProperties securityProperties;
+
+  private static final String ADMIN_ROLE_NAME = &quot;ADMIN&quot;;
+  private static final String USER_ROLE_NAME = &quot;USER&quot;;
+  private static final int USER_ROLE_FIRST_INDEX = 0;
+  private static final int USER_ROLE_SECOND_INDEX = 1;
+
+  @Override
+  protected void configure(final HttpSecurity http) throws Exception {
+
+    // Below config is a temporary solution to protect management endpoints.
+<span class="fc" id="L30">    http</span>
+<span class="fc" id="L31">        .authorizeRequests()</span>
+<span class="fc" id="L32">        .antMatchers( //</span>
+            &quot;/health&quot;, //
+            &quot;/env&quot;, //
+            &quot;/metrics&quot;, //
+            &quot;/jolokia&quot;, //
+            &quot;/dump&quot;, //
+            &quot;/shutdown&quot;, //
+            &quot;/beans&quot;, //
+            &quot;/trace&quot; //
+        )
+<span class="fc" id="L42">        .fullyAuthenticated().and()</span>
+<span class="fc" id="L43">        .httpBasic();</span>
+
+<span class="fc" id="L45">    http</span>
+<span class="fc" id="L46">        .csrf().disable()</span>
+<span class="fc" id="L47">        .authorizeRequests()</span>
+<span class="fc" id="L48">        .antMatchers(&quot;/&quot;, &quot;/index.html&quot;).hasRole(USER_ROLE_NAME)</span>
+<span class="fc" id="L49">        .antMatchers(&quot;/api/applications/**/env&quot;,</span>
+            &quot;/api/applications/**/jolokia&quot;,
+            &quot;/api/applications/**/heapdump&quot;)
+<span class="fc" id="L52">        .hasRole(ADMIN_ROLE_NAME)</span>
+<span class="fc" id="L53">        .anyRequest().permitAll()</span>
+<span class="fc" id="L54">        .and()</span>
+<span class="fc" id="L55">        .formLogin()</span>
+<span class="fc" id="L56">        .loginPage(&quot;/login&quot;)</span>
+<span class="fc" id="L57">        .defaultSuccessUrl(&quot;/&quot;)</span>
+<span class="fc" id="L58">        .permitAll()</span>
+<span class="fc" id="L59">        .and()</span>
+<span class="fc" id="L60">        .logout()</span>
+<span class="fc" id="L61">        .permitAll();</span>
+<span class="fc" id="L62">  }</span>
+
+  @Autowired
+  public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
+<span class="fc" id="L66">    SecurityProperties.User user = securityProperties.getUser();</span>
+<span class="fc" id="L67">    auth</span>
+<span class="fc" id="L68">        .inMemoryAuthentication()</span>
+<span class="fc" id="L69">        .withUser(user.getName()).password(user.getPassword()).roles(user.getRole().get(USER_ROLE_FIRST_INDEX), user</span>
+<span class="fc" id="L70">        .getRole().get(USER_ROLE_SECOND_INDEX)).and()</span>
+<span class="fc" id="L71">        .withUser(&quot;user&quot;).password(&quot;user_pass&quot;).roles(USER_ROLE_NAME, ADMIN_ROLE_NAME).and()</span>
+<span class="fc" id="L72">        .withUser(&quot;oss&quot;).password(&quot;oss&quot;).roles(USER_ROLE_NAME);</span>
+<span class="fc" id="L73">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

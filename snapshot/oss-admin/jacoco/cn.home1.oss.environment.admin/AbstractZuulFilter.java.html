@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractZuulFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-admin</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.environment.admin</a> &gt; <span class="el_source">AbstractZuulFilter.java</span></div><h1>AbstractZuulFilter.java</h1><pre class="source lang-java linenums">package cn.home1.oss.environment.admin;
+
+import com.netflix.zuul.ZuulFilter;
+
+/**
+ * Created by leo on 17/1/6.
+ */
+public abstract class AbstractZuulFilter extends ZuulFilter {
+  
+  private final int filterOrder;
+  private final String filterType;
+
+<span class="nc" id="L13">  protected AbstractZuulFilter(final int filterOrder, final String filterType) {</span>
+<span class="nc" id="L14">    this.filterOrder = filterOrder;</span>
+<span class="nc" id="L15">    this.filterType = filterType;</span>
+<span class="nc" id="L16">  }</span>
+
+  @Override
+  public int filterOrder() {
+<span class="nc" id="L20">    return this.filterOrder;</span>
+  }
+
+  @Override
+  public String filterType() {
+<span class="nc" id="L25">    return this.filterType;</span>
+  }
+
+  @Override
+  public boolean shouldFilter() {
+<span class="nc" id="L30">    return true;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

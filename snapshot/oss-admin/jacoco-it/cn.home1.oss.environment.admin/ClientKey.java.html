@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClientKey.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-admin</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.environment.admin</a> &gt; <span class="el_source">ClientKey.java</span></div><h1>ClientKey.java</h1><pre class="source lang-java linenums">package cn.home1.oss.environment.admin;
+
+import cn.home1.oss.lib.common.crypto.EncodeDecryptor;
+
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.Serializable;
+import java.util.Map;
+
+/**
+ * Created by Yuliang Jin on 16/10/26.
+ */
+<span class="nc bnc" id="L14" title="All 30 branches missed.">@Data</span>
+<span class="nc" id="L15">@Slf4j</span>
+public class ClientKey implements Serializable {
+  private static final long serialVersionUID = 1L;
+
+  private static final String CONSTANT_STRING_FOR_DISPLAY = &quot;******&quot;;
+  private static final String CONSTANT_STRING_FOR_USERNAME= &quot;username&quot;;
+  @SuppressWarnings(&quot;squid:S2068&quot;)
+  private static final String CONSTANT_STRING_FOR_PASSWORD= &quot;password&quot;;
+  private static final String CONSTANT_STRING_FOR_MANAGEMENT_AUTHENTICATION= &quot;managementAuthentication&quot;;
+
+<span class="nc" id="L25">  private String serviceId;</span>
+<span class="nc" id="L26">  private String userName;</span>
+<span class="nc" id="L27">  private String password;</span>
+
+<span class="nc" id="L29">  public ClientKey(final String serviceId, final String userName, final String password) {</span>
+<span class="nc" id="L30">    this.serviceId = serviceId;</span>
+<span class="nc" id="L31">    this.userName = userName;</span>
+<span class="nc" id="L32">    this.password = password;</span>
+<span class="nc" id="L33">  }</span>
+
+  public static String serviceIdFrom(final String requestUri) {
+<span class="nc" id="L36">    log.debug(&quot;Request Uri is {}.&quot;, requestUri);</span>
+<span class="nc" id="L37">    return requestUri.split(&quot;/&quot;)[3];</span>
+  }
+
+  /**
+   * To get the plain username and password; To modify the encrypted info to a constant String.
+   * @param infoObject
+   * @param decryptor
+   * @return
+   */
+  public static String[] usernamePasswordFromInfoObject( //
+      final Map&lt;String, Object&gt; infoObject, final EncodeDecryptor decryptor) {
+    final String[] result;
+<span class="nc bnc" id="L49" title="All 4 branches missed.">    if (infoObject != null &amp;&amp; infoObject.containsKey(CONSTANT_STRING_FOR_MANAGEMENT_AUTHENTICATION)) {</span>
+      @SuppressWarnings(&quot;unchecked&quot;)
+<span class="nc" id="L51">      final Map&lt;String, Object&gt; managementAuth = (Map&lt;String, Object&gt;) infoObject.get(CONSTANT_STRING_FOR_MANAGEMENT_AUTHENTICATION);</span>
+<span class="nc" id="L52">      final Boolean encrypted = (Boolean) managementAuth.get(&quot;encrypted&quot;);</span>
+      final String username;
+      final String password;
+<span class="nc bnc" id="L55" title="All 2 branches missed.">      if (encrypted) {</span>
+<span class="nc" id="L56">        username = decryptor.decrypt((String) managementAuth.get(CONSTANT_STRING_FOR_USERNAME));</span>
+<span class="nc" id="L57">        password = decryptor.decrypt((String) managementAuth.get(CONSTANT_STRING_FOR_PASSWORD));</span>
+      } else {
+<span class="nc" id="L59">        username = (String) managementAuth.get(CONSTANT_STRING_FOR_USERNAME);</span>
+<span class="nc" id="L60">        password = (String) managementAuth.get(CONSTANT_STRING_FOR_PASSWORD);</span>
+      }
+
+<span class="nc" id="L63">      managementAuth.put(CONSTANT_STRING_FOR_USERNAME, CONSTANT_STRING_FOR_DISPLAY);</span>
+<span class="nc" id="L64">      managementAuth.put(CONSTANT_STRING_FOR_PASSWORD, CONSTANT_STRING_FOR_DISPLAY);</span>
+
+<span class="nc" id="L66">      infoObject.put(CONSTANT_STRING_FOR_MANAGEMENT_AUTHENTICATION, managementAuth);</span>
+
+<span class="nc" id="L68">      result = new String[]{username, password};</span>
+<span class="nc" id="L69">    } else {</span>
+<span class="nc" id="L70">      result = null;</span>
+    }
+<span class="nc" id="L72">    return result;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

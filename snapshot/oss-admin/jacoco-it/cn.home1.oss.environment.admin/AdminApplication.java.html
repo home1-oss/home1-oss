@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-admin</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.environment.admin</a> &gt; <span class="el_source">AdminApplication.java</span></div><h1>AdminApplication.java</h1><pre class="source lang-java linenums">package cn.home1.oss.environment.admin;
+
+import de.codecentric.boot.admin.config.AdminServerProperties;
+import de.codecentric.boot.admin.config.EnableAdminServer;
+import de.codecentric.boot.admin.registry.StatusUpdater;
+import de.codecentric.boot.admin.registry.store.ApplicationStore;
+import de.codecentric.boot.admin.web.client.ApplicationOperations;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.RestTemplate;
+
+import cn.home1.oss.boot.autoconfigure.AppProperties;
+import cn.home1.oss.lib.common.crypto.Cryptos;
+import cn.home1.oss.lib.common.crypto.EncodeDecryptor;
+import cn.home1.oss.lib.common.crypto.KeyExpression;
+
+@Configuration
+@EnableAutoConfiguration
+@EnableAdminServer
+@EnableDiscoveryClient
+@EnableZuulProxy
+@EnableConfigurationProperties(value = {AppProperties.class})
+@SpringBootApplication
+<span class="fc" id="L44">@Slf4j</span>
+<span class="fc" id="L45">public class AdminApplication implements ApplicationListener&lt;ContextRefreshedEvent&gt; {</span>
+
+  @Autowired
+  private Environment environment;
+
+  @Autowired
+  private ApplicationContext applicationContext;
+
+  @Autowired
+  private ApplicationOperations applicationOperations;
+
+  @Autowired
+  private AdminServerProperties adminServerProperties;
+
+  @Autowired
+  private ApplicationStore applicationStore;
+
+  public static void main(final String[] args) {
+<span class="nc" id="L63">    SpringApplication.run(AdminApplication.class, args);</span>
+<span class="nc" id="L64">  }</span>
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ClientKeyStore clientKeyStoreListener() {
+<span class="fc" id="L69">    return new ClientKeyStore();</span>
+  }
+
+  @Bean
+  public BasicAuthFilter basicAuthFilter() {
+<span class="fc" id="L74">    return new BasicAuthFilter();</span>
+  }
+
+  @Bean
+  public PostFilterForClientInfo postFilterForClientInfo() {
+<span class="fc" id="L79">    return new PostFilterForClientInfo();</span>
+  }
+
+  @Bean
+  public RestTemplate restTemplate(final RestTemplateBuilder builder) {
+<span class="fc" id="L84">    return builder.build();</span>
+  }
+
+  @Bean
+  public EncodeDecryptor decryptor() {
+<span class="fc" id="L89">    final String adminPrivateKey = this.environment.getProperty(&quot;app.adminPrivateKey&quot;);</span>
+<span class="fc" id="L90">    return Cryptos.decryptor(new KeyExpression(adminPrivateKey));</span>
+  }
+
+  @Primary
+  @Bean
+  @ConditionalOnMissingBean
+  public StatusUpdater statusUpdater() {
+
+<span class="fc" id="L98">    log.info(&quot;Registering patched version of de.codecentric.boot.admin.registry.StatusUpdates&quot;);</span>
+
+<span class="fc" id="L100">    final RestTemplate restTemplate = new RestTemplate();</span>
+<span class="fc" id="L101">    restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());</span>
+<span class="fc" id="L102">    restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {</span>
+      @Override
+      protected boolean hasError(final HttpStatus statusCode) {
+<span class="nc" id="L105">        return false;</span>
+      }
+    });
+
+<span class="fc" id="L109">    final StatusUpdater statusUpdater = new PatchedStatusUpdater(this.applicationStore, this.applicationOperations, restTemplate);</span>
+<span class="fc" id="L110">    statusUpdater.setStatusLifetime(this.adminServerProperties.getMonitor().getStatusLifetime());</span>
+
+<span class="fc" id="L112">    return statusUpdater;</span>
+  }
+
+  @Override
+  public void onApplicationEvent(final ContextRefreshedEvent event) {
+<span class="fc" id="L117">    final PatchedStatusUpdater statusUpdater = (PatchedStatusUpdater) this.applicationContext.getBean(&quot;statusUpdater&quot;);</span>
+<span class="fc" id="L118">    statusUpdater.setActive(true);</span>
+<span class="fc" id="L119">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

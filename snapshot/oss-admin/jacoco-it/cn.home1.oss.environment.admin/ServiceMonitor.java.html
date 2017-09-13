@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServiceMonitor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oss-admin</a> &gt; <a href="index.source.html" class="el_package">cn.home1.oss.environment.admin</a> &gt; <span class="el_source">ServiceMonitor.java</span></div><h1>ServiceMonitor.java</h1><pre class="source lang-java linenums">package cn.home1.oss.environment.admin;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
+import org.springframework.boot.actuate.metrics.GaugeService;
+import org.springframework.stereotype.Component;
+
+/**
+ * Created by leo on 17/1/10. This class is to gather the times a method is invoked and the execution time for a
+ * method.
+ */
+@Aspect
+@Component
+public class ServiceMonitor {
+
+  private final CounterService counterService;
+
+  private final GaugeService gaugeService;
+
+<span class="fc" id="L25">  public ServiceMonitor(final CounterService counterService, final GaugeService gaugeService) {</span>
+<span class="fc" id="L26">    this.counterService = counterService;</span>
+<span class="fc" id="L27">    this.gaugeService = gaugeService;</span>
+<span class="fc" id="L28">  }</span>
+
+  @Autowired
+  public ServiceMonitor serviceMonitor(final CounterService counterService, final GaugeService gaugeService) {
+<span class="fc" id="L32">    return new ServiceMonitor(counterService, gaugeService);</span>
+  }
+
+  @Before(&quot;execution(* cn.home1.oss.environment.admin.controller.*.*(..))&quot;)
+  public void countServiceInvoke(final JoinPoint joinPoint) {
+<span class="fc" id="L37">    this.counterService.increment(&quot;meter.&quot; + joinPoint.getSignature() + &quot;-invokeNum&quot;);</span>
+<span class="fc" id="L38">  }</span>
+
+  @Around(&quot;execution(* cn.home1.oss.environment.admin.controller.*.*(..))&quot;)
+  public Object latencyService(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+<span class="fc" id="L42">    long start = System.currentTimeMillis();</span>
+<span class="fc" id="L43">    final Object proceed = proceedingJoinPoint.proceed();</span>
+<span class="fc" id="L44">    long end = System.currentTimeMillis();</span>
+<span class="fc" id="L45">    this.gaugeService.submit(proceedingJoinPoint.getSignature().toString() + &quot;-invokeTime&quot;, (double) end - start);</span>
+<span class="fc" id="L46">    return proceed;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
