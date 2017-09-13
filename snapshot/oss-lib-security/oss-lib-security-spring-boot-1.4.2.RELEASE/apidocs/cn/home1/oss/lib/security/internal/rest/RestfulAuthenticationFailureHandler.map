@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./RestfulAuthenticationFailureHandler.html" title="cn.home1.oss.lib.security.internal.rest.RestfulAuthenticationFailureHandler" alt="" coords="16,165,805,277"/>
+<area shape="rect" id="node1" href="./RestfulAuthenticationFailureHandler.html" title="&lt;TABLE&gt;" alt="" coords="5,160,816,283"/>
+<area shape="rect" id="node2_1" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/web/authentication/AuthenticationFailureHandler.html" title="org.springframework.security.web.authentication.AuthenticationFailureHandler" alt="" coords="68,11,753,106"/>
+<area shape="rect" id="node2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/web/authentication/AuthenticationFailureHandler.html" title="&lt;TABLE&gt;" alt="" coords="57,6,764,111"/>
+</map>

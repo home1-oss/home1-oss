@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./AbstractStaticPrivilege.html" title="cn.home1.oss.lib.security.api.AbstractStaticPrivilege" alt="" coords="16,397,189,475"/>
+<area shape="rect" id="node1" href="./AbstractStaticPrivilege.html" title="&lt;TABLE&gt;" alt="" coords="5,392,200,480"/>
+<area shape="rect" id="node2_1" href="./AbstractRole.html" title="cn.home1.oss.lib.security.api.AbstractRole" alt="" coords="235,371,405,501"/>
+<area shape="rect" id="node2" href="./AbstractRole.html" title="&lt;TABLE&gt;" alt="" coords="224,366,416,506"/>
+<area shape="rect" id="node3_2" href="./AbstractGrantedAuthority.html" title="cn.home1.oss.lib.security.api.AbstractGrantedAuthority" alt="" coords="49,165,372,312"/>
+<area shape="rect" id="node3" href="./AbstractGrantedAuthority.html" title="&lt;TABLE&gt;" alt="" coords="39,160,383,317"/>
+<area shape="rect" id="node4_3" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/core/GrantedAuthority.html" title="org.springframework.security.core.GrantedAuthority" alt="" coords="25,11,183,106"/>
+<area shape="rect" id="node4" href="http://java.sun.com/j2se/1.4.2/docs/api/org/springframework/security/core/GrantedAuthority.html" title="&lt;TABLE&gt;" alt="" coords="15,6,193,111"/>
+<area shape="rect" id="node5_4" href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Comparable.html" title="java.lang.Comparable" alt="" coords="229,11,406,106"/>
+<area shape="rect" id="node5" href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Comparable.html" title="&lt;TABLE&gt;" alt="" coords="218,6,417,111"/>
+</map>

@@ -1,0 +1,24 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./VerifyCodeProvider.html" title="cn.home1.oss.lib.security.api.VerifyCodeProvider" alt="" coords="16,115,304,227"/>
+<area shape="rect" id="node1" href="./VerifyCodeProvider.html" title="&lt;TABLE&gt;" alt="" coords="5,109,315,232"/>
+<area shape="rect" id="node2_1" href="./BaseUserDetailsAuthenticationProvider.html" title="cn.home1.oss.lib.security.api.BaseUserDetailsAuthenticationProvider" alt="" coords="350,11,1058,331"/>
+<area shape="rect" id="node2" href="./BaseUserDetailsAuthenticationProvider.html" title="&lt;TABLE&gt;" alt="" coords="339,5,1069,336"/>
+<area shape="rect" id="node3_2" href="./UserDetails.html" title="cn.home1.oss.lib.security.api.UserDetails" alt="" coords="1183,768,1292,845"/>
+<area shape="rect" id="node3" href="./UserDetails.html" title="&lt;TABLE&gt;" alt="" coords="1172,763,1303,851"/>
+<area shape="rect" id="node4_3" href="./AbstractStaticPrivilege.html" title="cn.home1.oss.lib.security.api.AbstractStaticPrivilege" alt="" coords="1597,511,1771,588"/>
+<area shape="rect" id="node4" href="./AbstractStaticPrivilege.html" title="&lt;TABLE&gt;" alt="" coords="1587,505,1781,593"/>
+<area shape="rect" id="node5_4" href="./AbstractRole.html" title="cn.home1.oss.lib.security.api.AbstractRole" alt="" coords="1903,485,2073,614"/>
+<area shape="rect" id="node5" href="./AbstractRole.html" title="&lt;TABLE&gt;" alt="" coords="1892,479,2084,619"/>
+<area shape="rect" id="node6_5" href="./GenericUser.html" title="cn.home1.oss.lib.security.api.GenericUser" alt="" coords="2195,28,2562,313"/>
+<area shape="rect" id="node6" href="./GenericUser.html" title="&lt;TABLE&gt;" alt="" coords="2185,23,2573,319"/>
+<area shape="rect" id="node7_6" href="./User.html" title="cn.home1.oss.lib.security.api.User" alt="" coords="1104,80,1371,261"/>
+<area shape="rect" id="node7" href="./User.html" title="&lt;TABLE&gt;" alt="" coords="1093,75,1381,267"/>
+<area shape="rect" id="node9_7" href="./AbstractUser.html" title="cn.home1.oss.lib.security.api.AbstractUser" alt="" coords="1114,389,1361,709"/>
+<area shape="rect" id="node9" href="./AbstractUser.html" title="&lt;TABLE&gt;" alt="" coords="1103,384,1371,715"/>
+<area shape="rect" id="node8_8" href="./StaticPrivilege.html" title="cn.home1.oss.lib.security.api.StaticPrivilege" alt="" coords="1416,89,1781,253"/>
+<area shape="rect" id="node8" href="./StaticPrivilege.html" title="&lt;TABLE&gt;" alt="" coords="1405,83,1792,258"/>
+<area shape="rect" id="node10_9" href="./AbstractGrantedAuthority.html" title="cn.home1.oss.lib.security.api.AbstractGrantedAuthority" alt="" coords="1827,97,2149,244"/>
+<area shape="rect" id="node10" href="./AbstractGrantedAuthority.html" title="&lt;TABLE&gt;" alt="" coords="1816,92,2160,249"/>
+<area shape="rect" id="node11_10" href="./Security.html" title="cn.home1.oss.lib.security.api.Security" alt="" coords="2607,115,2849,227"/>
+<area shape="rect" id="node11" href="./Security.html" title="&lt;TABLE&gt;" alt="" coords="2597,109,2859,232"/>
+</map>
