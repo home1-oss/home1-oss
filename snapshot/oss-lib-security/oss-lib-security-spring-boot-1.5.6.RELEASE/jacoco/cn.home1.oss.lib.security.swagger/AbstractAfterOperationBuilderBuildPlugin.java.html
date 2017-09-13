@@ -100,7 +100,7 @@ import java.util.Set;
 <span class="nc" id="L100">        .apply(context.alternateFor(this.typeResolver.resolve(ResolvedError.class)));</span>
 
 <span class="nc" id="L102">      final Set&lt;ResponseMessage&gt; responseMessagesProcessed = newHashSet();</span>
-<span class="nc" id="L103">      responseMessages.stream().forEach((responseMessage -&gt; {</span>
+<span class="nc" id="L103">      responseMessages.forEach(responseMessage -&gt; {</span>
 <span class="nc bnc" id="L104" title="All 2 branches missed.">        if (!isSuccessful(responseMessage.getCode())) {</span>
 <span class="nc" id="L105">          responseMessagesProcessed.add(new ResponseMessageBuilder()</span>
 <span class="nc" id="L106">            .code(responseMessage.getCode())</span>
@@ -108,7 +108,7 @@ import java.util.Set;
 <span class="nc" id="L108">            .responseModel(responseModel)</span>
 <span class="nc" id="L109">            .build());</span>
         }
-<span class="nc" id="L111">      }));</span>
+<span class="nc" id="L111">      });</span>
 <span class="nc bnc" id="L112" title="All 2 branches missed.">      if (!responseMessagesProcessed.isEmpty()) {</span>
 <span class="nc" id="L113">        context.operationBuilder().responseMessages(responseMessagesProcessed);</span>
       }
@@ -123,17 +123,19 @@ import java.util.Set;
    * 判断是否是成功的响应.
    */
   private static boolean isSuccessful(final int code) {
+    boolean result;
     try {
-<span class="nc" id="L127">      return HttpStatus.Series.SUCCESSFUL.equals(HttpStatus.Series.valueOf(code));</span>
-<span class="nc" id="L128">    } catch (final Exception ignored) {</span>
-<span class="nc" id="L129">      log.info(&quot;error check httpStatus {}.&quot;, code, ignored);</span>
-<span class="nc" id="L130">      return false;</span>
-    }
+<span class="nc" id="L128">      result = HttpStatus.Series.SUCCESSFUL.equals(HttpStatus.Series.valueOf(code));</span>
+<span class="nc" id="L129">    } catch (final Exception ignored) {</span>
+<span class="nc" id="L130">      log.info(&quot;error check httpStatus {}.&quot;, code, ignored);</span>
+<span class="nc" id="L131">      result = false;</span>
+<span class="nc" id="L132">    }</span>
+<span class="nc" id="L133">    return result;</span>
   }
 
   @Override
   public boolean supports(final DocumentationType delimiter) {
-<span class="nc" id="L136">    return DocumentationType.SWAGGER_2.equals(delimiter);</span>
+<span class="nc" id="L138">    return DocumentationType.SWAGGER_2.equals(delimiter);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

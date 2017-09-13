@@ -34,11 +34,11 @@ import javax.servlet.http.HttpServletResponse;
 
   @Override
   public void commence( //
-      final HttpServletRequest request, //
-      final HttpServletResponse response, //
-      final AuthenticationException authException //
+    final HttpServletRequest request, //
+    final HttpServletResponse response, //
+    final AuthenticationException authException //
   ) throws IOException, ServletException {
-<span class="nc" id="L41">    response.addHeader(&quot;WWW-Authenticate&quot;, &quot;Basic realm=\&quot;&quot; + this.getRealmName() + &quot;\&quot;&quot;);</span>
+<span class="nc" id="L41">    response.addHeader(&quot;WWW-Authenticate&quot;, &quot;Basic realm=\&quot;&quot; + this.realmName + &quot;\&quot;&quot;);</span>
 
     // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     // response.getWriter().println(&quot;HTTP Status 401 - &quot; + authException.getMessage());

@@ -6,7 +6,7 @@ oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.internal,Au
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.api,AbstractUser,63,14,6,0,21,5,11,5,8,5
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.api,StaticPrivilege,22,0,0,0,3,0,3,0,3,0
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.api,AbstractStaticPrivilege,3,0,0,0,2,0,1,0,1,0
-oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.api,Security,31,0,8,0,11,0,6,0,2,0
+oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.api,Security,37,0,8,0,14,0,6,0,2,0
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.api,OAuth2Utils,84,0,6,0,23,0,7,0,4,0
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.api,GenericUser,400,349,79,23,48,50,62,33,11,33
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.api,AbstractGrantedAuthority,67,0,12,0,19,0,13,0,7,0
@@ -40,7 +40,7 @@ oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.internal.pr
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.internal.preauth,PreAuthTestUserFilter,93,0,12,0,25,0,12,0,6,0
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.internal.preauth,PreAuthTokenProcessingFilter,182,0,10,0,48,0,22,0,17,0
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.internal.preauth,PreAuthTokenAuthenticationProvider,79,0,16,0,23,0,12,0,4,0
-oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.swagger,AbstractAfterOperationBuilderBuildPlugin,175,0,12,0,51,0,14,0,8,0
+oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.swagger,AbstractAfterOperationBuilderBuildPlugin,177,0,12,0,53,0,14,0,8,0
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.swagger,SecurityApiDocumentationPlugin,423,0,6,0,91,0,13,0,10,0
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.swagger,AuthenticationTokenHeaderBuilderPlugin,72,0,4,0,18,0,5,0,3,0
 oss-lib-security-spring-boot-1.5.6.RELEASE,cn.home1.oss.lib.security.swagger,AbstractSecurityApiListingPlugin,172,0,4,0,32,0,7,0,5,0
